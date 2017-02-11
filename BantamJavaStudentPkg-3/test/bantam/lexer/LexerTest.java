@@ -361,7 +361,15 @@ public class LexerTest
         assertEquals("LEX_ERROR",s);
 
 
-        //more
+        Lexer lexer2 = new Lexer(new StringReader("\"hvbjbj"));
+        Symbol token2 = lexer.next_token();
+        String s2 = ((Token)token.value).getName();
+        assertEquals("LEX_ERROR",s2);
+
+        Lexer lexer3 = new Lexer(new StringReader("\"hvbjbj \n jhbj \""));
+        Symbol token3 = lexer.next_token();
+        String s3 = ((Token)token.value).getName();
+        assertEquals("LEX_ERROR",s3);
     }
 
     @Test
