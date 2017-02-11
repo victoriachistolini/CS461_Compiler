@@ -228,6 +228,21 @@ import java_cup.runtime.Symbol;
 <YYINITIAL>instanceof   { return new Symbol(TokenIds.INSTANCEOF,
 						    new Token("INSTANCEOF", yyline)); }
 
+<YYINITIAL>boolean      { return new Symbol(TokenIds.BOOLEAN,
+						    new Token("BOOLEAN", yyline)); }
+
+<YYINITIAL>true         { return new Symbol(TokenIds.BOOLEAN_TRUE,
+						    new Token("BOOLEAN_TRUE", yyline)); }
+
+<YYINITIAL>false        { return new Symbol(TokenIds.BOOLEAN_FALSE,
+						    new Token("BOOLEAN_FALSE", yyline)); }
+
+<YYINITIAL>int          { return new Symbol(TokenIds.INT,
+						    new Token("INT", yyline)); }
+
+<YYINITIAL>String       { return new Symbol(TokenIds.STRING,
+						    new Token("STRING", yyline)); }
+
 <YYINITIAL>/            { return new Symbol(TokenIds.DIVIDE,
 						    new Token("DIVIDE", yyline)); }
 
@@ -258,7 +273,61 @@ import java_cup.runtime.Symbol;
 <YYINITIAL><            { return new Symbol(TokenIds.LT,
 						    new Token("LT", yyline)); }
 
-<YYINITIAL>".*"         { return new Symbol(TokenIds.STRING_CONST,
+<YYINITIAL>\|           { return new Symbol(TokenIds.OR,
+						    new Token("OR", yyline)); }
+
+<YYINITIAL>>=           { return new Symbol(TokenIds.GEQ,
+						    new Token("GEQ", yyline)); }
+
+<YYINITIAL>!=           { return new Symbol(TokenIds.NE,
+						    new Token("NE", yyline)); }
+
+<YYINITIAL>>            { return new Symbol(TokenIds.GT,
+						    new Token("GT", yyline)); }
+
+<YYINITIAL><=           { return new Symbol(TokenIds.LEQ,
+						    new Token("LEQ", yyline)); }
+
+<YYINITIAL>%            { return new Symbol(TokenIds.MODULUS,
+						    new Token("MODULUS", yyline)); }
+
+<YYINITIAL>;            { return new Symbol(TokenIds.SEMI,
+						    new Token("SEMI", yyline)); }
+
+<YYINITIAL>,            { return new Symbol(TokenIds.COMMA,
+						    new Token("COMMA", yyline)); }
+
+<YYINITIAL>\(           { return new Symbol(TokenIds.LPAREN,
+						    new Token("LPAREN", yyline)); }
+
+<YYINITIAL>\)           { return new Symbol(TokenIds.RPAREN,
+						    new Token("RPAREN", yyline)); }
+
+<YYINITIAL>=            { return new Symbol(TokenIds.ASSIGN,
+				 		    new Token("ASSIGN", yyline)); }
+
+<YYINITIAL>\[           { return new Symbol(TokenIds.LSQBRACE,
+						    new Token("LSQBRACE", yyline)); }
+
+<YYINITIAL>\]           { return new Symbol(TokenIds.RSQBRACE,
+					 	    new Token("RSQBRACE", yyline)); }
+
+<YYINITIAL>\{           { return new Symbol(TokenIds.LBRACE,
+						    new Token("LBRACE", yyline)); }
+
+<YYINITIAL>\}           { return new Symbol(TokenIds.RBRACE,
+						    new Token("RBRACE", yyline)); }
+
+YYINITIAL>\.            { return new Symbol(TokenIds.DOT,
+						    new Token("DOT", yyline)); }
+
+YYINITIAL>[0-9]+        { return new Symbol(TokenIds.INT_CONST,
+						    new Token("INT_CONST", yyline)); }
+
+YYINITIAL>[A-Za-z][A-Za-z0-9]*   { return new Symbol(TokenIds.ID,
+                                    new Token("ID", yyline)); }
+
+<YYINITIAL>\".*\"       { return new Symbol(TokenIds.STRING_CONST,
 						    new Token("STRING_CONST", yyline)); }
 
 .                       { throw new RuntimeException("Unmatched lexeme " +
