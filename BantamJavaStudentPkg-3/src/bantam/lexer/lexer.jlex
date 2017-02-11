@@ -331,14 +331,20 @@ import java_cup.runtime.Symbol;
 <YYINITIAL>\}           { return new Symbol(TokenIds.RBRACE,
 						    new Token("RBRACE", yyline)); }
 
-YYINITIAL>\.            { return new Symbol(TokenIds.DOT,
+<YYINITIAL>\.            { return new Symbol(TokenIds.DOT,
 						    new Token("DOT", yyline)); }
 
-YYINITIAL>[0-9]+        { return new Symbol(TokenIds.INT_CONST,
+<YYINITIAL>[0-9]+        { return new Symbol(TokenIds.INT_CONST,
 						    new Token("INT_CONST", yyline)); }
 
-YYINITIAL>[A-Za-z][A-Za-z0-9_]*   { return new Symbol(TokenIds.ID,
-                                    new Token("ID", yyline)); }
+<YYINITIAL>[_$A-Za-z][A-Za-z0-9_]*   {
+    int initialChar = yytext().charAt(0);
+    if(initialChar == '_' || initialChar == '$' || Character.isDigit(initialChar)) {
+        return new Symbol(TokenIds.LEX_ERROR, new Token("ILLEGAL_ID", yyline));
+    }
+    return new Symbol(TokenIds.ID,
+    new Token("ID", yyline));
+}
 
 <YYINITIAL>\".*\"       { return new Symbol(TokenIds.STRING_CONST,
 						    new Token("STRING_CONST", yyline)); }

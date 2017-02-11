@@ -236,8 +236,6 @@ public class LexerTest
         assertEquals("PLUS",s);
     }
 
-
-
     @Test
     public void assignToken() throws Exception {
         Lexer lexer = new Lexer(new StringReader("= "));
@@ -272,14 +270,14 @@ public class LexerTest
         //check for id starting with integer
         Lexer lexer2 = new Lexer(new StringReader("9hjbhj "));
         Symbol token2 = lexer.next_token();
-        String s2 = ((Token)token.value).getName();
+        String s2 = ((Token)token2.value).getName();
         assertNotEquals("ID",s2);
 
         //check for id starting with _
         Lexer lexer3 = new Lexer(new StringReader("_hjbhj "));
         Symbol token3 = lexer.next_token();
-        String s3 = ((Token)token.value).getName();
-        assertNotEquals("ID",s);
+        String s3 = ((Token)token3.value).getName();
+        assertNotEquals("ID",s3);
 
         //other tests
 
@@ -291,7 +289,6 @@ public class LexerTest
         Lexer lexer = new Lexer(new StringReader(". "));
         Symbol token = lexer.next_token();
         String s = ((Token)token.value).getName();
-        System.out.println(s);
         assertEquals("DOT",s);
     }
 
@@ -300,29 +297,14 @@ public class LexerTest
         Lexer lexer = new Lexer(new StringReader("67578 "));
         Symbol token = lexer.next_token();
         String s = ((Token)token.value).getName();
-        System.out.println(s);
         assertEquals("INT_CONST",s);
     }
-
-    @Test
-    public void errorToken() throws Exception {
-        Lexer lexer = new Lexer(new StringReader("error "));
-        Symbol token = lexer.next_token();
-        String s = ((Token)token.value).getName();
-        System.out.println(s);
-        assertEquals("ERROR",s);
-    }
-
-
-
-
 
     @Test
     public void stringToken() throws Exception {
         Lexer lexer = new Lexer(new StringReader("\"cool\" "));
         Symbol token = lexer.next_token();
         String s = ((Token)token.value).getName();
-        System.out.println(s);
         assertEquals("STRING_CONST",s);
     }
 
