@@ -216,48 +216,50 @@ import java_cup.runtime.Symbol;
 <YYINITIAL>return       { return new Symbol(TokenIds.RETURN,
 						    new Token("RETURN", yyline)); }
 
-<YYINITIAL>while       { return new Symbol(TokenIds.WHILE,
+<YYINITIAL>while        { return new Symbol(TokenIds.WHILE,
 						    new Token("WHILE", yyline)); }
 
-<YYINITIAL>else       { return new Symbol(TokenIds.ELSE,
+<YYINITIAL>else         { return new Symbol(TokenIds.ELSE,
 						    new Token("ELSE", yyline)); }
 
-<YYINITIAL>break       { return new Symbol(TokenIds.BREAK,
+<YYINITIAL>break        { return new Symbol(TokenIds.BREAK,
 						    new Token("BREAK", yyline)); }
 
-<YYINITIAL>instanceof       { return new Symbol(TokenIds.INSTANCEOF,
+<YYINITIAL>instanceof   { return new Symbol(TokenIds.INSTANCEOF,
 						    new Token("INSTANCEOF", yyline)); }
-<YYINITIAL>/       { return new Symbol(TokenIds.DIVIDE,
+
+<YYINITIAL>/            { return new Symbol(TokenIds.DIVIDE,
 						    new Token("DIVIDE", yyline)); }
-<YYINITIAL>/*       { return new Symbol(TokenIds.TIMES,
+
+<YYINITIAL>\*           { return new Symbol(TokenIds.TIMES,
 						    new Token("TIMES", yyline)); }
 
-<YYINITIAL>==       { return new Symbol(TokenIds.EQ,
+<YYINITIAL>==           { return new Symbol(TokenIds.EQ,
 						    new Token("EQ", yyline)); }
 
-<YYINITIAL>--      { return new Symbol(TokenIds.DECR,
+<YYINITIAL>--           { return new Symbol(TokenIds.DECR,
 						    new Token("DECR", yyline)); }
 
-<YYINITIAL>/+/+      { return new Symbol(TokenIds.INCR,
+<YYINITIAL>\+\+         { return new Symbol(TokenIds.INCR,
 						    new Token("INCR", yyline)); }
 
-<YYINITIAL>-      { return new Symbol(TokenIds.MINUS,
+<YYINITIAL>-            { return new Symbol(TokenIds.MINUS,
 						    new Token("MINUS", yyline)); }
 
-<YYINITIAL>/+      { return new Symbol(TokenIds.PLUS,
+<YYINITIAL>\+           { return new Symbol(TokenIds.PLUS,
 						    new Token("PLUS", yyline)); }
 
-<YYINITIAL>!      { return new Symbol(TokenIds.NOT,
-						    new Token("NOT", yyline)); }
+<YYINITIAL>!            { return new Symbol(TokenIds.NOT,
+				 		    new Token("NOT", yyline)); }
 
-<YYINITIAL>&      { return new Symbol(TokenIds.AND,
+<YYINITIAL>&            { return new Symbol(TokenIds.AND,
 						    new Token("AND", yyline)); }
 
-<YYINITIAL><      { return new Symbol(TokenIds.LT,
+<YYINITIAL><            { return new Symbol(TokenIds.LT,
 						    new Token("LT", yyline)); }
 
-<YYINITIAL>".*"        { return new Symbol(TokenIds.STRING_CONST,
+<YYINITIAL>".*"         { return new Symbol(TokenIds.STRING_CONST,
 						    new Token("STRING_CONST", yyline)); }
 
-.                      { throw new RuntimeException("Unmatched lexeme " +
+.                       { throw new RuntimeException("Unmatched lexeme " +
                           yytext() + " at line " + yyline); }
