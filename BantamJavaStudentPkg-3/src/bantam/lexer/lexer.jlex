@@ -1,3 +1,15 @@
+/**
+ * File: lexer.jlex
+ * @author Victoria Chistolini
+ * @author Edward (osan) Zhou
+ * @author Alex Rinker
+ * @author Vivek Sah
+ * Class: CS461
+ * Project: 1
+ * Date: Feb 11, 2017
+ */
+
+
 /* Bantam Java Compiler and Language Toolset.
 
    Copyright (C) 2009 by Marc Corliss (corliss@hws.edu) and 
@@ -198,6 +210,15 @@ import java_cup.runtime.Symbol;
 
 %%
 
+<YYINITIAL>//.*            {  }
+
+<YYINITIAL>\/\*([^*]|[\r\n]|(\*+([^*\/]|[\r\n])))*\*\/  {  }
+
+<YYINITIAL>\/\*([^*]|[\r\n]|(\*+([^*\/]|[\r\n])))*       { return new Symbol(TokenIds.LEX_ERROR,
+						                                    new Token("LEX_ERROR","unterminated comment.", yyline)); }
+
+<YYINITIAL>[ \n\b\t\f]+   {  }
+
 <YYINITIAL>class        { return new Symbol(TokenIds.CLASS, 
 						    new Token("CLASS", yyline)); }
 
@@ -228,20 +249,12 @@ import java_cup.runtime.Symbol;
 <YYINITIAL>instanceof   { return new Symbol(TokenIds.INSTANCEOF,
 						    new Token("INSTANCEOF", yyline)); }
 
-<YYINITIAL>boolean      { return new Symbol(TokenIds.BOOLEAN,
-						    new Token("BOOLEAN", yyline)); }
+<YYINITIAL>true         { return new Symbol(TokenIds.BOOLEAN_CONST,
+						    new Token("BOOLEAN_CONST", yyline)); }
 
-<YYINITIAL>true         { return new Symbol(TokenIds.BOOLEAN_TRUE,
-						    new Token("BOOLEAN_TRUE", yyline)); }
+<YYINITIAL>false        { return new Symbol(TokenIds.BOOLEAN_CONST,
+						    new Token("BOOLEAN_CONST", yyline)); }
 
-<YYINITIAL>false        { return new Symbol(TokenIds.BOOLEAN_FALSE,
-						    new Token("BOOLEAN_FALSE", yyline)); }
-
-<YYINITIAL>int          { return new Symbol(TokenIds.INT,
-						    new Token("INT", yyline)); }
-
-<YYINITIAL>String       { return new Symbol(TokenIds.STRING,
-						    new Token("STRING", yyline)); }
 
 <YYINITIAL>/            { return new Symbol(TokenIds.DIVIDE,
 						    new Token("DIVIDE", yyline)); }
@@ -324,11 +337,12 @@ YYINITIAL>\.            { return new Symbol(TokenIds.DOT,
 YYINITIAL>[0-9]+        { return new Symbol(TokenIds.INT_CONST,
 						    new Token("INT_CONST", yyline)); }
 
-YYINITIAL>[A-Za-z][A-Za-z0-9]*   { return new Symbol(TokenIds.ID,
+YYINITIAL>[A-Za-z][A-Za-z0-9_]*   { return new Symbol(TokenIds.ID,
                                     new Token("ID", yyline)); }
 
 <YYINITIAL>\".*\"       { return new Symbol(TokenIds.STRING_CONST,
 						    new Token("STRING_CONST", yyline)); }
+
 
 .                       { throw new RuntimeException("Unmatched lexeme " +
                           yytext() + " at line " + yyline); }
