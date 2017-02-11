@@ -1,3 +1,15 @@
+/**
+ * File: LexerTest.java
+ * @author djskrien
+ * @author Victoria Chistolini
+ * @author Edward (osan) Zhou
+ * @author Alex Rinker
+ * @author Vivek Sah
+ * Class: CS461
+ * Project: 1
+ * Date: Feb 11, 2017
+ */
+
 package bantam.lexer;
 
 import java_cup.runtime.Symbol;
@@ -8,11 +20,6 @@ import java.io.StringReader;
 
 import static org.junit.Assert.assertEquals;
 
-/*
- * File: LexerTest.java
- * Author: djskrien
- * Date: 1/8/17
- */
 public class LexerTest
 {
     @BeforeClass
@@ -21,7 +28,7 @@ public class LexerTest
     }
     @Test
     public void classToken() throws Exception {
-        Lexer lexer = new Lexer(new StringReader("class"));
+        Lexer lexer = new Lexer(new StringReader(" class"));
         Symbol token = lexer.next_token();
         String s = ((Token)token.value).getName();
         assertEquals("CLASS",s);
@@ -123,6 +130,16 @@ public class LexerTest
         System.out.println(s);
         assertEquals("STRING_CONST",s);
     }
+
+
+    @Test
+    public void commentToken() throws Exception {
+        Lexer lexer = new Lexer(new StringReader("/* this is a comment \n /* */"));
+        Symbol token = lexer.next_token();
+        String s = ((Token)token.value).getName();
+        assertEquals("EOF",s);
+    }
+
     @Test
     public void EOFToken() throws Exception {
         Lexer lexer = new Lexer(new StringReader(""));
