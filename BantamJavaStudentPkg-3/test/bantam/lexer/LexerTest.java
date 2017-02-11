@@ -7,6 +7,8 @@ import org.junit.Test;
 import java.io.StringReader;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+
 
 /*
  * File: LexerTest.java
@@ -108,12 +110,205 @@ public class LexerTest
     }
 
     @Test
-    public void timesToken() throws Exception {
-        Lexer lexer = new Lexer(new StringReader("* "));
+    public void semiToken() throws Exception {
+        Lexer lexer = new Lexer(new StringReader("; "));
         Symbol token = lexer.next_token();
         String s = ((Token)token.value).getName();
-        assertEquals("TIMES",s);
+        assertEquals("SEMI",s);
     }
+
+    @Test
+    public void lparenToken() throws Exception {
+        Lexer lexer = new Lexer(new StringReader("( "));
+        Symbol token = lexer.next_token();
+        String s = ((Token)token.value).getName();
+        assertEquals("LPAREN",s);
+    }
+
+    @Test
+    public void rparenToken() throws Exception {
+        Lexer lexer = new Lexer(new StringReader(") "));
+        Symbol token = lexer.next_token();
+        String s = ((Token)token.value).getName();
+        assertEquals("RPAREN",s);
+    }
+
+    @Test
+    public void decrToken() throws Exception {
+        Lexer lexer = new Lexer(new StringReader("-- "));
+        Symbol token = lexer.next_token();
+        String s = ((Token)token.value).getName();
+        assertEquals("DECR",s);
+    }
+
+    @Test
+    public void incrToken() throws Exception {
+        Lexer lexer = new Lexer(new StringReader("++ "));
+        Symbol token = lexer.next_token();
+        String s = ((Token)token.value).getName();
+        assertEquals("INCR",s);
+    }
+
+    @Test
+    public void minusToken() throws Exception {
+        Lexer lexer = new Lexer(new StringReader("- "));
+        Symbol token = lexer.next_token();
+        String s = ((Token)token.value).getName();
+        assertEquals("MINUS",s);
+    }
+
+    @Test
+    public void notToken() throws Exception {
+        Lexer lexer = new Lexer(new StringReader("! "));
+        Symbol token = lexer.next_token();
+        String s = ((Token)token.value).getName();
+        assertEquals("NOT",s);
+    }
+
+    @Test
+    public void andToken() throws Exception {
+        Lexer lexer = new Lexer(new StringReader("&& "));
+        Symbol token = lexer.next_token();
+        String s = ((Token)token.value).getName();
+        assertEquals("AND",s);
+    }
+
+    @Test
+    public void ltToken() throws Exception {
+        Lexer lexer = new Lexer(new StringReader("< "));
+        Symbol token = lexer.next_token();
+        String s = ((Token)token.value).getName();
+        assertEquals("LT",s);
+    }
+
+    @Test
+    public void gtToken() throws Exception {
+        Lexer lexer = new Lexer(new StringReader("> "));
+        Symbol token = lexer.next_token();
+        String s = ((Token)token.value).getName();
+        assertEquals("GT",s);
+    }
+
+    @Test
+    public void orToken() throws Exception {
+        Lexer lexer = new Lexer(new StringReader("| "));
+        Symbol token = lexer.next_token();
+        String s = ((Token)token.value).getName();
+        assertEquals("OR",s);
+    }
+
+    @Test
+    public void geqToken() throws Exception {
+        Lexer lexer = new Lexer(new StringReader(">= "));
+        Symbol token = lexer.next_token();
+        String s = ((Token)token.value).getName();
+        assertEquals("GEQ",s);
+    }
+
+    @Test
+    public void leqToken() throws Exception {
+        Lexer lexer = new Lexer(new StringReader("<= "));
+        Symbol token = lexer.next_token();
+        String s = ((Token)token.value).getName();
+        assertEquals("LEQ",s);
+    }
+
+    @Test
+    public void commaToken() throws Exception {
+        Lexer lexer = new Lexer(new StringReader(", "));
+        Symbol token = lexer.next_token();
+        String s = ((Token)token.value).getName();
+        assertEquals("COMMA",s);
+    }
+
+    @Test
+    public void plusToken() throws Exception {
+        Lexer lexer = new Lexer(new StringReader("+ "));
+        Symbol token = lexer.next_token();
+        String s = ((Token)token.value).getName();
+        assertEquals("PLUS",s);
+    }
+
+
+
+    @Test
+    public void assignToken() throws Exception {
+        Lexer lexer = new Lexer(new StringReader("= "));
+        Symbol token = lexer.next_token();
+        String s = ((Token)token.value).getName();
+        assertEquals("ASSIGN",s);
+    }
+
+    @Test
+    public void lsqbraceToken() throws Exception {
+        Lexer lexer = new Lexer(new StringReader("[ "));
+        Symbol token = lexer.next_token();
+        String s = ((Token)token.value).getName();
+        assertEquals("LSQBRACE",s);
+    }
+
+    @Test
+    public void rsqbraceToken() throws Exception {
+        Lexer lexer = new Lexer(new StringReader("] "));
+        Symbol token = lexer.next_token();
+        String s = ((Token)token.value).getName();
+        assertEquals("RSQBRACE",s);
+    }
+
+    @Test
+    public void idToken() throws Exception {
+        Lexer lexer = new Lexer(new StringReader("abc "));
+        Symbol token = lexer.next_token();
+        String s = ((Token)token.value).getName();
+        assertEquals("ID",s);
+
+        //check for id starting with integer
+        Lexer lexer2 = new Lexer(new StringReader("9hjbhj "));
+        Symbol token2 = lexer.next_token();
+        String s2 = ((Token)token.value).getName();
+        assertNotEquals("ID",s2);
+
+        //check for id starting with _
+        Lexer lexer3 = new Lexer(new StringReader("_hjbhj "));
+        Symbol token3 = lexer.next_token();
+        String s3 = ((Token)token.value).getName();
+        assertNotEquals("ID",s);
+
+        //other tests
+
+
+    }
+
+    @Test
+    public void dotToken() throws Exception {
+        Lexer lexer = new Lexer(new StringReader(". "));
+        Symbol token = lexer.next_token();
+        String s = ((Token)token.value).getName();
+        System.out.println(s);
+        assertEquals("DOT",s);
+    }
+
+    @Test
+    public void intToken() throws Exception {
+        Lexer lexer = new Lexer(new StringReader("67578 "));
+        Symbol token = lexer.next_token();
+        String s = ((Token)token.value).getName();
+        System.out.println(s);
+        assertEquals("INT_CONST",s);
+    }
+
+    @Test
+    public void errorToken() throws Exception {
+        Lexer lexer = new Lexer(new StringReader("error "));
+        Symbol token = lexer.next_token();
+        String s = ((Token)token.value).getName();
+        System.out.println(s);
+        assertEquals("ERROR",s);
+    }
+
+
+
+
 
     @Test
     public void stringToken() throws Exception {
@@ -130,4 +325,84 @@ public class LexerTest
         String s = ((Token)token.value).getName();
         assertEquals("EOF",s);
     }
+
+
+    @Test
+    public void eqToken() throws Exception {
+        Lexer lexer = new Lexer(new StringReader("=="));
+        Symbol token = lexer.next_token();
+        String s = ((Token)token.value).getName();
+        assertEquals("EQ",s);
+    }
+
+
+    @Test
+    public void lexErrorToken() throws Exception {
+        Lexer lexer = new Lexer(new StringReader("/*   rxdrh"));
+        Symbol token = lexer.next_token();
+        String s = ((Token)token.value).getName();
+        assertEquals("LEX_ERROR",s);
+
+
+        //more
+    }
+
+    @Test
+    public void lbraceToken() throws Exception {
+        Lexer lexer = new Lexer(new StringReader("{"));
+        Symbol token = lexer.next_token();
+        String s = ((Token)token.value).getName();
+        assertEquals("LBRACE",s);
+
+
+    }
+
+    @Test
+    public void rbraceToken() throws Exception {
+        Lexer lexer = new Lexer(new StringReader("}"));
+        Symbol token = lexer.next_token();
+        String s = ((Token)token.value).getName();
+        assertEquals("RBRACE",s);
+
+
+
+    }
+
+    @Test
+    public void modulusToken() throws Exception {
+        Lexer lexer = new Lexer(new StringReader("% "));
+        Symbol token = lexer.next_token();
+        String s = ((Token)token.value).getName();
+        assertEquals("MODULUS",s);
+
+
+    }
+    @Test
+    public void neToken() throws Exception {
+        Lexer lexer = new Lexer(new StringReader("!= "));
+        Symbol token = lexer.next_token();
+        String s = ((Token)token.value).getName();
+        assertEquals("NE",s);
+
+
+    }
+
+    @Test
+    public void booleanConstantToken() throws Exception {
+        Lexer lexer = new Lexer(new StringReader("true "));
+        Symbol token = lexer.next_token();
+        String s = ((Token)token.value).getName();
+        assertEquals("BOOLEAN_CONST",s);
+
+        Lexer lexer2 = new Lexer(new StringReader("false "));
+        Symbol token2 = lexer.next_token();
+        String s2 = ((Token)token.value).getName();
+        assertEquals("BOOLEAN_CONST",s2);
+
+
+    }
+
+
+
+
 }
