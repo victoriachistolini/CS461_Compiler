@@ -334,8 +334,20 @@ import java_cup.runtime.Symbol;
 <YYINITIAL>\.            { return new Symbol(TokenIds.DOT,
 						    new Token("DOT", yyline)); }
 
-<YYINITIAL>[0-9]+        { return new Symbol(TokenIds.INT_CONST,
-						    new Token("INT_CONST", yyline)); }
+<YYINITIAL>[0-9]+        {
+    try {
+        int x = Integer.parseInt(yytext());
+    }
+    catch (Exception e) {
+        return new Symbol(TokenIds.LEX_ERROR,
+                            new Token("LARGE_INT", yyline));
+    }
+    return new Symbol(TokenIds.INT_CONST,
+	                    new Token("INT_CONST", yyline));
+}
+
+<YYINITIAL>-[0-9]+       { return new Symbol(TokenIds.LEX_ERROR,
+                                                new Token("NEGATIVE_INT", yyline)); }
 
 <YYINITIAL>[_$A-Za-z][A-Za-z0-9_]*   {
     int initialChar = yytext().charAt(0);
@@ -346,12 +358,16 @@ import java_cup.runtime.Symbol;
     new Token("ID", yyline));
 }
 
-<YYINITIAL>\".*\"       { return new Symbol(TokenIds.STRING_CONST,
-						    new Token("STRING_CONST", yyline)); }
+<YYINITIAL>\".*\"       {
+    if(yytext().length() > 5000) {
+        return new Symbol(TokenIds.LEX_ERROR, new Token("LARGE_STRING", yyline));
+    }
+    return new Symbol(TokenIds.STRING_CONST,
+	                    new Token("STRING_CONST", yyline));
+}
 
 <YYINITIAL>\".*       { return new Symbol(TokenIds.LEX_ERROR,
                             new Token("MULTI_LINE_STRING", yyline)); }
-
 
 .                       { throw new RuntimeException("Unmatched lexeme " +
                           yytext() + " at line " + yyline); }

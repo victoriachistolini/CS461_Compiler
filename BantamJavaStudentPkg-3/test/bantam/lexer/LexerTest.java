@@ -12,6 +12,7 @@
 
 package bantam.lexer;
 
+import java_cup.lexer;
 import java_cup.runtime.Symbol;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -302,8 +303,29 @@ public class LexerTest
     }
 
     @Test
+    public void largeIntToken() throws Exception {
+        Lexer lexer = new Lexer(new StringReader("2147483647"));
+        Symbol token = lexer.next_token();
+        String s = ((Token)token.value).getName();
+        assertEquals("INT_CONST",s);
+
+        Lexer lexer2 = new Lexer(new StringReader("2147483648"));
+        Symbol token2 = lexer2.next_token();
+        String s2 = ((Token)token2.value).getName();
+        assertEquals("LARGE_INT",s2);
+    }
+
+    @Test
+    public void negativeIntToken() throws Exception {
+        Lexer lexer = new Lexer(new StringReader("-99"));
+        Symbol token = lexer.next_token();
+        String s = ((Token)token.value).getName();
+        assertEquals("NEGATIVE_INT",s);
+    }
+
+    @Test
     public void stringToken() throws Exception {
-        Lexer lexer = new Lexer(new StringReader("\"this is a string\""));
+        Lexer lexer = new Lexer(new StringReader("\"this is \\\"a string\""));
         Symbol token = lexer.next_token();
         String s = ((Token)token.value).getName();
         assertEquals("STRING_CONST",s);
@@ -315,7 +337,27 @@ public class LexerTest
         Symbol token = lexer.next_token();
         String s = ((Token)token.value).getName();
         assertEquals("MULTI_LINE_STRING",s);
+    }
 
+    @Test
+    public void longStringToken() throws Exception {
+        String str1 = "\"";
+        String str2 = "\"";
+        for(int i=0; i<4998; i++) { //4998 due to the two '\' chars which are counted
+            str1+= "A";
+            str2+= "B";
+        }
+        str1+="\"";
+        str2+="B\"";
+        Lexer lexer = new Lexer(new StringReader(str1));
+        Symbol token = lexer.next_token();
+        String s = ((Token)token.value).getName();
+        assertEquals("STRING_CONST",s);
+
+        Lexer lexer2 = new Lexer(new StringReader(str2));
+        Symbol token2 = lexer2.next_token();
+        String s2 = ((Token)token2.value).getName();
+        assertEquals("LARGE_STRING",s2);
     }
 
     @Test
