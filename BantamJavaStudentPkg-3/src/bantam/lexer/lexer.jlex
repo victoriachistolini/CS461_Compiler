@@ -215,7 +215,7 @@ import java_cup.runtime.Symbol;
 <YYINITIAL>\/\*([^*]|[\r\n]|(\*+([^*\/]|[\r\n])))*\*\/  {  }
 
 <YYINITIAL>\/\*([^*]|[\r\n]|(\*+([^*\/]|[\r\n])))*       { return new Symbol(TokenIds.LEX_ERROR,
-						                                    new Token("LEX_ERROR","unterminated comment.", yyline)); }
+						                                    new Token("UNTERMINATED_COMMENT", yyline)); }
 
 <YYINITIAL>[ \n\b\t\f]+   {  }
 
@@ -362,12 +362,27 @@ import java_cup.runtime.Symbol;
     if(yytext().length() > 5000) {
         return new Symbol(TokenIds.LEX_ERROR, new Token("LARGE_STRING", yyline));
     }
+    for(int i=0; i<yytext().length(); i++) {
+        if(yytext().charAt(i) == '\\' && !(yytext().charAt(i+1) == 'n'  ||
+                                           yytext().charAt(i+1) == 't'  ||
+                                           yytext().charAt(i+1) == '"'  ||
+                                           yytext().charAt(i+1) == '\\' ||
+                                           yytext().charAt(i+1) == 'f')) {
+            return new Symbol(TokenIds.LEX_ERROR, new Token("ILLEGAL_ESCAPE_CHAR", yyline));
+        }
+    }
     return new Symbol(TokenIds.STRING_CONST,
 	                    new Token("STRING_CONST", yyline));
 }
 
-<YYINITIAL>\".*       { return new Symbol(TokenIds.LEX_ERROR,
-                            new Token("MULTI_LINE_STRING", yyline)); }
+<YYINITIAL>\"[^\"]*       { return new Symbol(TokenIds.LEX_ERROR,
+                            new Token("UNTERMINATED_STRING", yyline)); }
+
+<YYINITIAL>\"(.*[\n].*)*\"       { return new Symbol(TokenIds.LEX_ERROR,
+                            new Token("MULTILINE_STRING", yyline)); }
+
+<YYINITIAL>[@?#$%^~`\\/\.]+ { return new Symbol(TokenIds.LEX_ERROR,
+                            new Token("ILLEGAL_CHAR", yyline)); }
 
 .                       { throw new RuntimeException("Unmatched lexeme " +
                           yytext() + " at line " + yyline); }

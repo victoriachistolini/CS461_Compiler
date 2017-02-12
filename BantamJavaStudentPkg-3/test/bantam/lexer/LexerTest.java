@@ -273,13 +273,13 @@ public class LexerTest
 
         //check for id starting with integer
         Lexer lexer2 = new Lexer(new StringReader("9hjbhj "));
-        Symbol token2 = lexer.next_token();
+        Symbol token2 = lexer2.next_token();
         String s2 = ((Token)token2.value).getName();
         assertNotEquals("ID",s2);
 
         //check for id starting with _
         Lexer lexer3 = new Lexer(new StringReader("_hjbhj "));
-        Symbol token3 = lexer.next_token();
+        Symbol token3 = lexer3.next_token();
         String s3 = ((Token)token3.value).getName();
         assertNotEquals("ID",s3);
 
@@ -336,7 +336,7 @@ public class LexerTest
         Lexer lexer = new Lexer(new StringReader("\"this is a \n string\""));
         Symbol token = lexer.next_token();
         String s = ((Token)token.value).getName();
-        assertEquals("MULTI_LINE_STRING",s);
+        assertEquals("MULTILINE_STRING",s);
     }
 
     @Test
@@ -385,24 +385,22 @@ public class LexerTest
         assertEquals("EQ",s);
     }
 
-
     @Test
     public void lexErrorToken() throws Exception {
         Lexer lexer = new Lexer(new StringReader("/*   rxdrh"));
         Symbol token = lexer.next_token();
         String s = ((Token)token.value).getName();
-        assertEquals("LEX_ERROR",s);
+        assertEquals("UNTERMINATED_COMMENT",s);
 
+        Lexer lexer2 = new Lexer(new StringReader("\"reg more code"));
+        Symbol token2 = lexer2.next_token();
+        String s2 = ((Token)token2.value).getName();
+        assertEquals("UNTERMINATED_STRING",s2);
 
-        Lexer lexer2 = new Lexer(new StringReader("\"hvbjbj"));
-        Symbol token2 = lexer.next_token();
-        String s2 = ((Token)token.value).getName();
-        assertEquals("LEX_ERROR",s2);
-
-        Lexer lexer3 = new Lexer(new StringReader("\"hvbjbj \n jhbj \""));
-        Symbol token3 = lexer.next_token();
-        String s3 = ((Token)token.value).getName();
-        assertEquals("LEX_ERROR",s3);
+        Lexer lexer3 = new Lexer(new StringReader("\"hvbjb\nj \n jhb\nj \""));
+        Symbol token3 = lexer3.next_token();
+        String s3 = ((Token)token3.value).getName();
+        assertEquals("MULTILINE_STRING",s3);
     }
 
     @Test
@@ -445,8 +443,34 @@ public class LexerTest
         assertEquals("BOOLEAN_CONST",s);
 
         Lexer lexer2 = new Lexer(new StringReader("false "));
-        Symbol token2 = lexer.next_token();
-        String s2 = ((Token)token.value).getName();
+        Symbol token2 = lexer2.next_token();
+        String s2 = ((Token)token2.value).getName();
         assertEquals("BOOLEAN_CONST",s2);
+    }
+
+    @Test
+    public void illegalEscapeToken() throws Exception {
+        Lexer lexer = new Lexer(new StringReader("\"\\n \""));
+        Symbol token = lexer.next_token();
+        String s = ((Token)token.value).getName();
+        assertEquals("STRING_CONST",s);
+
+        Lexer lexer2 = new Lexer(new StringReader("\"\\a \""));
+        Symbol token2 = lexer2.next_token();
+        String s2 = ((Token)token2.value).getName();
+        assertEquals("ILLEGAL_ESCAPE_CHAR",s2);
+    }
+
+    @Test
+    public void illegalToken() throws Exception {
+        Lexer lexer = new Lexer(new StringReader("\\ "));
+        Symbol token = lexer.next_token();
+        String s = ((Token)token.value).getName();
+        assertEquals("ILLEGAL_CHAR",s);
+
+        Lexer lexer2 = new Lexer(new StringReader("??@%@@`~ "));
+        Symbol token2 = lexer2.next_token();
+        String s2 = ((Token)token2.value).getName();
+        assertEquals("ILLEGAL_CHAR",s2);
     }
 }
