@@ -22,6 +22,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
 
+/**
+ * This class tests all of the Lexer token identifications
+ */
 public class LexerTest
 {
     @BeforeClass
@@ -280,8 +283,6 @@ public class LexerTest
         assertNotEquals("ID",s3);
 
         //other tests
-
-
     }
 
     @Test
@@ -302,12 +303,20 @@ public class LexerTest
 
     @Test
     public void stringToken() throws Exception {
-        Lexer lexer = new Lexer(new StringReader("\"cool\" "));
+        Lexer lexer = new Lexer(new StringReader("\"this is a string\""));
         Symbol token = lexer.next_token();
         String s = ((Token)token.value).getName();
         assertEquals("STRING_CONST",s);
     }
 
+    @Test
+    public void stringErrorToken() throws Exception {
+        Lexer lexer = new Lexer(new StringReader("\"this is a \n string\""));
+        Symbol token = lexer.next_token();
+        String s = ((Token)token.value).getName();
+        assertEquals("MULTI_LINE_STRING",s);
+
+    }
 
     @Test
     public void commentToken() throws Exception {
@@ -360,8 +369,6 @@ public class LexerTest
         Symbol token = lexer.next_token();
         String s = ((Token)token.value).getName();
         assertEquals("LBRACE",s);
-
-
     }
 
     @Test
@@ -370,9 +377,6 @@ public class LexerTest
         Symbol token = lexer.next_token();
         String s = ((Token)token.value).getName();
         assertEquals("RBRACE",s);
-
-
-
     }
 
     @Test
@@ -381,17 +385,14 @@ public class LexerTest
         Symbol token = lexer.next_token();
         String s = ((Token)token.value).getName();
         assertEquals("MODULUS",s);
-
-
     }
+
     @Test
     public void neToken() throws Exception {
         Lexer lexer = new Lexer(new StringReader("!= "));
         Symbol token = lexer.next_token();
         String s = ((Token)token.value).getName();
         assertEquals("NE",s);
-
-
     }
 
     @Test
@@ -405,11 +406,5 @@ public class LexerTest
         Symbol token2 = lexer.next_token();
         String s2 = ((Token)token.value).getName();
         assertEquals("BOOLEAN_CONST",s2);
-
-
     }
-
-
-
-
 }

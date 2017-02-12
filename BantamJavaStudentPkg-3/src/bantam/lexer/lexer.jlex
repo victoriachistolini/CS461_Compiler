@@ -349,6 +349,9 @@ import java_cup.runtime.Symbol;
 <YYINITIAL>\".*\"       { return new Symbol(TokenIds.STRING_CONST,
 						    new Token("STRING_CONST", yyline)); }
 
+<YYINITIAL>\".*       { return new Symbol(TokenIds.LEX_ERROR,
+                            new Token("MULTI_LINE_STRING", yyline)); }
+
 
 .                       { throw new RuntimeException("Unmatched lexeme " +
                           yytext() + " at line " + yyline); }
