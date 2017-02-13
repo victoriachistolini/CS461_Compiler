@@ -217,7 +217,7 @@ import java_cup.runtime.Symbol;
 <YYINITIAL>\/\*([^*]|[\r\n]|(\*+([^*\/]|[\r\n])))*       { return new Symbol(TokenIds.LEX_ERROR,
 						                                    new Token("UNTERMINATED_COMMENT", yyline)); }
 
-<YYINITIAL>[ \n\b\t\f]+   {  }
+<YYINITIAL>[ \r\n\b\t\f]+   {  }
 
 <YYINITIAL>class        { return new Symbol(TokenIds.CLASS, 
 						    new Token("CLASS", yyline)); }
