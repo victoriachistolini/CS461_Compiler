@@ -32,6 +32,10 @@ public class LexerTest
     public static void begin() {
         System.out.println("begin");
     }
+
+    /**
+     * Check if the class key word is recognized
+     */
     @Test
     public void classToken() throws Exception {
         Lexer lexer = new Lexer(new StringReader(" class"));
@@ -40,6 +44,9 @@ public class LexerTest
         assertEquals("CLASS",s);
     }
 
+    /**
+     * Check if the for key word is recognized
+     */
     @Test
     public void forToken() throws Exception {
         Lexer lexer = new Lexer(new StringReader("for "));
@@ -48,6 +55,9 @@ public class LexerTest
         assertEquals("FOR",s);
     }
 
+    /**
+     * Check if the new key word is recognized
+     */
     @Test
     public void newToken() throws Exception {
         Lexer lexer = new Lexer(new StringReader("new "));
@@ -56,6 +66,9 @@ public class LexerTest
         assertEquals("NEW",s);
     }
 
+    /**
+     * Check if the if key word is recognized
+     */
     @Test
     public void ifToken() throws Exception {
         Lexer lexer = new Lexer(new StringReader("if "));
@@ -64,6 +77,9 @@ public class LexerTest
         assertEquals("IF",s);
     }
 
+    /**
+     * Check if the extends key word is recognized
+     */
     @Test
     public void extendsToken() throws Exception {
         Lexer lexer = new Lexer(new StringReader("extends "));
@@ -72,6 +88,9 @@ public class LexerTest
         assertEquals("EXTENDS",s);
     }
 
+    /**
+     * Check if the return key word is recognized
+     */
     @Test
     public void returnToken() throws Exception {
         Lexer lexer = new Lexer(new StringReader("return "));
@@ -80,6 +99,9 @@ public class LexerTest
         assertEquals("RETURN",s);
     }
 
+    /**
+     * Check if the while key word is recognized
+     */
     @Test
     public void whileToken() throws Exception {
         Lexer lexer = new Lexer(new StringReader("while "));
@@ -88,6 +110,10 @@ public class LexerTest
         assertEquals("WHILE",s);
     }
 
+
+    /**
+     * Check if the else key word is recognized
+     */
     @Test
     public void elseToken() throws Exception {
         Lexer lexer = new Lexer(new StringReader("else "));
@@ -96,6 +122,9 @@ public class LexerTest
         assertEquals("ELSE",s);
     }
 
+    /**
+     * Check if the class break word is recognized
+     */
     @Test
     public void breakToken() throws Exception {
         Lexer lexer = new Lexer(new StringReader("break "));
@@ -104,14 +133,20 @@ public class LexerTest
         assertEquals("BREAK",s);
     }
 
+    /**
+     * Check if the instanceof key word is recognized
+     */
     @Test
     public void instanceofToken() throws Exception {
-        Lexer lexer = new Lexer(new StringReader("instanceof "));
+        Lexer lexer = new Lexer(new StringReader(" instanceof "));
         Symbol token = lexer.next_token();
         String s = ((Token)token.value).getName();
         assertEquals("INSTANCEOF",s);
     }
 
+    /**
+     * Check if the divide symbol is recognized
+     */
     @Test
     public void divideToken() throws Exception {
         Lexer lexer = new Lexer(new StringReader("/ "));
@@ -120,6 +155,9 @@ public class LexerTest
         assertEquals("DIVIDE",s);
     }
 
+    /**
+     * Check if the semi colin is recognized
+     */
     @Test
     public void semiToken() throws Exception {
         Lexer lexer = new Lexer(new StringReader("; "));
@@ -128,6 +166,9 @@ public class LexerTest
         assertEquals("SEMI",s);
     }
 
+    /**
+     * Check if the left parenthesis is recognized
+     */
     @Test
     public void lparenToken() throws Exception {
         Lexer lexer = new Lexer(new StringReader("( "));
@@ -136,6 +177,9 @@ public class LexerTest
         assertEquals("LPAREN",s);
     }
 
+    /**
+     * Check if the right parenthesis is recognized
+     */
     @Test
     public void rparenToken() throws Exception {
         Lexer lexer = new Lexer(new StringReader(") "));
@@ -144,6 +188,9 @@ public class LexerTest
         assertEquals("RPAREN",s);
     }
 
+    /**
+     * Check if the decrement by 1 symbol is recognized
+     */
     @Test
     public void decrToken() throws Exception {
         Lexer lexer = new Lexer(new StringReader("-- "));
@@ -152,6 +199,9 @@ public class LexerTest
         assertEquals("DECR",s);
     }
 
+    /**
+     * Check if the increment by 1 symbol is recognized
+     */
     @Test
     public void incrToken() throws Exception {
         Lexer lexer = new Lexer(new StringReader("++ "));
@@ -160,6 +210,9 @@ public class LexerTest
         assertEquals("INCR",s);
     }
 
+    /**
+     * Check if the minus symbol is recognized
+     */
     @Test
     public void minusToken() throws Exception {
         Lexer lexer = new Lexer(new StringReader("- "));
@@ -168,6 +221,9 @@ public class LexerTest
         assertEquals("MINUS",s);
     }
 
+    /**
+     * Check if the not symbol is recognized
+     */
     @Test
     public void notToken() throws Exception {
         Lexer lexer = new Lexer(new StringReader("! "));
@@ -177,6 +233,9 @@ public class LexerTest
     }
 
     @Test
+    /**
+     * Check if the and symbol is recognized
+     */
     public void andToken() throws Exception {
         Lexer lexer = new Lexer(new StringReader("&& "));
         Symbol token = lexer.next_token();
@@ -184,6 +243,9 @@ public class LexerTest
         assertEquals("AND",s);
     }
 
+    /**
+     * Check if the less than symbol is recognized
+     */
     @Test
     public void ltToken() throws Exception {
         Lexer lexer = new Lexer(new StringReader("< "));
@@ -192,6 +254,9 @@ public class LexerTest
         assertEquals("LT",s);
     }
 
+    /**
+     * Check if the greater than symbol is recognized
+     */
     @Test
     public void gtToken() throws Exception {
         Lexer lexer = new Lexer(new StringReader("> "));
@@ -200,6 +265,9 @@ public class LexerTest
         assertEquals("GT",s);
     }
 
+    /**
+     * Check if the or symbol is recognized
+     */
     @Test
     public void orToken() throws Exception {
         Lexer lexer = new Lexer(new StringReader("| "));
@@ -208,6 +276,9 @@ public class LexerTest
         assertEquals("OR",s);
     }
 
+    /**
+     * Check if the greater than or equal to symbol is recognized
+     */
     @Test
     public void geqToken() throws Exception {
         Lexer lexer = new Lexer(new StringReader(">= "));
@@ -216,6 +287,9 @@ public class LexerTest
         assertEquals("GEQ",s);
     }
 
+    /**
+     * Check if the less than or equal to symbol is recognized
+     */
     @Test
     public void leqToken() throws Exception {
         Lexer lexer = new Lexer(new StringReader("<= "));
@@ -224,6 +298,9 @@ public class LexerTest
         assertEquals("LEQ",s);
     }
 
+    /**
+     * Check if the comma symbol is recognized
+     */
     @Test
     public void commaToken() throws Exception {
         Lexer lexer = new Lexer(new StringReader(", "));
@@ -232,6 +309,9 @@ public class LexerTest
         assertEquals("COMMA",s);
     }
 
+    /**
+     * Check if the plus sign symbol is recognized
+     */
     @Test
     public void plusToken() throws Exception {
         Lexer lexer = new Lexer(new StringReader("+ "));
@@ -240,6 +320,9 @@ public class LexerTest
         assertEquals("PLUS",s);
     }
 
+    /**
+     * Check if the assignment symbol is recognized
+     */
     @Test
     public void assignToken() throws Exception {
         Lexer lexer = new Lexer(new StringReader("= "));
@@ -248,6 +331,9 @@ public class LexerTest
         assertEquals("ASSIGN",s);
     }
 
+    /**
+     * Check if the left square bracket symbol is recognized
+     */
     @Test
     public void lsqbraceToken() throws Exception {
         Lexer lexer = new Lexer(new StringReader("[ "));
@@ -256,6 +342,9 @@ public class LexerTest
         assertEquals("LSQBRACE",s);
     }
 
+    /**
+     * Check if the right square bracket symbol is recognized
+     */
     @Test
     public void rsqbraceToken() throws Exception {
         Lexer lexer = new Lexer(new StringReader("] "));
@@ -264,6 +353,11 @@ public class LexerTest
         assertEquals("RSQBRACE",s);
     }
 
+    /**
+     * Check if an identifier is recognized
+     * Thus we determine if the two incorrect identifiers are correctly not
+     * recognized: 1 - begin with digit; 2 - begin with underscore
+     */
     @Test
     public void idToken() throws Exception {
         Lexer lexer = new Lexer(new StringReader("abc "));
@@ -283,9 +377,11 @@ public class LexerTest
         String s3 = ((Token)token3.value).getName();
         assertNotEquals("ID",s3);
 
-        //other tests
     }
 
+    /**
+     * Check if the dot symbol is recognized
+     */
     @Test
     public void dotToken() throws Exception {
         Lexer lexer = new Lexer(new StringReader(". "));
@@ -294,6 +390,9 @@ public class LexerTest
         assertEquals("DOT",s);
     }
 
+    /**
+     * Check if and integer is correctly recognized
+     */
     @Test
     public void intToken() throws Exception {
         Lexer lexer = new Lexer(new StringReader("67578 "));
@@ -302,6 +401,9 @@ public class LexerTest
         assertEquals("INT_CONST",s);
     }
 
+    /**
+     * Check if the integers larger than the range are correctly recognized
+     */
     @Test
     public void largeIntToken() throws Exception {
         Lexer lexer = new Lexer(new StringReader("2147483647"));
@@ -315,6 +417,9 @@ public class LexerTest
         assertEquals("LARGE_INT",s2);
     }
 
+    /**
+     * Check if integer is negative
+     */
     @Test
     public void negativeIntToken() throws Exception {
         Lexer lexer = new Lexer(new StringReader("-99"));
@@ -323,6 +428,9 @@ public class LexerTest
         assertEquals("NEGATIVE_INT",s);
     }
 
+    /**
+     * Check if strings are correctly identified.
+     */
     @Test
     public void stringToken() throws Exception {
         Lexer lexer = new Lexer(new StringReader("\"this is \\\"a string\""));
@@ -331,6 +439,9 @@ public class LexerTest
         assertEquals("STRING_CONST",s);
     }
 
+    /**
+     * Check if multiline strings are correctly identified
+     */
     @Test
     public void stringErrorToken() throws Exception {
         Lexer lexer = new Lexer(new StringReader("\"this is a \n string\""));
@@ -339,6 +450,9 @@ public class LexerTest
         assertEquals("MULTILINE_STRING",s);
     }
 
+    /**
+     * Check if String larger than 5000 characters are idenitified as long
+     */
     @Test
     public void longStringToken() throws Exception {
         String str1 = "\"";
@@ -360,6 +474,9 @@ public class LexerTest
         assertEquals("LARGE_STRING",s2);
     }
 
+    /**
+     * Check that comments are properly ignored
+     */
     @Test
     public void commentToken() throws Exception {
         Lexer lexer = new Lexer(new StringReader("/* this is a comment \n /* */"));
@@ -368,6 +485,9 @@ public class LexerTest
         assertEquals("EOF",s);
     }
 
+    /**
+     * Check if empty of file indicator token works correctly
+     */
     @Test
     public void EOFToken() throws Exception {
         Lexer lexer = new Lexer(new StringReader(""));
@@ -377,6 +497,10 @@ public class LexerTest
     }
 
 
+
+    /**
+     * Check the equals operation works
+     */
     @Test
     public void eqToken() throws Exception {
         Lexer lexer = new Lexer(new StringReader("=="));
@@ -385,6 +509,10 @@ public class LexerTest
         assertEquals("EQ",s);
     }
 
+    /**
+     * Check if unterminated comments, strings and multi line strings are
+     * correctly handled
+     */
     @Test
     public void lexErrorToken() throws Exception {
         Lexer lexer = new Lexer(new StringReader("/*   rxdrh"));
@@ -403,6 +531,9 @@ public class LexerTest
         assertEquals("MULTILINE_STRING",s3);
     }
 
+    /**
+     * Check if the left brace symbol is recognized
+     */
     @Test
     public void lbraceToken() throws Exception {
         Lexer lexer = new Lexer(new StringReader("{"));
@@ -411,6 +542,9 @@ public class LexerTest
         assertEquals("LBRACE",s);
     }
 
+    /**
+     * Check if the right brace symbol is recognized
+     */
     @Test
     public void rbraceToken() throws Exception {
         Lexer lexer = new Lexer(new StringReader("}"));
@@ -419,6 +553,9 @@ public class LexerTest
         assertEquals("RBRACE",s);
     }
 
+    /**
+     * Check if the modulus symbol is recognized
+     */
     @Test
     public void modulusToken() throws Exception {
         Lexer lexer = new Lexer(new StringReader("% "));
@@ -427,6 +564,9 @@ public class LexerTest
         assertEquals("MODULUS",s);
     }
 
+    /**
+     * Check if the not equals to symbol is recognized
+     */
     @Test
     public void neToken() throws Exception {
         Lexer lexer = new Lexer(new StringReader("!= "));
@@ -435,6 +575,9 @@ public class LexerTest
         assertEquals("NE",s);
     }
 
+    /**
+     * Check if true and false key words are recognized as booleans
+     */
     @Test
     public void booleanConstantToken() throws Exception {
         Lexer lexer = new Lexer(new StringReader("true "));
@@ -448,6 +591,9 @@ public class LexerTest
         assertEquals("BOOLEAN_CONST",s2);
     }
 
+    /**
+     * Check if the an illegal escape is recognized
+     */
     @Test
     public void illegalEscapeToken() throws Exception {
         Lexer lexer = new Lexer(new StringReader("\"\\n \""));
@@ -461,6 +607,9 @@ public class LexerTest
         assertEquals("ILLEGAL_ESCAPE_CHAR",s2);
     }
 
+    /**
+     * Check if an illegal character is recognized
+     */
     @Test
     public void illegalToken() throws Exception {
         Lexer lexer = new Lexer(new StringReader("\\ "));
