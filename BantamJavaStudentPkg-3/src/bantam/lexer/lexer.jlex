@@ -286,7 +286,7 @@ import java_cup.runtime.Symbol;
 <YYINITIAL><            { return new Symbol(TokenIds.LT,
 						    new Token("LT", yyline)); }
 
-<YYINITIAL>\|           { return new Symbol(TokenIds.OR,
+<YYINITIAL>\|\|           { return new Symbol(TokenIds.OR,
 						    new Token("OR", yyline)); }
 
 <YYINITIAL>>=           { return new Symbol(TokenIds.GEQ,
@@ -346,10 +346,7 @@ import java_cup.runtime.Symbol;
 	                    new Token("INT_CONST", yyline));
 }
 
-<YYINITIAL>-[0-9]+       { return new Symbol(TokenIds.LEX_ERROR,
-                                                new Token("NEGATIVE_INT", yyline)); }
-
-<YYINITIAL>[_$A-Za-z][A-Za-z0-9_]*   {
+<YYINITIAL>[_$A-Za-z0-9][A-Za-z0-9_]*   {
     int initialChar = yytext().charAt(0);
     if(initialChar == '_' || initialChar == '$' || Character.isDigit(initialChar)) {
         return new Symbol(TokenIds.LEX_ERROR, new Token("ILLEGAL_ID", yyline));
@@ -375,13 +372,13 @@ import java_cup.runtime.Symbol;
 	                    new Token("STRING_CONST", yyline));
 }
 
+<YYINITIAL>\"(.|\n)*\"       { return new Symbol(TokenIds.LEX_ERROR,
+                            new Token("MULTILINE_STRING", yyline)); }
+
 <YYINITIAL>\"[^\"]*       { return new Symbol(TokenIds.LEX_ERROR,
                             new Token("UNTERMINATED_STRING", yyline)); }
 
-<YYINITIAL>\"(.*[\n].*)*\"       { return new Symbol(TokenIds.LEX_ERROR,
-                            new Token("MULTILINE_STRING", yyline)); }
-
-<YYINITIAL>[@?#$%^~`\\/\.]+ { return new Symbol(TokenIds.LEX_ERROR,
+<YYINITIAL>[:\'@?#$^~`\\/\.\|]+ { return new Symbol(TokenIds.LEX_ERROR,
                             new Token("ILLEGAL_CHAR", yyline)); }
 
 .                       { throw new RuntimeException("Unmatched lexeme " +
