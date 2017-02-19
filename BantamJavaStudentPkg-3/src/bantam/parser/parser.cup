@@ -62,6 +62,11 @@ action code {:
 
 /* code below is copied to the Parser class, which drives parsing */
 parser code {:
+    /**
+     * @return the ErrorHandler for this Parser
+     */
+    public ErrorHandler getErrorHandler() { return action_obj.getErrorHandler(); }
+
     /** overrides done_parsing in inherited class, called when parsing finishes
       * either after accepting or because of errors
       * */

@@ -94,6 +94,11 @@ public class SemanticAnalyzer {
 	// return root;
     }
 
+    /**
+     * @return the ErrorHandler for this Parser
+     */
+    public ErrorHandler getErrorHandler() { return errorHandler; }
+
     /** Add built in classes to the class tree 
       * */
     private void updateBuiltins() {
