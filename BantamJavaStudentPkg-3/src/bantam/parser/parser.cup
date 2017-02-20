@@ -122,6 +122,14 @@ nonterminal Program program;
 nonterminal ClassList class_list;
 nonterminal Class_ class;
 nonterminal MemberList member_list;
+nonterminal Member member;
+nonterminal Method method;
+nonterminal Field field;
+nonterminal FormalList formal_list;
+nonterminal Formal formal;
+nonterminal StmtList stmt_list;
+nonterminal Stmt stmt;
+
 /* add other non-terminals... */
 
 /* precedence/associativity rules
@@ -163,11 +171,46 @@ class
 				   parent.getAttribute(), ml); :}
 	;
 
-/* member list (FIXE: only allows empty member lists) */
+/* member list */
 member_list
-	::= 
+	::=
+	    member:m
+	        {: RESULT = (MemberList)(new MemberList(getCurrLineNum()).addElement(m); :}
+	    | member_list:ml member:m
+	        {: RESULT = (MemberList)ml.addElement(m); :}
+	    |
         /* empty list */
 	    {: RESULT = new MemberList(getCurrLineNum()); :}
 	;
+
+/* a single member */
+member
+    /* a method */
+    ::=
+        method:m
+            {: RESULT = new Method(getCurrLineNum()); :}
+    |
+    /* a field */
+        field:f
+            {: RESULT = new Field(getCurrLineNum()); :}
+    ;
+
+/* a single method */
+method
+    ::=
+        /* a method without optional [] */
+        ID:id ID:name LPAREN formal_list:fl RPAREN LBRACE stmt_list:sl RBRACE
+            {: RESULT = new Method(getCurrLineNum(), id, name, fl, sl); :}
+        |
+        /* a method with optional [] */
+        ID:id LSQBRACE RSQBRACE ID:name LPAREN formal_list:fl RPAREN LBRACE stmt_list:sl RBRACE
+                    {: RESULT = new Method(getCurrLineNum(), id + "[]", name, fl, sl); :}
+    ;
+
+*/ a single field */
+field
+    ::=
+        ID LSQBRACE RSQBRACE ID
+
 
 /* add more productions... */
