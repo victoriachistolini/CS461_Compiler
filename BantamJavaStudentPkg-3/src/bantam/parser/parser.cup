@@ -171,18 +171,6 @@ class
 				   parent.getAttribute(), ml); :}
 	;
 
-/* member list */
-member_list
-	::=
-	    member:m
-	        {: RESULT = (MemberList)(new MemberList(getCurrLineNum()).addElement(m); :}
-	    | member_list:ml member:m
-	        {: RESULT = (MemberList)ml.addElement(m); :}
-	    |
-        /* empty list */
-	    {: RESULT = new MemberList(getCurrLineNum()); :}
-	;
-
 /* a single member */
 member
     /* a method */
