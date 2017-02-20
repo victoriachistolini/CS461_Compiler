@@ -171,17 +171,17 @@ class
 				   parent.getAttribute(), ml); :}
 	;
 
-/* a single member */
-member
-    /* a method */
-    ::=
-        method:m
-            {: RESULT = new Method(getCurrLineNum()); :}
-    |
-    /* a field */
-        field:f
-            {: RESULT = new Field(getCurrLineNum()); :}
-    ;
+/* member list */
+member_list
+	::=
+	    member:m
+	        {: RESULT = (MemberList)(new MemberList(getCurrLineNum()).addElement(m); :}
+	    | member_list:ml member:m
+	        {: RESULT = (MemberList)ml.addElement(m); :}
+	    |
+        /* empty list */
+	    {: RESULT = new MemberList(getCurrLineNum()); :}
+	;
 
 /* a single method */
 method
