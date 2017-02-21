@@ -129,6 +129,7 @@ nonterminal FormalList formal_list;
 nonterminal Formal formal;
 nonterminal StmtList stmt_list;
 nonterminal Stmt stmt;
+nonterminal Expr expr;
 
 /* add other non-terminals... */
 
@@ -175,7 +176,7 @@ class
 member_list
 	::=
 	    member:m
-	        {: RESULT = (MemberList)(new MemberList(getCurrLineNum()).addElement(m); :}
+	        {: RESULT = (MemberList)(new MemberList(getCurrLineNum()).addElement(m)); :}
 	    | member_list:ml member:m
 	        {: RESULT = (MemberList)ml.addElement(m); :}
 	    |
@@ -188,17 +189,52 @@ method
     ::=
         /* a method without optional [] */
         ID:id ID:name LPAREN formal_list:fl RPAREN LBRACE stmt_list:sl RBRACE
-            {: RESULT = new Method(getCurrLineNum(), id, name, fl, sl); :}
+            {: RESULT = new Method(getCurrLineNum(), id.getAttribute(),
+                                   name.getAttribute(), fl, sl); :}
         |
         /* a method with optional [] */
         ID:id LSQBRACE RSQBRACE ID:name LPAREN formal_list:fl RPAREN LBRACE stmt_list:sl RBRACE
-                    {: RESULT = new Method(getCurrLineNum(), id + "[]", name, fl, sl); :}
+                    {: RESULT = new Method(getCurrLineNum(), id.getAttribute() + "[]",
+                                           name.getAttribute(), fl, sl); :}
     ;
 
-*/ a single field */
+/* a single field */
 field
     ::=
-        ID LSQBRACE RSQBRACE ID
+        /* a field without optional [] or expr */
+        ID:type  ID:name
+            {: RESULT = new Field(getCurrLineNum(), type.getAttribute(),
+                                  name.getAttribute(), null); :}
+     |
+        /* a field with expr */
+        ID:type ID:name ASSIGN expr:exp
+        {: RESULT = new Field(getCurrLineNum(), type.getAttribute(),
+                                  name.getAttribute(), exp ); :}
+     |
+        /* a field with both [] and expr */
+        ID:type LSQBRACE RSQBRACE ID:name ASSIGN expr:exp
+        {: RESULT = new Field(getCurrLineNum(), type.getAttribute()+"[]",
+                              name.getAttribute(), exp ); :}
+     |
+        /* a field with [] */
+        ID:type LSQBRACE RSQBRACE ID:name
+           {: RESULT = new Field(getCurrLineNum(), type.getAttribute()+"[]",
+                                 name.getAttribute(), null ); :}
+     ;
+
+/* a single formal */
+formal
+    ::=
+        /* a totally normal formal*/
+        ID:type  ID:name
+        {: RESULT = new Formal(getCurrLineNum(), type.getAttribute(),
+                               name.getAttribute()); :}
+     |
+        /* a formal with [] */
+        ID:type LSQBRACE RSQBRACE ID:name
+        {: RESULT = new Formal(getCurrLineNum(), type.getAttribute()+"[]",
+                               name.getAttribute()); :}
+     ;
 
 
 /* add more productions... */
