@@ -128,8 +128,10 @@ nonterminal Field field;
 nonterminal FormalList formal_list;
 nonterminal Formal formal;
 nonterminal StmtList stmt_list;
-nonterminal Stmt stmt;
+nonterminal Stmt stmt, expr_stmt, decl_stmt, if_stmt, while_stmt, for_stmt;
 nonterminal Expr expr;
+
+
 
 /* add other non-terminals... */
 
@@ -236,5 +238,46 @@ formal
                                name.getAttribute()); :}
      ;
 
+/* a expression statement */
+expr_stmt
+    ::=
+        /* a totally normal expression statement */
+        expr:e SEMI
+        {: RESULT = new ExprStmt(getCurrLineNum(), e); :}
+    ;
+decl_stmt
+    ::=
+        /* normal declaration statement */
+        ID:type ID:name ASSIGN expr:e SEMI
+        {: RESULT = new DeclStmt(getCurrLineNum(), type.getAttribute(),
+                                       name.getAttribute(), e); :}
+        |
+        /* optional [] declaration statement */
+        ID:type LSQBRACE RSQBRACE ID:name ASSIGN expr:e SEMI
+            {: RESULT = new DeclStmt(getCurrLineNum(), type.getAttribute()+"[]",
+                                               name.getAttribute(), e); :}
+     ;
 
+
+if_stmt
+    ::=
+        /* normal if statement */
+        IF LPAREN expr:e RPAREN stmt:s
+        {: RESULT = new IfStmt(getCurrLineNum(), e, s, null); :}
+        |
+        /* if with an else statement */
+        IF LPAREN expr:e RPAREN stmt:s1 ELSE stmt:s2
+                {: RESULT = new IfStmt(getCurrLineNum(), e, s1, s2); :}
+    ;
+
+while_stmt
+    ::=
+        /* normal while statement */
+        WHILE LPAREN expr:e RPAREN stmt:s
+        {: RESULT = new WhileStmt(getCurrLineNum(), e, s); :}
+    ;
+
+for_stmt
+    ::=
+    FOR LPAREN 
 /* add more productions... */
