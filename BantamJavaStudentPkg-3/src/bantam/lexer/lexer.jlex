@@ -343,7 +343,7 @@ import java_cup.runtime.Symbol;
                             new Token("LARGE_INT", yyline));
     }
     return new Symbol(TokenIds.INT_CONST,
-	                    new Token("INT_CONST", yyline));
+	                    new Token("INT_CONST", yytext(), yyline));
 }
 
 <YYINITIAL>[_$A-Za-z0-9][A-Za-z0-9_]*   {
@@ -352,7 +352,7 @@ import java_cup.runtime.Symbol;
         return new Symbol(TokenIds.LEX_ERROR, new Token("ILLEGAL_ID", yyline));
     }
     return new Symbol(TokenIds.ID,
-    new Token("ID", yyline));
+    new Token("ID", yytext(), yyline));
 }
 
 <YYINITIAL>\".*\"       {
@@ -369,10 +369,10 @@ import java_cup.runtime.Symbol;
         }
     }
     return new Symbol(TokenIds.STRING_CONST,
-	                    new Token("STRING_CONST", yyline));
+	                    new Token("STRING_CONST", yytext(), yyline));
 }
 
-<YYINITIAL>\"(.|\n)*\"       { return new Symbol(TokenIds.LEX_ERROR,
+<YYINITIAL>\"(.|\n)+\"       { return new Symbol(TokenIds.LEX_ERROR,
                             new Token("MULTILINE_STRING", yyline)); }
 
 <YYINITIAL>\"[^\"]*       { return new Symbol(TokenIds.LEX_ERROR,
