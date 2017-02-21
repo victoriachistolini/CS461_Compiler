@@ -102,8 +102,7 @@ parser code {:
     }
 :}
 
-/* list of terminals, which correspond to tokens returned by the bantam.lexer
- */
+/* list of terminals, which correspond to tokens returned by the bantam.lexer */
 terminal Token LEX_ERROR;
 terminal Token CLASS, EXTENDS, IF, ELSE, WHILE, FOR, BREAK, NEW, RETURN, INSTANCEOF;
 terminal Token PLUS, MINUS, TIMES, DIVIDE, MODULUS, NOT, AND, OR;
@@ -112,12 +111,7 @@ terminal Token LPAREN, RPAREN, LBRACE, RBRACE, LSQBRACE, RSQBRACE;
 terminal Token SEMI, COMMA, DOT;
 terminal Token ID, INT_CONST, BOOLEAN_CONST, STRING_CONST;
 
-/* list of non-terminals used in context-free grammar
-   format: nonterminal <type> <list of nonterminal names>
-   example: nonterminal Expr expr1, expr2
-   The type specifies what type of result the non-terminal will return
-   The type should correspond to a class name from the AST
-*/
+/* list of non-terminals used in context-free grammar */
 nonterminal Program program;
 nonterminal ClassList class_list;
 nonterminal Class_ class;
@@ -136,18 +130,19 @@ nonterminal BinaryLogicExpr logic_and, logic_or;
 nonterminal VarExpr var_expr;
 nonterminal ExprList expr_list;
 
+/* precedence/associativity rules */
 
+precedence right ASSIGN;
+precedence left OR;
+precedence left AND;
+precedence left EQ, NE;
+precedence left LT,GEQ,GT,LEQ;
+precedence left PLUS,MINUS;
+precedence left TIMES,DIVIDE,MODULUS;
+precedence right NEW;
+precedence right INCR,DECR,NOT;
+precedence left DOT,LSQBRACE,RSQBRACE,LPAREN,RPAREN;
 
-/* add other non-terminals... */
-
-/* precedence/associativity rules
-   format: precedence <associativity> <list of terminals>
-   example: precedence right ASSIGN
-   precedence specified by order (from lowest to highest)
-   note: use a single precedence rule for terminals with same precedence
-   associativity specfied by middle operand (left, right, none)
-*/
-/* add precedence rules... */
 
 /* program, which is simply a list of classes */
 program	
