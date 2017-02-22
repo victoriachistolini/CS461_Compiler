@@ -186,6 +186,7 @@ class
 	    {: RESULT = new Class_(t.getLineNum(), getCurrFilename(),
 				   name.getAttribute(),
 				   parent.getAttribute(), ml); :}
+	;
 
 /* member list */
 member_list
