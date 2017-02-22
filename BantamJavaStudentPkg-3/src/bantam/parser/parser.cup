@@ -227,22 +227,22 @@ method
 field
     ::=
         /* a field without optional [] or expr */
-        ID:type  ID:name
+        ID:type  ID:name SEMI
             {: RESULT = new Field(getCurrLineNum(), type.getAttribute(),
                                   name.getAttribute(), null); :}
      |
         /* a field with expr */
-        ID:type ID:name ASSIGN expr:exp
+        ID:type ID:name ASSIGN expr:exp SEMI
         {: RESULT = new Field(getCurrLineNum(), type.getAttribute(),
                                   name.getAttribute(), exp ); :}
      |
         /* a field with both [] and expr */
-        ID:type LSQBRACE RSQBRACE ID:name ASSIGN expr:exp
+        ID:type LSQBRACE RSQBRACE ID:name ASSIGN expr:exp SEMI
         {: RESULT = new Field(getCurrLineNum(), type.getAttribute()+"[]",
                               name.getAttribute(), exp ); :}
      |
         /* a field with [] */
-        ID:type LSQBRACE RSQBRACE ID:name
+        ID:type LSQBRACE RSQBRACE ID:name SEMI
            {: RESULT = new Field(getCurrLineNum(), type.getAttribute()+"[]",
                                  name.getAttribute(), null ); :}
      ;

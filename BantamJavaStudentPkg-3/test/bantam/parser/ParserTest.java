@@ -15,6 +15,7 @@ package bantam.parser;
 import bantam.ast.ClassList;
 import bantam.ast.Class_;
 import bantam.ast.Program;
+import java_cup.parser;
 import java_cup.runtime.Symbol;
 import bantam.lexer.Lexer;
 import org.junit.BeforeClass;
@@ -89,6 +90,29 @@ public class ParserTest
             }
         }
         assertTrue(thrown);
+    }
+
+    /**
+     * Tests a very basic legal file
+     */
+    @Test
+    public void shortLegalFileTest() throws Exception {
+        Lexer lexer = new Lexer(new StringReader("class A { int a = 4+5; }"));
+        Lexer lexer2 = new Lexer(new StringReader("class A { int a = 4+5; }"));
+        lexer2.printTokens();
+        Parser parser = new Parser(lexer);
+        boolean thrown = false;
+
+        try {
+            parser.parse();
+        } catch (RuntimeException e) {
+            thrown = true;
+            assertEquals("Bantam parser found errors.", e.getMessage());
+            for (ErrorHandler.Error err : parser.getErrorHandler().getErrorList()) {
+                System.out.println(err);
+            }
+        }
+        assertFalse(thrown);
     }
 
 }
