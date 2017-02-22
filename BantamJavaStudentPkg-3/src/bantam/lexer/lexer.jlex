@@ -255,7 +255,6 @@ import java_cup.runtime.Symbol;
 <YYINITIAL>false        { return new Symbol(TokenIds.BOOLEAN_CONST,
 						    new Token("BOOLEAN_CONST", yyline)); }
 
-
 <YYINITIAL>/            { return new Symbol(TokenIds.DIVIDE,
 						    new Token("DIVIDE", yyline)); }
 

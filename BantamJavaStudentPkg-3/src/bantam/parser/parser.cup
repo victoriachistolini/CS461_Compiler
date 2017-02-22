@@ -200,7 +200,7 @@ member_list
 	    {: RESULT = new MemberList(getCurrLineNum()); :}
 	;
 
-/* a member
+/* a member */
 member
     ::=
         field:f
@@ -208,6 +208,7 @@ member
         |
         method:m
         {: RESULT = m; :}
+    ;
 
 /* a single method */
 method

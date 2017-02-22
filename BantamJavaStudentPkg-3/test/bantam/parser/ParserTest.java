@@ -44,6 +44,26 @@ public class ParserTest
          you might want to initialize some fields here. */
     }
 
+    /**
+     * A generic legality test, the input string must be a legal bantam java file
+     */
+    private void legalCodetest(String legalCode) throws Exception {
+        Lexer lexer = new Lexer(new StringReader(legalCode));
+        Parser parser = new Parser(lexer);
+        boolean thrown = false;
+
+        try {
+            parser.parse();
+        } catch (RuntimeException e) {
+            thrown = true;
+            assertEquals("Bantam parser found errors.", e.getMessage());
+            for (ErrorHandler.Error err : parser.getErrorHandler().getErrorList()) {
+                System.out.println(err);
+            }
+        }
+        assertFalse(thrown);
+    }
+
     /** tests the case of a Main class with no members */
     @Test
     public void emptyMainClassTest() throws Exception {
@@ -93,26 +113,19 @@ public class ParserTest
     }
 
     /**
-     * Tests a very basic legal file
+     * A short legal code snippet test
      */
     @Test
-    public void shortLegalFileTest() throws Exception {
-        Lexer lexer = new Lexer(new StringReader("class A { int a = 4+5; }"));
-        Lexer lexer2 = new Lexer(new StringReader("class A { int a = 4+5; }"));
-        lexer2.printTokens();
-        Parser parser = new Parser(lexer);
-        boolean thrown = false;
+    public void shortLegalFiletest() throws Exception {
+        legalCodetest("class A { int a = 4+5; }");
+    }
 
-        try {
-            parser.parse();
-        } catch (RuntimeException e) {
-            thrown = true;
-            assertEquals("Bantam parser found errors.", e.getMessage());
-            for (ErrorHandler.Error err : parser.getErrorHandler().getErrorList()) {
-                System.out.println(err);
-            }
-        }
-        assertFalse(thrown);
+    /**
+     * A method test
+     */
+    @Test
+    public void methodTest() throws Exception {
+        legalCodetest("class A { void stuff(){ int a = 4+5; }}");
     }
 
 }
