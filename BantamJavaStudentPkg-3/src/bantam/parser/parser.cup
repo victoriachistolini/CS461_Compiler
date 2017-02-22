@@ -176,17 +176,16 @@ class_list
 
 /* a single class */
 class
-        ::= 
+        ::=
         /* class with no specified parent - uses Object class */
-        CLASS:t ID:nam LBRACE member_list:ml RBRACE
+        CLASS:t ID:name LBRACE member_list:ml RBRACE
 	    {: RESULT = new Class_(t.getLineNum(), getCurrFilename(), 
-				   nam.getAttribute(), "Object", ml); :}
+				   name.getAttribute(), "Object", ml); :}
         /* class with a specified parent */
-	| CLASS:t ID:nam EXTENDS ID:parent LBRACE member_list:ml RBRACE
-	    {: RESULT = new Class_(t.getLineNum(), getCurrFilename(), 
-				   nam.getAttribute(),
+	| CLASS:t ID:name EXTENDS ID:parent LBRACE member_list:ml RBRACE
+	    {: RESULT = new Class_(t.getLineNum(), getCurrFilename(),
+				   name.getAttribute(),
 				   parent.getAttribute(), ml); :}
-	;
 
 /* member list */
 member_list
@@ -213,14 +212,14 @@ member
 method
     ::=
         /* a method without optional [] */
-        ID:id ID:nam LPAREN formal_list:fl RPAREN LBRACE stmt_list:sl RBRACE
+        ID:id ID:name LPAREN formal_list:fl RPAREN LBRACE stmt_list:sl RBRACE
             {: RESULT = new Method(getCurrLineNum(), id.getAttribute(),
-                                   nam.getAttribute(), fl, sl); :}
+                                   name.getAttribute(), fl, sl); :}
         |
         /* a method with optional [] */
-        ID:id LSQBRACE RSQBRACE ID:nam LPAREN formal_list:fl RPAREN LBRACE stmt_list:sl RBRACE
+        ID:id LSQBRACE RSQBRACE ID:name LPAREN formal_list:fl RPAREN LBRACE stmt_list:sl RBRACE
                     {: RESULT = new Method(getCurrLineNum(), id.getAttribute() + "[]",
-                                           nam.getAttribute(), fl, sl); :}
+                                           name.getAttribute(), fl, sl); :}
     ;
 
 /* a single field */
