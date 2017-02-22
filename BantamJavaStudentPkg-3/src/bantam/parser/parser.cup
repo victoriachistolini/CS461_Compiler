@@ -460,8 +460,8 @@ expr
 array_assign_expr
       ::=
             /* array assignment with reference */
-          var_expr:ref DOT ID:var LSQBRACE expr:e1 RSQBRACE ASSIGN expr:e2
-          {: RESULT = new ArrayAssignExpr(getCurrLineNum(), ((VarExpr)ref).getName(), var.getAttribute(), e1, e2 ); :}
+          ID:ref DOT ID:var LSQBRACE expr:e1 RSQBRACE ASSIGN expr:e2
+          {: RESULT = new ArrayAssignExpr(getCurrLineNum(), ref.getAttribute(), var.getAttribute(), e1, e2 ); :}
           |
             /* array assignment without reference */
           ID:var LSQBRACE expr:e1 RSQBRACE ASSIGN expr:e2
@@ -470,8 +470,8 @@ array_assign_expr
 assign_expr
        ::=
             /* assignment with reference */
-            var_expr:ref DOT ID:var ASSIGN expr:e
-            {: RESULT = new AssignExpr(getCurrLineNum(), ((VarExpr)ref).getName(), var.getAttribute(), e ); :}
+            ID:ref DOT ID:var ASSIGN expr:e
+            {: RESULT = new AssignExpr(getCurrLineNum(), ref.getAttribute(), var.getAttribute(), e ); :}
             |
             /* assignment without reference */
             ID:var ASSIGN expr:e
@@ -480,8 +480,8 @@ assign_expr
 
 var_expr
     ::=
-        var_expr:var ID:id
-        {: RESULT = new VarExpr(getCurrLineNum(), var, id.getAttribute()); :}
+        ID:id1 DOT ID:id2
+        {: RESULT = new VarExpr(getCurrLineNum(), new VarExpr(getCurrLineNum(),null, id1.getAttribute()), id2.getAttribute()); :}
         |
         ID:id
         {: RESULT = new VarExpr(getCurrLineNum(), null, id.getAttribute()); :}
@@ -489,8 +489,8 @@ var_expr
 
 array_expr
     ::=
-       var_expr:var ID:id LSQBRACE expr:e RSQBRACE
-       {: RESULT = new ArrayExpr(getCurrLineNum(), var, id.getAttribute(), e); :}
+       ID:id1 DOT ID:id2 LSQBRACE expr:e RSQBRACE
+       {: RESULT = new ArrayExpr(getCurrLineNum(), new VarExpr(getCurrLineNum(),null, id1.getAttribute()), id2.getAttribute(), e); :}
        |
        ID:id LSQBRACE expr:e RSQBRACE
               {: RESULT = new ArrayExpr(getCurrLineNum(), null, id.getAttribute(), e); :}
@@ -752,3 +752,4 @@ decr_expr
             DECR expr:e
             {: RESULT = new UnaryDecrExpr(getCurrLineNum(), e, true); :}
          ;
+
