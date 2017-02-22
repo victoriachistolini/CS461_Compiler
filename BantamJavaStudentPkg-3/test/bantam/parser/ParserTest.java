@@ -41,7 +41,9 @@ public class ParserTest
     }
 
     /**
-     * A generic legality test, the input string must be a legal bantam java file
+     * A generic legality test, the input string should be a representation of
+     * a legal bantam java file
+     * @params legalCode a String of legal Bantam Java code.
      */
     private void legalCodetest(String legalCode) throws Exception {
         Lexer lexer = new Lexer(new StringReader(legalCode));
@@ -61,10 +63,12 @@ public class ParserTest
     }
 
     /**
-     * A generic legality test, the input string must be a illegal bantam java file
+     * A generic illegality test, the input string should be a representation of
+     * an illegal bantam java file
+     * @params illegalCode a String of illegal Bantam Java code.
      */
-    private void illegalCodetest(String legalCode) throws Exception {
-        Lexer lexer = new Lexer(new StringReader(legalCode));
+    private void illegalCodetest(String illegalCode) throws Exception {
+        Lexer lexer = new Lexer(new StringReader(illegalCode));
         Parser parser = new Parser(lexer);
         boolean thrown = false;
 
