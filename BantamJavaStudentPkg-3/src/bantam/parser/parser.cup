@@ -88,6 +88,42 @@ parser code {:
 	action_obj.getErrorHandler().checkErrors();
     }
 
+    /**
+     * Generates an appropriate error message based on the
+     * input error type
+     * @param t the relevant error Token
+     */
+    private String generateErrorMessage(Token t) {
+        String errorMessage = "";
+        switch(t.getName()) {
+            case "UNTERMINATED_COMMENT":
+                errorMessage = "unterminated comment detected";
+            case "LARGE_INT":
+                errorMessage = (
+                    "int value " + t.getAttribute() + "is too large. Bantam Java only " +
+                    "supports integers of size 2147483647 (2^32 - 1) or less"
+                );
+            case "ILLEGAL_ID":
+                errorMessage = "illegal id '" + t.getAttribute() + "'";
+            case "LARGE_STRING":
+                errorMessage = (
+                    "Bantam Java Strings cannot exceed 5000 chars." +
+                    "Found string of size: " + t.getAttribute()
+                );
+            case "ILLEGAL_ESCAPE_CHAR":
+                errorMessage = "illegal escape char: '" + t.getAttribute() + "'";
+            case "MULTILINE_STRING":
+                errorMessage = "multiline string detected";
+            case "UNTERMINATED_STRING":
+                errorMessage = "unterminated string: '" + t.getAttribute() + "'";
+            case "ILLEGAL_CHAR":
+                errorMessage = "illegal char: '" + t.getAttribute() + "'";
+            case "EOF":
+                errorMessage = "reached end of file while parsing '}''";
+        }
+        return errorMessage;
+    }
+
     /** overrides syntax_error in inherited class and handles syntax errors 
       * @param curr current symbol from the bantam.lexer
       * */
@@ -103,6 +139,12 @@ parser code {:
 	errorHandler.register(errorHandler.PARSE_ERROR, action_obj.getCurrFilename(), 
 			      action_obj.getCurrLineNum(), 
 			      "unexpected input near '" + t.getLexeme() + "'");
+
+    // handle lexer errors
+    errorHandler.register(errorHandler.LEX_ERROR, action_obj.getCurrFilename(),
+    			      action_obj.getCurrLineNum(),
+    			      generateErrorMessage(t));
+
     }
 
     /** override error_sync_size in inherited class and

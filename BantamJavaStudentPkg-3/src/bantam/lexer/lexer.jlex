@@ -250,10 +250,10 @@ import java_cup.runtime.Symbol;
 						    new Token("INSTANCEOF", yyline)); }
 
 <YYINITIAL>true         { return new Symbol(TokenIds.BOOLEAN_CONST,
-						    new Token("BOOLEAN_CONST", yyline)); }
+						    new Token("BOOLEAN_CONST", yytext(), yyline)); }
 
 <YYINITIAL>false        { return new Symbol(TokenIds.BOOLEAN_CONST,
-						    new Token("BOOLEAN_CONST", yyline)); }
+						    new Token("BOOLEAN_CONST", yytext(), yyline)); }
 
 <YYINITIAL>/            { return new Symbol(TokenIds.DIVIDE,
 						    new Token("DIVIDE", yyline)); }
@@ -339,7 +339,7 @@ import java_cup.runtime.Symbol;
     }
     catch (Exception e) {
         return new Symbol(TokenIds.LEX_ERROR,
-                            new Token("LARGE_INT", yyline));
+                            new Token("LARGE_INT", yytext(), yyline));
     }
     return new Symbol(TokenIds.INT_CONST,
 	                    new Token("INT_CONST", yytext(), yyline));
@@ -348,7 +348,7 @@ import java_cup.runtime.Symbol;
 <YYINITIAL>[_$A-Za-z0-9][A-Za-z0-9_]*   {
     int initialChar = yytext().charAt(0);
     if(initialChar == '_' || initialChar == '$' || Character.isDigit(initialChar)) {
-        return new Symbol(TokenIds.LEX_ERROR, new Token("ILLEGAL_ID", yyline));
+        return new Symbol(TokenIds.LEX_ERROR, new Token("ILLEGAL_ID", yytext(), yyline));
     }
     return new Symbol(TokenIds.ID,
     new Token("ID", yytext(), yyline));
@@ -356,7 +356,10 @@ import java_cup.runtime.Symbol;
 
 <YYINITIAL>\".*\"       {
     if(yytext().length() > 5000) {
-        return new Symbol(TokenIds.LEX_ERROR, new Token("LARGE_STRING", yyline));
+        return new Symbol(
+            TokenIds.LEX_ERROR,
+            new Token("LARGE_STRING", String.valueOf(yytext().length()), yyline)
+        );
     }
     for(int i=0; i<yytext().length(); i++) {
         if(yytext().charAt(i) == '\\' && !(yytext().charAt(i+1) == 'n'  ||
@@ -364,7 +367,10 @@ import java_cup.runtime.Symbol;
                                            yytext().charAt(i+1) == '"'  ||
                                            yytext().charAt(i+1) == '\\' ||
                                            yytext().charAt(i+1) == 'f')) {
-            return new Symbol(TokenIds.LEX_ERROR, new Token("ILLEGAL_ESCAPE_CHAR", yyline));
+            return new Symbol(
+                TokenIds.LEX_ERROR,
+                new Token("ILLEGAL_ESCAPE_CHAR", yytext(), yyline)
+            );
         }
     }
     return new Symbol(TokenIds.STRING_CONST,
@@ -375,10 +381,10 @@ import java_cup.runtime.Symbol;
                             new Token("MULTILINE_STRING", yyline)); }
 
 <YYINITIAL>\"[^\"]*       { return new Symbol(TokenIds.LEX_ERROR,
-                            new Token("UNTERMINATED_STRING", yyline)); }
+                            new Token("UNTERMINATED_STRING", yytext(), yyline)); }
 
 <YYINITIAL>[:\'@?#$^~`\\/\.\|]+ { return new Symbol(TokenIds.LEX_ERROR,
-                            new Token("ILLEGAL_CHAR", yyline)); }
+                            new Token("ILLEGAL_CHAR", yytext(), yyline)); }
 
 .                       { throw new RuntimeException("Unmatched lexeme " +
                           yytext() + " at line " + yyline); }

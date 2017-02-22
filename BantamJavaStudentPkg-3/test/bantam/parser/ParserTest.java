@@ -46,8 +46,7 @@ public class ParserTest
      * @params legalCode a String of legal Bantam Java code.
      */
     private void legalCodetest(String legalCode) throws Exception {
-        Lexer lexer = new Lexer(new StringReader(legalCode));
-        Parser parser = new Parser(lexer);
+        Parser parser = new Parser(new Lexer(new StringReader(legalCode)));
         boolean thrown = false;
 
         try {
@@ -68,8 +67,7 @@ public class ParserTest
      * @params illegalCode a String of illegal Bantam Java code.
      */
     private void illegalCodetest(String illegalCode) throws Exception {
-        Lexer lexer = new Lexer(new StringReader(illegalCode));
-        Parser parser = new Parser(lexer);
+        Parser parser = new Parser(new Lexer(new StringReader(illegalCode)));
         boolean thrown = false;
 
         try {
@@ -164,6 +162,15 @@ public class ParserTest
         legalCodetest("class A { void ifMethod(){ int a = 4; if (x <15) x++ ; }}");
     }
     // Illegal if-statment
+
+    /**
+     * A test to ensure that the lex error messages provide the
+     * user with relevant debugging information
+     */
+    @Test
+    public void lexErrorMessageTest() throws Exception{
+        illegalCodetest("class A { \nint 9a = 3; }");
+    }
 
 
 }
