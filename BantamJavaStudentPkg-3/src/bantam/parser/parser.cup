@@ -1,5 +1,5 @@
 /**
- * File: LexerTest.java
+ * File: parser.cup
  * @author djskrien
  * @author Victoria Chistolini
  * @author Edward (osan) Zhou
@@ -747,10 +747,16 @@ incr_expr
         ::=
             INCR expr:e
             {: RESULT = new UnaryIncrExpr(getCurrLineNum(), e, true); :}
+            |
+            expr:e INCR
+            {: RESULT = new UnaryIncrExpr(getCurrLineNum(), e, true); :}
         ;
 decr_expr
         ::=
             DECR expr:e
+            {: RESULT = new UnaryDecrExpr(getCurrLineNum(), e, true); :}
+            |
+            expr:e DECR
             {: RESULT = new UnaryDecrExpr(getCurrLineNum(), e, true); :}
          ;
 

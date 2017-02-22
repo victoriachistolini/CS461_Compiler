@@ -1,5 +1,5 @@
 /**
- * File: LexerTest.java
+ * File: ParserTest.java
  * @author djskrien
  * @author Victoria Chistolini
  * @author Edward (osan) Zhou
@@ -28,11 +28,7 @@ import java.io.StringReader;
 
 import static org.junit.Assert.*;
 
-/*
- * File: ParserTest.java
- * Author: djskrien
- * Date: 2/13/17
- */
+
 public class ParserTest
 {
     @Rule
@@ -62,6 +58,26 @@ public class ParserTest
             }
         }
         assertFalse(thrown);
+    }
+
+    /**
+     * A generic legality test, the input string must be a illegal bantam java file
+     */
+    private void illegalCodetest(String legalCode) throws Exception {
+        Lexer lexer = new Lexer(new StringReader(legalCode));
+        Parser parser = new Parser(lexer);
+        boolean thrown = false;
+
+        try {
+            parser.parse();
+        } catch (RuntimeException e) {
+            thrown = true;
+            assertEquals("Bantam parser found errors.", e.getMessage());
+            for (ErrorHandler.Error err : parser.getErrorHandler().getErrorList()) {
+                System.out.println(err);
+            }
+        }
+        assertTrue(thrown);
     }
 
     /** tests the case of a Main class with no members */
@@ -113,7 +129,7 @@ public class ParserTest
     }
 
     /**
-     * A short legal code snippet test
+     * A class with a single field
      */
     @Test
     public void shortLegalFiletest() throws Exception {
@@ -127,5 +143,23 @@ public class ParserTest
     public void methodTest() throws Exception {
         legalCodetest("class A { void stuff(){ int a = 4+5; }}");
     }
+
+    /**
+     * A legal if-statment
+     */
+    @Test
+    public void ifTest() throws Exception {
+        legalCodetest("class A { void ifMethod(){ int x = 4; if (x <15) x++ ;  }}");
+    }
+
+    /**
+     * A legal if-statment
+     */
+    @Test
+    public void fieldTest() throws Exception {
+        legalCodetest("class A { void ifMethod(){ int a = 4; if (x <15) x++ ; }}");
+    }
+    // Illegal if-statment
+
 
 }
