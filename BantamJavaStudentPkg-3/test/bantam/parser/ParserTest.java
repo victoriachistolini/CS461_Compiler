@@ -1,3 +1,15 @@
+/**
+ * File: LexerTest.java
+ * @author djskrien
+ * @author Victoria Chistolini
+ * @author Edward (osan) Zhou
+ * @author Alex Rinker
+ * @author Vivek Sah
+ * Class: CS461
+ * Project: 2
+ * Date: Feb 21, 2017
+ */
+
 package bantam.parser;
 
 import bantam.ast.ClassList;
