@@ -151,7 +151,10 @@ public class ParserTest
      */
     @Test
     public void ifTest() throws Exception {
-        legalCodetest("class A { void ifMethod(){ int x = 4; if (x <15) x++ ;  }}");
+        String ifStmt = "int x = 4; if (x>10) return;";
+        String ifElseStmt = "int x = 4; if (x <15) x++ ; else return;";
+        legalCodetest("class A { void ifMethod(){ "+ ifStmt + " }}");
+        legalCodetest("class A { void ifMethod(){ "+ ifElseStmt + " }}");
     }
 
     /**
@@ -168,9 +171,7 @@ public class ParserTest
      * user with relevant debugging information
      */
     @Test
-    public void lexErrorMessageTest() throws Exception{
+    public void lexErrorMessageTest() throws Exception {
         illegalCodetest("class A { \nint 9a = 3; }");
     }
-
-
 }

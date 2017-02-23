@@ -195,9 +195,9 @@ precedence left EQ, NE;
 precedence left LT,GEQ,GT,LEQ;
 precedence left PLUS,MINUS;
 precedence left TIMES,DIVIDE,MODULUS;
-precedence right NEW;
-precedence right INCR,DECR,NOT;
-precedence left DOT,LSQBRACE,RSQBRACE,LPAREN,RPAREN;
+precedence left NEW;
+precedence left INCR,DECR,NOT;
+precedence left DOT;
 
 
 /* program, which is simply a list of classes */
@@ -404,6 +404,10 @@ for_stmt
         /* only first expression */
         FOR LPAREN expr:e1 SEMI SEMI RPAREN stmt:s
         {: RESULT = new ForStmt(getCurrLineNum(), e1,null,null, s); :}
+        |
+        /* only second expression */
+        FOR LPAREN SEMI expr:e2 SEMI RPAREN stmt:s
+        {: RESULT = new ForStmt(getCurrLineNum(),null,e2,null, s); :}
         |
         /* only first & third expression */
         FOR LPAREN expr:e1 SEMI SEMI expr:e3 RPAREN stmt:s
