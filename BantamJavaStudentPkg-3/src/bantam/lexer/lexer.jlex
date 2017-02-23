@@ -279,7 +279,7 @@ import java_cup.runtime.Symbol;
 <YYINITIAL>!            { return new Symbol(TokenIds.NOT,
 				 		    new Token("NOT", yyline)); }
 
-<YYINITIAL>&            { return new Symbol(TokenIds.AND,
+<YYINITIAL>&&            { return new Symbol(TokenIds.AND,
 						    new Token("AND", yyline)); }
 
 <YYINITIAL><            { return new Symbol(TokenIds.LT,
