@@ -118,8 +118,6 @@ parser code {:
                 errorMessage = "unterminated string: '" + t.getAttribute() + "'";
             case "ILLEGAL_CHAR":
                 errorMessage = "illegal char: '" + t.getAttribute() + "'";
-            case "EOF":
-                errorMessage = "reached end of file while parsing '}''";
         }
         return errorMessage;
     }
@@ -141,10 +139,12 @@ parser code {:
 			      "unexpected input near '" + t.getLexeme() + "'");
 
     // handle lexer errors
-    errorHandler.register(errorHandler.LEX_ERROR, action_obj.getCurrFilename(),
+    // TODO figure out why "EOF" is detected as a LEX_ERROR whenever any error occurs
+    if(t.getName() != "EOF") {
+        errorHandler.register(errorHandler.LEX_ERROR, action_obj.getCurrFilename(),
     			      action_obj.getCurrLineNum(),
     			      generateErrorMessage(t));
-
+        }
     }
 
     /** override error_sync_size in inherited class and
