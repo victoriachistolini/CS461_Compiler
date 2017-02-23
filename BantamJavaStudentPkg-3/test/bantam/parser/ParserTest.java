@@ -153,8 +153,10 @@ public class ParserTest
     public void ifTest() throws Exception {
         String ifStmt = "int x = 4; if (x>10) return;";
         String ifElseStmt = "int x = 4; if (x <15) x++ ; else return;";
+        String ifElseNestedStmt = "int x = 4; if (x <15) x++ ; else if (d < 5) f = 7; else  return;";
         legalCodetest("class A { void ifMethod(){ "+ ifStmt + " }}");
         legalCodetest("class A { void ifMethod(){ "+ ifElseStmt + " }}");
+        legalCodetest("class A { void ifMethod(){ "+ ifElseNestedStmt + " }}");
     }
 
     /**
@@ -175,8 +177,117 @@ public class ParserTest
         illegalCodetest("class A { \nint 9a = 3; }");
     }
 
+
+
+    /**
+     * A legal for-loop
+     */
+    @Test
+    public void forTest() throws Exception {
+        legalCodetest("class A { void ifMethod(){ for(;;) x=2;  }}");
+        legalCodetest("class A { void ifMethod(){ for(;;x=2) x=2;  }}");
+
+        legalCodetest("class A { void ifMethod(){ for(;x=2;) x=2;  }}");
+
+        legalCodetest("class A { void ifMethod(){ for(;x=2;x=3) x=2;  }}");
+        legalCodetest("class A { void ifMethod(){ for(x=2;;) x=2;  }}");
+
+        legalCodetest("class A { void ifMethod(){ for(x=2;;x=2) x=2;  }}");
+
+        legalCodetest("class A { void ifMethod(){ for(x=2;x=2;) x=2;  }}");
+        legalCodetest("class A { void ifMethod(){ for(x=2;x< 3;x++) x=2;  }}");
+    }
+
+    /**
+     * Legal while statement
+     */
+    @Test
+    public void whileTest() throws Exception {
+        legalCodetest("class A { void whileMethod(){ while(x=2 ) x++;  }}");
+    }
+
+    /**
+     * Legal break statement
+     */
+    @Test
+    public void breakTest() throws Exception {
+        legalCodetest("class A { void breakMethod(){ break; }}");
+    }
+
+    /**
+     * Legal block statement
+     */
+    @Test
+    public void blockTest() throws Exception {
+        legalCodetest("class A { void blockMethod(){ while(a < 3){ a=3;b=4;c=9;} }}");
+    }
+
+    /**
+     * Legal new expression
+     */
+    @Test
+    public void newTest() throws Exception {
+        legalCodetest("class A { void newMethod(){ a = new Stuff(); }}");
+        legalCodetest("class A { void newMethod(){ a = new String[5+6]; }}");
+    }
+
+
+    /**
+     * Legal cast expression
+     */
+    @Test
+    public void castTest() throws Exception {
+        legalCodetest("class A { void newMethod(){ a = (int)( 6+9); }}");
+        legalCodetest("class A { void newMethod(){ a = (int[])(\"String\"); }}");
+    }
+
+
+    /**
+     * binary arith expression, with all possible types of expressions
+     */
     @Test
     public void binaryArithTest() throws Exception {
-        legalCodetest("class A { void newMethod(){ int x = 4; a = blah.number(); }}");
+
+        // try minus binary arith test with stringConstExpr and newExpr
+        legalCodetest("class A { void newMethod(){ a = \"String\"++ - new array[10]; }}");
+
+        // try modulus bin arith with an instanceof expr
+        legalCodetest("class A { void newMethod(){ q = thing1 instanceof A % thing2 instanceof B; }}");
+
+        // try multiplication bin arith with a dispatch and a varExpr
+        //legalCodetest("class A { void newMethod(int x,int y){result =  a.shape() * q.shape ; }}");
+
+        // try addition bin arith with dynamic dispatches
+        legalCodetest("class A { void newMethod(){ this.Stuff[x++] + x=5.number(); }}");
+
+        // try divide bin arith with
+        legalCodetest("class A { void newMethod(){ q = (((thing[]) (junk)) / ((cooolerJunk) (intJunk) )); }}");
     }
+
+
+
+    /**
+     * binary comparison expression, with binary logic
+     */
+    @Test
+    public void binaryCompTest() throws Exception {
+        // testing all binary comparisons with the binary logic OR
+        legalCodetest("class A { void newCompMethod(){ int a =0; if ( (--a == b) || (b !=c) ) { b = ( (c < d) || (d <= e) ); f = ((g > h) || (h >= i));} } }");
+        // testing all binary comparisions with binary logic OR / AND
+        legalCodetest("class A { void newCompMethod(){ int a =0; if ( (a == b) || (b !=c) ) { b = ( (c < d) && (d <= e) ); f = ((g > h) || (h >= i));} } }");
+
+
+    }
+
+
+    @Test
+    public void unaryTest() throws Exception {
+        // testing negative unary
+        legalCodetest("class A { void unaryMethod(){ a=-b; b=!a; } }");
+        // unary incr
+        legalCodetest("class A { void unaryMethod(){ a=++b; b=a++; c = --d; d = c--; } }");
+
+
+    }
+
 }
