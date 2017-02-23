@@ -15,6 +15,7 @@ package bantam.parser;
 import bantam.ast.ClassList;
 import bantam.ast.Class_;
 import bantam.ast.Program;
+import com.sun.rmi.rmid.ExecPermission;
 import java_cup.parser;
 import java_cup.runtime.Symbol;
 import bantam.lexer.Lexer;
@@ -69,7 +70,6 @@ public class ParserTest
     private void illegalCodetest(String illegalCode) throws Exception {
         Parser parser = new Parser(new Lexer(new StringReader(illegalCode)));
         boolean thrown = false;
-
         try {
             parser.parse();
         } catch (RuntimeException e) {
@@ -131,14 +131,6 @@ public class ParserTest
     }
 
     /**
-     * A class with a single field
-     */
-    @Test
-    public void shortLegalFiletest() throws Exception {
-        legalCodetest("class A { int a = 4+5; }");
-    }
-
-    /**
      * A method test
      */
     @Test
@@ -147,7 +139,7 @@ public class ParserTest
     }
 
     /**
-     * A legal if-statment
+     * A legal if-statement
      */
     @Test
     public void ifTest() throws Exception {
@@ -158,13 +150,13 @@ public class ParserTest
     }
 
     /**
-     * A legal if-statment
+     * A boolean expressions test
      */
     @Test
-    public void fieldTest() throws Exception {
-        legalCodetest("class A { void ifMethod(){ int a = 4; if (x <15) x++ ; }}");
+    public void boolExprTest() throws Exception {
+        legalCodetest("class A { void sillyMethod(){if (true || false) return;}}");
+        legalCodetest("class A { void sillyMethod(){if (true && false) return;}}");
     }
-    // Illegal if-statment
 
     /**
      * A test to ensure that the lex error messages provide the
@@ -175,8 +167,37 @@ public class ParserTest
         illegalCodetest("class A { \nint 9a = 3; }");
     }
 
+    /**
+     * A test to see if dispatching works
+     * @throws Exception
+     */
     @Test
-    public void binaryArithTest() throws Exception {
+    public void dispatchTest() throws Exception {
         legalCodetest("class A { void newMethod(){ int x = 4; a = blah.number(); }}");
+    }
+
+    /**
+     * A test to see if missing semicolons are caught
+     */
+    @Test
+    public void missingSEMITest() throws Exception {
+        legalCodetest("class A { void sillyMethod() { int a = 4+5; }}");
+        legalCodetest("class A { void sillyMethod() { return; }}");
+        legalCodetest("class A { void sillyMethod() { break; }}");
+        legalCodetest("class A { int i; void sillyMethod() { for(i=0 ; i<3 ; i++) { return; }}}");
+        illegalCodetest("class A { void sillyMethod() { int a = 4 }}");
+        illegalCodetest("class A { void sillyMethod() { return }}");
+        illegalCodetest("class A { void sillyMethod() { break }}");
+        illegalCodetest("class A { void sillyMethod() { for(int i=0 i<3 i++) { return; }}}");
+    }
+
+    /**
+     * A test to see if unmatched parens are caught
+     */
+    @Test
+    public void unmatchedParensTest() throws Exception {
+        legalCodetest("class A { void sillyMethod(){}}");
+        illegalCodetest("class A { void sillyMethod({}}");
+        illegalCodetest("class A { void sillyMethod){}}");
     }
 }
