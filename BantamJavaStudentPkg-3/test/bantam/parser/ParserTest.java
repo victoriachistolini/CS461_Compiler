@@ -174,4 +174,9 @@ public class ParserTest
     public void lexErrorMessageTest() throws Exception {
         illegalCodetest("class A { \nint 9a = 3; }");
     }
+
+    @Test
+    public void binaryArithTest() throws Exception {
+        legalCodetest("class A { void newMethod(){ int x = 4; a = blah.number(); }}");
+    }
 }

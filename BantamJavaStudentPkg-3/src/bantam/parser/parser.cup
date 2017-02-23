@@ -560,6 +560,19 @@ dispatch_expr
         |
         expr:e DOT ID:name LPAREN expr_list:el RPAREN
         {: RESULT = new DispatchExpr(getCurrLineNum(), e, name.getAttribute(), el ); :}
+        |
+        ID:id DOT ID:name LPAREN expr_list:el RPAREN
+        {: RESULT = new DispatchExpr(
+                            getCurrLineNum(),
+                            new VarExpr(
+                                getCurrLineNum(),
+                                null,
+                                id.getAttribute()
+                            ),
+                            name.getAttribute(),
+                            el
+           );
+        :}
     ;
 
 expr_list
