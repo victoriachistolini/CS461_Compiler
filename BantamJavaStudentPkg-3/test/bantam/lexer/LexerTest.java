@@ -7,7 +7,7 @@
  * @author Vivek Sah
  * Class: CS461
  * Project: 1
- * Date: Feb 11, 2017
+ * Date: Feb 21, 2017
  */
 
 package bantam.lexer;
@@ -32,270 +32,70 @@ public class LexerTest
     public static void begin() {
         System.out.println("begin");
     }
-
     /**
      * Check if the class key word is recognized
      */
     @Test
-    public void classToken() throws Exception {
-        Lexer lexer = new Lexer(new StringReader(" class"));
-        Symbol token = lexer.next_token();
-        String s = ((Token)token.value).getName();
-        assertEquals("CLASS",s);
-    }
-
-    /**
-     * Check if the for key word is recognized
-     */
-    @Test
-    public void forToken() throws Exception {
-        Lexer lexer = new Lexer(new StringReader("for "));
-        Symbol token = lexer.next_token();
-        String s = ((Token)token.value).getName();
-        assertEquals("FOR",s);
-    }
-
-    /**
-     * Check if the new key word is recognized
-     */
-    @Test
-    public void newToken() throws Exception {
-        Lexer lexer = new Lexer(new StringReader("new "));
-        Symbol token = lexer.next_token();
-        String s = ((Token)token.value).getName();
-        assertEquals("NEW",s);
-    }
-
-    /**
-     * Check if the if key word is recognized
-     */
-    @Test
-    public void ifToken() throws Exception {
-        Lexer lexer = new Lexer(new StringReader("if "));
-        Symbol token = lexer.next_token();
-        String s = ((Token)token.value).getName();
-        assertEquals("IF",s);
-    }
-
-    /**
-     * Check if the extends key word is recognized
-     */
-    @Test
-    public void extendsToken() throws Exception {
-        Lexer lexer = new Lexer(new StringReader("extends "));
-        Symbol token = lexer.next_token();
-        String s = ((Token)token.value).getName();
-        assertEquals("EXTENDS",s);
-    }
-
-    /**
-     * Check if the return key word is recognized
-     */
-    @Test
-    public void returnToken() throws Exception {
-        Lexer lexer = new Lexer(new StringReader("return "));
-        Symbol token = lexer.next_token();
-        String s = ((Token)token.value).getName();
-        assertEquals("RETURN",s);
-    }
-
-    /**
-     * Check if the while key word is recognized
-     */
-    @Test
-    public void whileToken() throws Exception {
-        Lexer lexer = new Lexer(new StringReader("while "));
-        Symbol token = lexer.next_token();
-        String s = ((Token)token.value).getName();
-        assertEquals("WHILE",s);
-    }
-
-
-    /**
-     * Check if the else key word is recognized
-     */
-    @Test
-    public void elseToken() throws Exception {
-        Lexer lexer = new Lexer(new StringReader("else "));
-        Symbol token = lexer.next_token();
-        String s = ((Token)token.value).getName();
-        assertEquals("ELSE",s);
-    }
-
-    /**
-     * Check if the class break word is recognized
-     */
-    @Test
-    public void breakToken() throws Exception {
-        Lexer lexer = new Lexer(new StringReader("break "));
-        Symbol token = lexer.next_token();
-        String s = ((Token)token.value).getName();
-        assertEquals("BREAK",s);
-    }
-
-    /**
-     * Check if the instanceof key word is recognized
-     */
-    @Test
-    public void instanceofToken() throws Exception {
-        Lexer lexer = new Lexer(new StringReader(" instanceof "));
-        Symbol token = lexer.next_token();
-        String s = ((Token)token.value).getName();
-        assertEquals("INSTANCEOF",s);
+    public void keywordTokens() throws Exception {
+        checkToken(" class ", "CLASS");
+        checkToken(" for ", "FOR");
+        checkToken(" new ", "NEW");
+        checkToken(" if ", "IF");
+        checkToken(" extends ", "EXTENDS");
+        checkToken(" return ", "RETURN");
+        checkToken(" while ", "WHILE");
+        checkToken(" else ", "ELSE");
+        checkToken(" break ", "BREAK");
+        checkToken(" instanceof ", "INSTANCEOF");
     }
 
     /**
      * Check if the divide symbol is recognized
      */
     @Test
-    public void divideToken() throws Exception {
-        Lexer lexer = new Lexer(new StringReader("/ "));
-        Symbol token = lexer.next_token();
-        String s = ((Token)token.value).getName();
-        assertEquals("DIVIDE",s);
+    public void arithmeticTokens() throws Exception {
+        checkToken(" / ", "DIVIDE");
+        checkToken(" - ", "MINUS");
+        checkToken(" + ", "PLUS");
+        checkToken(" % ", "MODULUS");
+        checkToken(" * ", "TIMES");
+        checkToken(" -- ", "DECR");
+        checkToken(" ++ ", "INCR");
     }
 
     /**
-     * Check if the semi colin is recognized
+     * Check if braces and parentheses are recognized
      */
     @Test
-    public void semiToken() throws Exception {
-        Lexer lexer = new Lexer(new StringReader("; "));
-        Symbol token = lexer.next_token();
-        String s = ((Token)token.value).getName();
-        assertEquals("SEMI",s);
+    public void braceTokens() throws Exception {
+        checkToken(" [ ", "LSQBRACE");
+        checkToken(" ] ", "RSQBRACE");
+        checkToken("{", "LBRACE");
+        checkToken("}", "RBRACE");
+        checkToken(" ( ", "LPAREN");
+        checkToken(" ) ", "RPAREN");
     }
 
     /**
-     * Check if the left parenthesis is recognized
+     * Check logical operators
      */
     @Test
-    public void lparenToken() throws Exception {
-        Lexer lexer = new Lexer(new StringReader("( "));
-        Symbol token = lexer.next_token();
-        String s = ((Token)token.value).getName();
-        assertEquals("LPAREN",s);
+    public void logicalTokens() throws Exception {
+        checkToken(" ! ", "NOT");
+        checkToken(" && ", "AND");
+        checkToken(" || ", "OR");
     }
 
     /**
-     * Check if the right parenthesis is recognized
+     * Check relational operators
      */
     @Test
-    public void rparenToken() throws Exception {
-        Lexer lexer = new Lexer(new StringReader(") "));
-        Symbol token = lexer.next_token();
-        String s = ((Token)token.value).getName();
-        assertEquals("RPAREN",s);
-    }
-
-    /**
-     * Check if the decrement by 1 symbol is recognized
-     */
-    @Test
-    public void decrToken() throws Exception {
-        Lexer lexer = new Lexer(new StringReader("-- "));
-        Symbol token = lexer.next_token();
-        String s = ((Token)token.value).getName();
-        assertEquals("DECR",s);
-    }
-
-    /**
-     * Check if the increment by 1 symbol is recognized
-     */
-    @Test
-    public void incrToken() throws Exception {
-        Lexer lexer = new Lexer(new StringReader("++ "));
-        Symbol token = lexer.next_token();
-        String s = ((Token)token.value).getName();
-        assertEquals("INCR",s);
-    }
-
-    /**
-     * Check if the minus symbol is recognized
-     */
-    @Test
-    public void minusToken() throws Exception {
-        Lexer lexer = new Lexer(new StringReader("- "));
-        Symbol token = lexer.next_token();
-        String s = ((Token)token.value).getName();
-        assertEquals("MINUS",s);
-    }
-
-    /**
-     * Check if the not symbol is recognized
-     */
-    @Test
-    public void notToken() throws Exception {
-        Lexer lexer = new Lexer(new StringReader("! "));
-        Symbol token = lexer.next_token();
-        String s = ((Token)token.value).getName();
-        assertEquals("NOT",s);
-    }
-
-    @Test
-    /**
-     * Check if the and symbol is recognized
-     */
-    public void andToken() throws Exception {
-        Lexer lexer = new Lexer(new StringReader("&& "));
-        Symbol token = lexer.next_token();
-        String s = ((Token)token.value).getName();
-        assertEquals("AND",s);
-    }
-
-    /**
-     * Check if the less than symbol is recognized
-     */
-    @Test
-    public void ltToken() throws Exception {
-        Lexer lexer = new Lexer(new StringReader("< "));
-        Symbol token = lexer.next_token();
-        String s = ((Token)token.value).getName();
-        assertEquals("LT",s);
-    }
-
-    /**
-     * Check if the greater than symbol is recognized
-     */
-    @Test
-    public void gtToken() throws Exception {
-        Lexer lexer = new Lexer(new StringReader("> "));
-        Symbol token = lexer.next_token();
-        String s = ((Token)token.value).getName();
-        assertEquals("GT",s);
-    }
-
-    /**
-     * Check if the or symbol is recognized
-     */
-    @Test
-    public void orToken() throws Exception {
-        Lexer lexer = new Lexer(new StringReader("| "));
-        Symbol token = lexer.next_token();
-        String s = ((Token)token.value).getName();
-        assertEquals("OR",s);
-    }
-
-    /**
-     * Check if the greater than or equal to symbol is recognized
-     */
-    @Test
-    public void geqToken() throws Exception {
-        Lexer lexer = new Lexer(new StringReader(">= "));
-        Symbol token = lexer.next_token();
-        String s = ((Token)token.value).getName();
-        assertEquals("GEQ",s);
-    }
-
-    /**
-     * Check if the less than or equal to symbol is recognized
-     */
-    @Test
-    public void leqToken() throws Exception {
-        Lexer lexer = new Lexer(new StringReader("<= "));
-        Symbol token = lexer.next_token();
-        String s = ((Token)token.value).getName();
-        assertEquals("LEQ",s);
+    public void relationalTokens() throws Exception {
+        checkToken(" < ", "LT");
+        checkToken(" <= ", "LEQ");
+        checkToken(" > ", "GT");
+        checkToken(" >= ", "GEQ");
+        checkToken("==","EQ");
     }
 
     /**
@@ -303,21 +103,15 @@ public class LexerTest
      */
     @Test
     public void commaToken() throws Exception {
-        Lexer lexer = new Lexer(new StringReader(", "));
-        Symbol token = lexer.next_token();
-        String s = ((Token)token.value).getName();
-        assertEquals("COMMA",s);
+        checkToken(" , ", "COMMA");
     }
 
     /**
-     * Check if the plus sign symbol is recognized
+     * Check if the semi colin is recognized
      */
     @Test
-    public void plusToken() throws Exception {
-        Lexer lexer = new Lexer(new StringReader("+ "));
-        Symbol token = lexer.next_token();
-        String s = ((Token)token.value).getName();
-        assertEquals("PLUS",s);
+    public void semiToken() throws Exception {
+        checkToken(" ; ", "SEMI");
     }
 
     /**
@@ -325,32 +119,7 @@ public class LexerTest
      */
     @Test
     public void assignToken() throws Exception {
-        Lexer lexer = new Lexer(new StringReader("= "));
-        Symbol token = lexer.next_token();
-        String s = ((Token)token.value).getName();
-        assertEquals("ASSIGN",s);
-    }
-
-    /**
-     * Check if the left square bracket symbol is recognized
-     */
-    @Test
-    public void lsqbraceToken() throws Exception {
-        Lexer lexer = new Lexer(new StringReader("[ "));
-        Symbol token = lexer.next_token();
-        String s = ((Token)token.value).getName();
-        assertEquals("LSQBRACE",s);
-    }
-
-    /**
-     * Check if the right square bracket symbol is recognized
-     */
-    @Test
-    public void rsqbraceToken() throws Exception {
-        Lexer lexer = new Lexer(new StringReader("] "));
-        Symbol token = lexer.next_token();
-        String s = ((Token)token.value).getName();
-        assertEquals("RSQBRACE",s);
+        checkToken(" = ", "ASSIGN");
     }
 
     /**
@@ -360,23 +129,9 @@ public class LexerTest
      */
     @Test
     public void idToken() throws Exception {
-        Lexer lexer = new Lexer(new StringReader("abc "));
-        Symbol token = lexer.next_token();
-        String s = ((Token)token.value).getName();
-        assertEquals("ID",s);
-
-        //check for id starting with integer
-        Lexer lexer2 = new Lexer(new StringReader("9hjbhj "));
-        Symbol token2 = lexer2.next_token();
-        String s2 = ((Token)token2.value).getName();
-        assertNotEquals("ID",s2);
-
-        //check for id starting with _
-        Lexer lexer3 = new Lexer(new StringReader("_hjbhj "));
-        Symbol token3 = lexer3.next_token();
-        String s3 = ((Token)token3.value).getName();
-        assertNotEquals("ID",s3);
-
+        checkToken(" abc ", "ID");
+        checkToken(" 9abc ", "ILLEGAL_ID");
+        checkToken(" _abc ", "ILLEGAL_ID");
     }
 
     /**
@@ -384,74 +139,20 @@ public class LexerTest
      */
     @Test
     public void dotToken() throws Exception {
-        Lexer lexer = new Lexer(new StringReader(". "));
-        Symbol token = lexer.next_token();
-        String s = ((Token)token.value).getName();
-        assertEquals("DOT",s);
+        checkToken(" . ", "DOT");
     }
 
     /**
-     * Check if and integer is correctly recognized
-     */
-    @Test
-    public void intToken() throws Exception {
-        Lexer lexer = new Lexer(new StringReader("67578 "));
-        Symbol token = lexer.next_token();
-        String s = ((Token)token.value).getName();
-        assertEquals("INT_CONST",s);
-    }
-
-    /**
-     * Check if the integers larger than the range are correctly recognized
+     * Check if integers are correctly recognized
      */
     @Test
     public void largeIntToken() throws Exception {
-        Lexer lexer = new Lexer(new StringReader("2147483647"));
-        Symbol token = lexer.next_token();
-        String s = ((Token)token.value).getName();
-        assertEquals("INT_CONST",s);
-
-        Lexer lexer2 = new Lexer(new StringReader("2147483648"));
-        Symbol token2 = lexer2.next_token();
-        String s2 = ((Token)token2.value).getName();
-        assertEquals("LARGE_INT",s2);
-    }
-
-    /**
-     * Check if integer is negative
-     */
-    @Test
-    public void negativeIntToken() throws Exception {
-        Lexer lexer = new Lexer(new StringReader("-99"));
-        Symbol token = lexer.next_token();
-        String s = ((Token)token.value).getName();
-        assertEquals("NEGATIVE_INT",s);
+        checkToken(" 2147483647 ", "INT_CONST");
+        checkToken(" 2147483648 ", "LARGE_INT");
     }
 
     /**
      * Check if strings are correctly identified.
-     */
-    @Test
-    public void stringToken() throws Exception {
-        Lexer lexer = new Lexer(new StringReader("\"this is \\\"a string\""));
-        Symbol token = lexer.next_token();
-        String s = ((Token)token.value).getName();
-        assertEquals("STRING_CONST",s);
-    }
-
-    /**
-     * Check if multiline strings are correctly identified
-     */
-    @Test
-    public void stringErrorToken() throws Exception {
-        Lexer lexer = new Lexer(new StringReader("\"this is a \n string\""));
-        Symbol token = lexer.next_token();
-        String s = ((Token)token.value).getName();
-        assertEquals("MULTILINE_STRING",s);
-    }
-
-    /**
-     * Check if String larger than 5000 characters are idenitified as long
      */
     @Test
     public void longStringToken() throws Exception {
@@ -463,15 +164,8 @@ public class LexerTest
         }
         str1+="\"";
         str2+="B\"";
-        Lexer lexer = new Lexer(new StringReader(str1));
-        Symbol token = lexer.next_token();
-        String s = ((Token)token.value).getName();
-        assertEquals("STRING_CONST",s);
-
-        Lexer lexer2 = new Lexer(new StringReader(str2));
-        Symbol token2 = lexer2.next_token();
-        String s2 = ((Token)token2.value).getName();
-        assertEquals("LARGE_STRING",s2);
+        checkToken(str1, "STRING_CONST");
+        checkToken(str2, "LARGE_STRING");
     }
 
     /**
@@ -479,10 +173,7 @@ public class LexerTest
      */
     @Test
     public void commentToken() throws Exception {
-        Lexer lexer = new Lexer(new StringReader("/* this is a comment \n /* */"));
-        Symbol token = lexer.next_token();
-        String s = ((Token)token.value).getName();
-        assertEquals("EOF",s);
+        checkToken("/* this is a comment \n /* */", "EOF");
     }
 
     /**
@@ -490,23 +181,7 @@ public class LexerTest
      */
     @Test
     public void EOFToken() throws Exception {
-        Lexer lexer = new Lexer(new StringReader(""));
-        Symbol token = lexer.next_token();
-        String s = ((Token)token.value).getName();
-        assertEquals("EOF",s);
-    }
-
-
-
-    /**
-     * Check the equals operation works
-     */
-    @Test
-    public void eqToken() throws Exception {
-        Lexer lexer = new Lexer(new StringReader("=="));
-        Symbol token = lexer.next_token();
-        String s = ((Token)token.value).getName();
-        assertEquals("EQ",s);
+        checkToken("","EOF");
     }
 
     /**
@@ -515,53 +190,9 @@ public class LexerTest
      */
     @Test
     public void lexErrorToken() throws Exception {
-        Lexer lexer = new Lexer(new StringReader("/*   rxdrh"));
-        Symbol token = lexer.next_token();
-        String s = ((Token)token.value).getName();
-        assertEquals("UNTERMINATED_COMMENT",s);
-
-        Lexer lexer2 = new Lexer(new StringReader("\"reg more code"));
-        Symbol token2 = lexer2.next_token();
-        String s2 = ((Token)token2.value).getName();
-        assertEquals("UNTERMINATED_STRING",s2);
-
-        Lexer lexer3 = new Lexer(new StringReader("\"hvbjb\nj \n jhb\nj \""));
-        Symbol token3 = lexer3.next_token();
-        String s3 = ((Token)token3.value).getName();
-        assertEquals("MULTILINE_STRING",s3);
-    }
-
-    /**
-     * Check if the left brace symbol is recognized
-     */
-    @Test
-    public void lbraceToken() throws Exception {
-        Lexer lexer = new Lexer(new StringReader("{"));
-        Symbol token = lexer.next_token();
-        String s = ((Token)token.value).getName();
-        assertEquals("LBRACE",s);
-    }
-
-    /**
-     * Check if the right brace symbol is recognized
-     */
-    @Test
-    public void rbraceToken() throws Exception {
-        Lexer lexer = new Lexer(new StringReader("}"));
-        Symbol token = lexer.next_token();
-        String s = ((Token)token.value).getName();
-        assertEquals("RBRACE",s);
-    }
-
-    /**
-     * Check if the modulus symbol is recognized
-     */
-    @Test
-    public void modulusToken() throws Exception {
-        Lexer lexer = new Lexer(new StringReader("% "));
-        Symbol token = lexer.next_token();
-        String s = ((Token)token.value).getName();
-        assertEquals("MODULUS",s);
+        checkToken("/*  abc", "UNTERMINATED_COMMENT");
+        checkToken("\" abc", "UNTERMINATED_STRING");
+        checkToken("\"abc\nabc\"", "MULTILINE_STRING");
     }
 
     /**
@@ -569,10 +200,7 @@ public class LexerTest
      */
     @Test
     public void neToken() throws Exception {
-        Lexer lexer = new Lexer(new StringReader("!= "));
-        Symbol token = lexer.next_token();
-        String s = ((Token)token.value).getName();
-        assertEquals("NE",s);
+        checkToken(" != ", "NE");
     }
 
     /**
@@ -580,15 +208,8 @@ public class LexerTest
      */
     @Test
     public void booleanConstantToken() throws Exception {
-        Lexer lexer = new Lexer(new StringReader("true "));
-        Symbol token = lexer.next_token();
-        String s = ((Token)token.value).getName();
-        assertEquals("BOOLEAN_CONST",s);
-
-        Lexer lexer2 = new Lexer(new StringReader("false "));
-        Symbol token2 = lexer2.next_token();
-        String s2 = ((Token)token2.value).getName();
-        assertEquals("BOOLEAN_CONST",s2);
+        checkToken(" true ", "BOOLEAN_CONST");
+        checkToken(" false ", "BOOLEAN_CONST");
     }
 
     /**
@@ -596,15 +217,8 @@ public class LexerTest
      */
     @Test
     public void illegalEscapeToken() throws Exception {
-        Lexer lexer = new Lexer(new StringReader("\"\\n \""));
-        Symbol token = lexer.next_token();
-        String s = ((Token)token.value).getName();
-        assertEquals("STRING_CONST",s);
-
-        Lexer lexer2 = new Lexer(new StringReader("\"\\a \""));
-        Symbol token2 = lexer2.next_token();
-        String s2 = ((Token)token2.value).getName();
-        assertEquals("ILLEGAL_ESCAPE_CHAR",s2);
+        checkToken("\"\\n \"", "STRING_CONST");
+        checkToken("\"\\a \"", "ILLEGAL_ESCAPE_CHAR");
     }
 
     /**
@@ -612,14 +226,16 @@ public class LexerTest
      */
     @Test
     public void illegalToken() throws Exception {
-        Lexer lexer = new Lexer(new StringReader("\\ "));
+        checkToken("\\ ", "ILLEGAL_CHAR");
+    }
+
+    /**
+     * Checks equality of String with the expected token from the Lexer
+     */
+    private void checkToken(String str, String expectedToken) throws Exception{
+        Lexer lexer = new Lexer(new StringReader(str));
         Symbol token = lexer.next_token();
         String s = ((Token)token.value).getName();
-        assertEquals("ILLEGAL_CHAR",s);
-
-        Lexer lexer2 = new Lexer(new StringReader("??@%@@`~ "));
-        Symbol token2 = lexer2.next_token();
-        String s2 = ((Token)token2.value).getName();
-        assertEquals("ILLEGAL_CHAR",s2);
+        assertEquals(expectedToken,s);
     }
 }

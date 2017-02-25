@@ -1,3 +1,13 @@
+/**
+ * File: lexer.jlex
+ * @author Victoria Chistolini
+ * @author Edward (osan) Zhou
+ * @author Alex Rinker
+ * @author Vivek Sah
+ * Class: CS461
+ * Project: 1
+ * Date: Feb 11, 2017
+ */
 /* Bantam Java Compiler and Language Toolset.
    Copyright (C) 2009 by Marc Corliss (corliss@hws.edu) and 
                          David Furcy (furcyd@uwosh.edu) and
@@ -47,7 +57,7 @@ public class Lexer implements java_cup.runtime.Scanner {
     /** array that holds the names of each file we're lexing 
       * (used only when multipleFiles is true)
       * */
-    private String[] filenames;
+    private String[] filenames = {"Reader/InputStream"};
     /** array that holds the reader for each file we're lexing 
       * (used only when multipleFiles is true)
       * */
@@ -389,98 +399,104 @@ public class Lexer implements java_cup.runtime.Scanner {
 		/* 44 */ YY_NO_ANCHOR,
 		/* 45 */ YY_NO_ANCHOR,
 		/* 46 */ YY_NO_ANCHOR,
-		/* 47 */ YY_NOT_ACCEPT,
+		/* 47 */ YY_NO_ANCHOR,
 		/* 48 */ YY_NO_ANCHOR,
-		/* 49 */ YY_NOT_ACCEPT,
+		/* 49 */ YY_NO_ANCHOR,
 		/* 50 */ YY_NO_ANCHOR,
 		/* 51 */ YY_NOT_ACCEPT,
 		/* 52 */ YY_NO_ANCHOR,
-		/* 53 */ YY_NOT_ACCEPT,
+		/* 53 */ YY_NO_ANCHOR,
 		/* 54 */ YY_NO_ANCHOR,
 		/* 55 */ YY_NOT_ACCEPT,
 		/* 56 */ YY_NO_ANCHOR,
-		/* 57 */ YY_NOT_ACCEPT,
-		/* 58 */ YY_NO_ANCHOR,
-		/* 59 */ YY_NOT_ACCEPT,
-		/* 60 */ YY_NO_ANCHOR,
-		/* 61 */ YY_NOT_ACCEPT,
+		/* 57 */ YY_NO_ANCHOR,
+		/* 58 */ YY_NOT_ACCEPT,
+		/* 59 */ YY_NO_ANCHOR,
+		/* 60 */ YY_NOT_ACCEPT,
+		/* 61 */ YY_NO_ANCHOR,
 		/* 62 */ YY_NO_ANCHOR,
-		/* 63 */ YY_NOT_ACCEPT,
+		/* 63 */ YY_NO_ANCHOR,
 		/* 64 */ YY_NO_ANCHOR,
-		/* 65 */ YY_NOT_ACCEPT,
+		/* 65 */ YY_NO_ANCHOR,
 		/* 66 */ YY_NO_ANCHOR,
-		/* 67 */ YY_NOT_ACCEPT,
+		/* 67 */ YY_NO_ANCHOR,
 		/* 68 */ YY_NO_ANCHOR,
-		/* 69 */ YY_NOT_ACCEPT,
-		/* 70 */ YY_NOT_ACCEPT,
-		/* 71 */ YY_NOT_ACCEPT,
-		/* 72 */ YY_NOT_ACCEPT,
-		/* 73 */ YY_NOT_ACCEPT,
-		/* 74 */ YY_NOT_ACCEPT,
-		/* 75 */ YY_NOT_ACCEPT,
-		/* 76 */ YY_NOT_ACCEPT,
-		/* 77 */ YY_NOT_ACCEPT,
-		/* 78 */ YY_NOT_ACCEPT,
-		/* 79 */ YY_NOT_ACCEPT,
-		/* 80 */ YY_NOT_ACCEPT,
-		/* 81 */ YY_NOT_ACCEPT,
-		/* 82 */ YY_NOT_ACCEPT,
-		/* 83 */ YY_NOT_ACCEPT,
-		/* 84 */ YY_NOT_ACCEPT,
-		/* 85 */ YY_NOT_ACCEPT,
-		/* 86 */ YY_NOT_ACCEPT,
-		/* 87 */ YY_NOT_ACCEPT,
-		/* 88 */ YY_NOT_ACCEPT,
-		/* 89 */ YY_NOT_ACCEPT,
-		/* 90 */ YY_NOT_ACCEPT,
-		/* 91 */ YY_NOT_ACCEPT,
-		/* 92 */ YY_NOT_ACCEPT,
-		/* 93 */ YY_NOT_ACCEPT,
-		/* 94 */ YY_NOT_ACCEPT,
-		/* 95 */ YY_NOT_ACCEPT,
-		/* 96 */ YY_NOT_ACCEPT,
-		/* 97 */ YY_NOT_ACCEPT,
-		/* 98 */ YY_NOT_ACCEPT,
-		/* 99 */ YY_NOT_ACCEPT,
-		/* 100 */ YY_NOT_ACCEPT,
-		/* 101 */ YY_NOT_ACCEPT,
-		/* 102 */ YY_NOT_ACCEPT,
-		/* 103 */ YY_NOT_ACCEPT,
-		/* 104 */ YY_NO_ANCHOR,
-		/* 105 */ YY_NOT_ACCEPT,
-		/* 106 */ YY_NOT_ACCEPT,
-		/* 107 */ YY_NOT_ACCEPT,
-		/* 108 */ YY_NOT_ACCEPT,
-		/* 109 */ YY_NOT_ACCEPT,
-		/* 110 */ YY_NOT_ACCEPT,
-		/* 111 */ YY_NOT_ACCEPT,
-		/* 112 */ YY_NOT_ACCEPT
+		/* 69 */ YY_NO_ANCHOR,
+		/* 70 */ YY_NO_ANCHOR,
+		/* 71 */ YY_NO_ANCHOR,
+		/* 72 */ YY_NO_ANCHOR,
+		/* 73 */ YY_NO_ANCHOR,
+		/* 74 */ YY_NO_ANCHOR,
+		/* 75 */ YY_NO_ANCHOR,
+		/* 76 */ YY_NO_ANCHOR,
+		/* 77 */ YY_NO_ANCHOR,
+		/* 78 */ YY_NO_ANCHOR,
+		/* 79 */ YY_NO_ANCHOR,
+		/* 80 */ YY_NO_ANCHOR,
+		/* 81 */ YY_NO_ANCHOR,
+		/* 82 */ YY_NO_ANCHOR,
+		/* 83 */ YY_NO_ANCHOR,
+		/* 84 */ YY_NO_ANCHOR,
+		/* 85 */ YY_NO_ANCHOR,
+		/* 86 */ YY_NO_ANCHOR,
+		/* 87 */ YY_NO_ANCHOR,
+		/* 88 */ YY_NO_ANCHOR,
+		/* 89 */ YY_NO_ANCHOR,
+		/* 90 */ YY_NO_ANCHOR,
+		/* 91 */ YY_NO_ANCHOR,
+		/* 92 */ YY_NO_ANCHOR,
+		/* 93 */ YY_NO_ANCHOR,
+		/* 94 */ YY_NO_ANCHOR,
+		/* 95 */ YY_NO_ANCHOR,
+		/* 96 */ YY_NO_ANCHOR,
+		/* 97 */ YY_NO_ANCHOR,
+		/* 98 */ YY_NO_ANCHOR,
+		/* 99 */ YY_NO_ANCHOR,
+		/* 100 */ YY_NO_ANCHOR,
+		/* 101 */ YY_NO_ANCHOR,
+		/* 102 */ YY_NO_ANCHOR
 	};
 	private int yy_cmap[] = unpackFromString(1,130,
-"50:10,0,50:2,0,50:19,26,49,50:2,31,27,50,34,35,22,25,33,24,46,21,47:10,50,3" +
-"2,28,23,30,50:2,44,48:7,41,48:2,45,48,42,48:4,19,43,48:4,40,48,36,50,37,50:" +
-"3,3,17,1,14,9,5,20,16,11,48,18,2,48,8,6,48:2,7,4,13,15,48,10,12,48:2,38,29," +
-"39,50:2,51:2")[0];
+"2:8,5:2,46,2,5,4,2:18,5,27,45,47,43,32,28,47,35,36,3,26,34,25,41,1,42:10,47" +
+",33,29,24,31,47:2,44:26,37,47,38,47,44,47,8,22,6,19,14,10,44,21,16,44,23,7," +
+"44,13,11,44:2,12,9,18,20,44,15,17,44:2,39,30,40,47,2,0:2")[0];
 
-	private int yy_rmap[] = unpackFromString(1,113,
-"0,1,2:2,3,4,5,6,2,7,2,8,2:17,9,2:14,10,2,11,12,2,13,14,15,16,17,18,19,20,21" +
-",22,23,24,25,26,27,28,29,30,31,9,32,33,9,34,35,36,37,38,39,40,41,42,43,44,4" +
-"5,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,7" +
-"0,71,72,73,74")[0];
+	private int yy_rmap[] = unpackFromString(1,103,
+"0,1,2,1:2,3,4,5,6,7,8,1,9,10,11,1:9,12,13,14,15,16,17,1:5,12,1,18,17:2,19,1" +
+",17:9,20,21,12,22,18,23,24,19,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39," +
+"40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,17," +
+"64,65,66,67")[0];
 
-	private int yy_nxt[][] = unpackFromString(75,52,
-"-1,1,48:3,50,48,52,104,54,56,58,48,60,48:3,62,48,64,48,2,3,4,5,6,7,8,9,10,1" +
-"1,12,13,14,15,16,17,18,19,20,66,48:8,68,48,21,-1:2,47,-1:124,23,-1:52,24,-1" +
-":52,25,-1:49,26,-1:51,27,-1:51,28,-1:29,71:48,29,71,-1:2,44:20,-1:19,44:6,-" +
-"1,44:2,-1:50,46,-1:7,106,-1:50,112,-1:52,49,-1:2,51,-1:52,30,-1:53,53,-1:55" +
-",107,-1:40,57,-1:9,105,-1:49,31,-1:57,59,-1:39,72,-1:52,22,-1:2,61,-1:54,73" +
-",-1:47,63,-1:48,74,-1:8,32,-1:44,65,67,-1:59,75,-1:49,69,-1:44,109,-1:85,70" +
-",-1:20,76,-1:49,77,-1:85,78,-1:19,33,-1:44,83,-1:62,110,-1:47,34,-1:45,85,-" +
-"1:59,111,-1:82,86,-1:13,35,-1:56,36,-1:49,87,-1:52,88,-1:52,37,-1:51,90,-1:" +
-"60,38,-1:74,92,-1:18,39,-1:57,93,-1:45,94,-1:46,95,-1:68,40,-1:74,96,-1:12," +
-"41,-1:48,97,-1:58,42,-1:84,98,-1:19,99,-1:86,100,-1:13,101,-1:90,102,-1:11," +
-"43,-1:76,103,-1:22,44:20,-1:19,44:6,45,46,44,-1:12,55,-1:55,108,-1:42,79,-1" +
-":62,81,-1:45,82,-1:44,84,-1:52,89,-1:56,91,-1:47,80,-1:47");
+	private int yy_nxt[][] = unpackFromString(68,48,
+"1,2,3,4,5:2,6,98:3,71,98,100,72,82,101,52,98,83,98:3,102,98,7,8,9,10,11,12," +
+"13,14,15,16,17,18,19,20,21,22,23,24,25,56,98,26,5,53,-1:49,27,-1,28,-1:26,5" +
+"3,-1:10,53,-1,53,-1:3,53,-1:4,5:2,-1:40,5,-1:7,98,84,98:16,-1:18,98,-1,98,-" +
+"1:27,30,-1:48,31,-1:48,32,-1:45,33,-1:47,34,-1:24,53,-1:28,35,-1:10,53,-1,5" +
+"3,-1:3,53,-1:24,36,-1:24,53,-1:28,53,-1:10,53,-1,53,-1:3,53,-1:6,98:18,-1:1" +
+"8,25,-1,98,-1:4,26:3,54,26:40,37,57,26,-1,27:3,-1,27:41,-1,27,-1,28:2,51,28" +
+":44,-1:6,98:18,-1:18,98,-1,98,-1:4,55:3,-1,55:40,37,58,55,-1,58:3,-1,58:40," +
+"40,58:2,-1,41,28,60,28:44,-1:6,98:4,29,98:2,88,98:10,-1:18,98,-1,98,-1:4,54" +
+":44,-1,54:2,-1,53,-1:4,98:18,-1:6,53,-1:10,53,98,53,98,-1:2,53,-1,57:3,54,5" +
+"7:40,40,57:2,-1:6,98:6,38,98:11,-1:18,98,-1,98,-1:5,28,60,28:44,-1:6,98:9,3" +
+"9,98:8,-1:18,98,-1,98,-1:9,98:8,42,98:9,-1:18,98,-1,98,-1:9,98:8,43,98:9,-1" +
+":18,98,-1,98,-1:9,98:3,44,98:14,-1:18,98,-1,98,-1:9,98:8,45,98:9,-1:18,98,-" +
+"1,98,-1:9,98:8,46,98:9,-1:18,98,-1,98,-1:9,98:17,47,-1:18,98,-1,98,-1:9,98:" +
+"7,48,98:10,-1:18,98,-1,98,-1:9,98:3,49,98:14,-1:18,98,-1,98,-1:9,98:4,50,98" +
+":13,-1:18,98,-1,98,-1:9,98:2,85,98:2,59,98:12,-1:18,98,-1,98,-1:9,98:8,61,9" +
+"8:9,-1:18,98,-1,98,-1:9,98:3,62,98:14,-1:18,98,-1,98,-1:9,98:14,63,98:3,-1:" +
+"18,98,-1,98,-1:9,98:3,64,98:14,-1:18,98,-1,98,-1:9,98:3,65,98:14,-1:18,98,-" +
+"1,98,-1:9,98,66,98:16,-1:18,98,-1,98,-1:9,98:2,67,98:15,-1:18,98,-1,98,-1:9" +
+",98:6,68,98:11,-1:18,98,-1,98,-1:9,98:13,69,98:4,-1:18,98,-1,98,-1:9,98:5,7" +
+"0,98:12,-1:18,98,-1,98,-1:9,98,73,98:9,99,98:6,-1:18,98,-1,98,-1:9,98:6,74," +
+"98:11,-1:18,98,-1,98,-1:9,98:2,75,98:15,-1:18,98,-1,98,-1:9,98,76,98:16,-1:" +
+"18,98,-1,98,-1:9,98:12,90,98:5,-1:18,98,-1,98,-1:9,98:10,77,98:7,-1:18,98,-" +
+"1,98,-1:9,98:3,92,98:14,-1:18,98,-1,98,-1:9,98:8,78,98:9,-1:18,98,-1,98,-1:" +
+"9,98:14,79,98:3,-1:18,98,-1,98,-1:9,98:8,93,98:9,-1:18,98,-1,98,-1:9,98:12," +
+"94,98:5,-1:18,98,-1,98,-1:9,98:7,80,98:10,-1:18,98,-1,98,-1:9,98:2,95,98:15" +
+",-1:18,98,-1,98,-1:9,98:7,96,98:10,-1:18,98,-1,98,-1:9,97,98:17,-1:18,98,-1" +
+",98,-1:9,98:8,81,98:9,-1:18,98,-1,98,-1:9,98:12,91,98:5,-1:18,98,-1,98,-1:9" +
+",98:8,86,98:9,-1:18,98,-1,98,-1:9,98:15,87,98:2,-1:18,98,-1,98,-1:9,98:6,89" +
+",98:11,-1:18,98,-1,98,-1:3");
 
 	public java_cup.runtime.Symbol next_token ()
 		throws java.io.IOException {
@@ -546,8 +562,7 @@ public class Lexer implements java_cup.runtime.Scanner {
 					yy_to_mark();
 					switch (yy_last_accept_state) {
 					case 1:
-						{ throw new RuntimeException("Unmatched lexeme " +
-                          yytext() + " at line " + yyline); }
+						
 					case -2:
 						break;
 					case 2:
@@ -556,283 +571,786 @@ public class Lexer implements java_cup.runtime.Scanner {
 					case -3:
 						break;
 					case 3:
-						{ return new Symbol(TokenIds.TIMES,
-						    new Token("TIMES", yyline)); }
+						{ throw new RuntimeException("Unmatched lexeme " +
+                          yytext() + " at line " + yyline); }
 					case -4:
 						break;
 					case 4:
-						{ return new Symbol(TokenIds.ASSIGN,
-				 		    new Token("ASSIGN", yyline)); }
+						{ return new Symbol(TokenIds.TIMES,
+						    new Token("TIMES", yyline)); }
 					case -5:
 						break;
 					case 5:
-						{ return new Symbol(TokenIds.MINUS,
-						    new Token("MINUS", yyline)); }
+						{  }
 					case -6:
 						break;
 					case 6:
-						{ return new Symbol(TokenIds.PLUS,
-						    new Token("PLUS", yyline)); }
+						{
+    int initialChar = yytext().charAt(0);
+    if(initialChar == '_' || initialChar == '$' || Character.isDigit(initialChar)) {
+        return new Symbol(TokenIds.LEX_ERROR, new Token("ILLEGAL_ID", yytext(), yyline));
+    }
+    return new Symbol(TokenIds.ID,
+    new Token("ID", yytext(), yyline));
+}
 					case -7:
 						break;
 					case 7:
-						{ return new Symbol(TokenIds.NOT,
-				 		    new Token("NOT", yyline)); }
+						{ return new Symbol(TokenIds.ASSIGN,
+				 		    new Token("ASSIGN", yyline)); }
 					case -8:
 						break;
 					case 8:
-						{ return new Symbol(TokenIds.AND,
-						    new Token("AND", yyline)); }
+						{ return new Symbol(TokenIds.MINUS,
+						    new Token("MINUS", yyline)); }
 					case -9:
 						break;
 					case 9:
-						{ return new Symbol(TokenIds.LT,
-						    new Token("LT", yyline)); }
+						{ return new Symbol(TokenIds.PLUS,
+						    new Token("PLUS", yyline)); }
 					case -10:
 						break;
 					case 10:
-						{ return new Symbol(TokenIds.OR,
-						    new Token("OR", yyline)); }
+						{ return new Symbol(TokenIds.NOT,
+				 		    new Token("NOT", yyline)); }
 					case -11:
 						break;
 					case 11:
-						{ return new Symbol(TokenIds.GT,
-						    new Token("GT", yyline)); }
+						{ return new Symbol(TokenIds.AND,
+						    new Token("AND", yyline)); }
 					case -12:
 						break;
 					case 12:
-						{ return new Symbol(TokenIds.MODULUS,
-						    new Token("MODULUS", yyline)); }
+						{ return new Symbol(TokenIds.LT,
+						    new Token("LT", yyline)); }
 					case -13:
 						break;
 					case 13:
-						{ return new Symbol(TokenIds.SEMI,
-						    new Token("SEMI", yyline)); }
+						{ return new Symbol(TokenIds.LEX_ERROR,
+                            new Token("ILLEGAL_CHAR", yytext(), yyline)); }
 					case -14:
 						break;
 					case 14:
-						{ return new Symbol(TokenIds.COMMA,
-						    new Token("COMMA", yyline)); }
+						{ return new Symbol(TokenIds.GT,
+						    new Token("GT", yyline)); }
 					case -15:
 						break;
 					case 15:
-						{ return new Symbol(TokenIds.LPAREN,
-						    new Token("LPAREN", yyline)); }
+						{ return new Symbol(TokenIds.MODULUS,
+						    new Token("MODULUS", yyline)); }
 					case -16:
 						break;
 					case 16:
-						{ return new Symbol(TokenIds.RPAREN,
-						    new Token("RPAREN", yyline)); }
+						{ return new Symbol(TokenIds.SEMI,
+						    new Token("SEMI", yyline)); }
 					case -17:
 						break;
 					case 17:
-						{ return new Symbol(TokenIds.LSQBRACE,
-						    new Token("LSQBRACE", yyline)); }
+						{ return new Symbol(TokenIds.COMMA,
+						    new Token("COMMA", yyline)); }
 					case -18:
 						break;
 					case 18:
-						{ return new Symbol(TokenIds.RSQBRACE,
-					 	    new Token("RSQBRACE", yyline)); }
+						{ return new Symbol(TokenIds.LPAREN,
+						    new Token("LPAREN", yyline)); }
 					case -19:
 						break;
 					case 19:
-						{ return new Symbol(TokenIds.LBRACE,
-						    new Token("LBRACE", yyline)); }
+						{ return new Symbol(TokenIds.RPAREN,
+						    new Token("RPAREN", yyline)); }
 					case -20:
 						break;
 					case 20:
-						{ return new Symbol(TokenIds.RBRACE,
-						    new Token("RBRACE", yyline)); }
+						{ return new Symbol(TokenIds.LSQBRACE,
+						    new Token("LSQBRACE", yyline)); }
 					case -21:
 						break;
 					case 21:
-						
+						{ return new Symbol(TokenIds.RSQBRACE,
+					 	    new Token("RSQBRACE", yyline)); }
 					case -22:
 						break;
 					case 22:
-						{ return new Symbol(TokenIds.IF,
-						    new Token("IF", yyline)); }
+						{ return new Symbol(TokenIds.LBRACE,
+						    new Token("LBRACE", yyline)); }
 					case -23:
 						break;
 					case 23:
-						{ return new Symbol(TokenIds.EQ,
-						    new Token("EQ", yyline)); }
+						{ return new Symbol(TokenIds.RBRACE,
+						    new Token("RBRACE", yyline)); }
 					case -24:
 						break;
 					case 24:
-						{ return new Symbol(TokenIds.DECR,
-						    new Token("DECR", yyline)); }
+						{ return new Symbol(TokenIds.DOT,
+						    new Token("DOT", yyline)); }
 					case -25:
 						break;
 					case 25:
-						{ return new Symbol(TokenIds.INCR,
-						    new Token("INCR", yyline)); }
+						{
+    try {
+        int x = Integer.parseInt(yytext());
+    }
+    catch (Exception e) {
+        return new Symbol(TokenIds.LEX_ERROR,
+                            new Token("LARGE_INT", yytext(), yyline));
+    }
+    return new Symbol(TokenIds.INT_CONST,
+	                    new Token("INT_CONST", yytext(), yyline));
+}
 					case -26:
 						break;
 					case 26:
-						{ return new Symbol(TokenIds.NE,
-						    new Token("NE", yyline)); }
+						{ return new Symbol(TokenIds.LEX_ERROR,
+                            new Token("UNTERMINATED_STRING", yytext(), yyline)); }
 					case -27:
 						break;
 					case 27:
-						{ return new Symbol(TokenIds.LEQ,
-						    new Token("LEQ", yyline)); }
+						{  }
 					case -28:
 						break;
 					case 28:
-						{ return new Symbol(TokenIds.GEQ,
-						    new Token("GEQ", yyline)); }
+						{ return new Symbol(TokenIds.LEX_ERROR,
+						                                    new Token("UNTERMINATED_COMMENT", yyline)); }
 					case -29:
 						break;
 					case 29:
-						{ return new Symbol(TokenIds.STRING_CONST,
-						    new Token("STRING_CONST", yyline)); }
+						{ return new Symbol(TokenIds.IF,
+						    new Token("IF", yyline)); }
 					case -30:
 						break;
 					case 30:
-						{ return new Symbol(TokenIds.FOR,
-						    new Token("FOR", yyline)); }
+						{ return new Symbol(TokenIds.EQ,
+						    new Token("EQ", yyline)); }
 					case -31:
 						break;
 					case 31:
-						{ return new Symbol(TokenIds.NEW,
-						    new Token("NEW", yyline)); }
+						{ return new Symbol(TokenIds.DECR,
+						    new Token("DECR", yyline)); }
 					case -32:
 						break;
 					case 32:
-						{ return new Symbol(TokenIds.INT,
-						    new Token("INT", yyline)); }
+						{ return new Symbol(TokenIds.INCR,
+						    new Token("INCR", yyline)); }
 					case -33:
 						break;
 					case 33:
-						{ return new Symbol(TokenIds.ELSE,
-						    new Token("ELSE", yyline)); }
+						{ return new Symbol(TokenIds.NE,
+						    new Token("NE", yyline)); }
 					case -34:
 						break;
 					case 34:
-						{ return new Symbol(TokenIds.BOOLEAN_TRUE,
-						    new Token("BOOLEAN_TRUE", yyline)); }
+						{ return new Symbol(TokenIds.LEQ,
+						    new Token("LEQ", yyline)); }
 					case -35:
 						break;
 					case 35:
-						{ return new Symbol(TokenIds.CLASS, 
-						    new Token("CLASS", yyline)); }
+						{ return new Symbol(TokenIds.OR,
+						    new Token("OR", yyline)); }
 					case -36:
 						break;
 					case 36:
-						{ return new Symbol(TokenIds.BOOLEAN_FALSE,
-						    new Token("BOOLEAN_FALSE", yyline)); }
+						{ return new Symbol(TokenIds.GEQ,
+						    new Token("GEQ", yyline)); }
 					case -37:
 						break;
 					case 37:
-						{ return new Symbol(TokenIds.WHILE,
-						    new Token("WHILE", yyline)); }
+						{
+    if(yytext().length() > 5000) {
+        return new Symbol(
+            TokenIds.LEX_ERROR,
+            new Token("LARGE_STRING", String.valueOf(yytext().length()), yyline)
+        );
+    }
+    for(int i=0; i<yytext().length(); i++) {
+        if(yytext().charAt(i) == '\\' && !(yytext().charAt(i+1) == 'n'  ||
+                                           yytext().charAt(i+1) == 't'  ||
+                                           yytext().charAt(i+1) == '"'  ||
+                                           yytext().charAt(i+1) == '\\' ||
+                                           yytext().charAt(i+1) == 'f')) {
+            return new Symbol(
+                TokenIds.LEX_ERROR,
+                new Token("ILLEGAL_ESCAPE_CHAR", yytext(), yyline)
+            );
+        }
+    }
+    return new Symbol(TokenIds.STRING_CONST,
+	                    new Token("STRING_CONST", yytext(), yyline));
+}
 					case -38:
 						break;
 					case 38:
-						{ return new Symbol(TokenIds.BREAK,
-						    new Token("BREAK", yyline)); }
+						{ return new Symbol(TokenIds.FOR,
+						    new Token("FOR", yyline)); }
 					case -39:
 						break;
 					case 39:
-						{ return new Symbol(TokenIds.RETURN,
-						    new Token("RETURN", yyline)); }
+						{ return new Symbol(TokenIds.NEW,
+						    new Token("NEW", yyline)); }
 					case -40:
 						break;
 					case 40:
-						{ return new Symbol(TokenIds.STRING,
-						    new Token("STRING", yyline)); }
+						{ return new Symbol(TokenIds.LEX_ERROR,
+                            new Token("MULTILINE_STRING", yyline)); }
 					case -41:
 						break;
 					case 41:
-						{ return new Symbol(TokenIds.EXTENDS,
-						    new Token("EXTENDS", yyline)); }
+						{  }
 					case -42:
 						break;
 					case 42:
-						{ return new Symbol(TokenIds.BOOLEAN,
-						    new Token("BOOLEAN", yyline)); }
+						{ return new Symbol(TokenIds.ELSE,
+						    new Token("ELSE", yyline)); }
 					case -43:
 						break;
 					case 43:
-						{ return new Symbol(TokenIds.INSTANCEOF,
-						    new Token("INSTANCEOF", yyline)); }
+						{ return new Symbol(TokenIds.BOOLEAN_CONST,
+						    new Token("BOOLEAN_CONST", yytext(), yyline)); }
 					case -44:
 						break;
 					case 44:
-						{ return new Symbol(TokenIds.ID,
-                                    new Token("ID", yyline)); }
+						{ return new Symbol(TokenIds.CLASS, 
+						    new Token("CLASS", yyline)); }
 					case -45:
 						break;
 					case 45:
-						{ return new Symbol(TokenIds.DOT,
-						    new Token("DOT", yyline)); }
+						{ return new Symbol(TokenIds.BOOLEAN_CONST,
+						    new Token("BOOLEAN_CONST", yytext(), yyline)); }
 					case -46:
 						break;
 					case 46:
-						{ return new Symbol(TokenIds.INT_CONST,
-						    new Token("INT_CONST", yyline)); }
+						{ return new Symbol(TokenIds.WHILE,
+						    new Token("WHILE", yyline)); }
 					case -47:
 						break;
-					case 48:
-						{ throw new RuntimeException("Unmatched lexeme " +
-                          yytext() + " at line " + yyline); }
+					case 47:
+						{ return new Symbol(TokenIds.BREAK,
+						    new Token("BREAK", yyline)); }
 					case -48:
 						break;
-					case 50:
-						{ throw new RuntimeException("Unmatched lexeme " +
-                          yytext() + " at line " + yyline); }
+					case 48:
+						{ return new Symbol(TokenIds.RETURN,
+						    new Token("RETURN", yyline)); }
 					case -49:
 						break;
-					case 52:
-						{ throw new RuntimeException("Unmatched lexeme " +
-                          yytext() + " at line " + yyline); }
+					case 49:
+						{ return new Symbol(TokenIds.EXTENDS,
+						    new Token("EXTENDS", yyline)); }
 					case -50:
 						break;
-					case 54:
-						{ throw new RuntimeException("Unmatched lexeme " +
-                          yytext() + " at line " + yyline); }
+					case 50:
+						{ return new Symbol(TokenIds.INSTANCEOF,
+						    new Token("INSTANCEOF", yyline)); }
 					case -51:
 						break;
-					case 56:
-						{ throw new RuntimeException("Unmatched lexeme " +
-                          yytext() + " at line " + yyline); }
+					case 52:
+						{
+    int initialChar = yytext().charAt(0);
+    if(initialChar == '_' || initialChar == '$' || Character.isDigit(initialChar)) {
+        return new Symbol(TokenIds.LEX_ERROR, new Token("ILLEGAL_ID", yytext(), yyline));
+    }
+    return new Symbol(TokenIds.ID,
+    new Token("ID", yytext(), yyline));
+}
 					case -52:
 						break;
-					case 58:
-						{ throw new RuntimeException("Unmatched lexeme " +
-                          yytext() + " at line " + yyline); }
+					case 53:
+						{ return new Symbol(TokenIds.LEX_ERROR,
+                            new Token("ILLEGAL_CHAR", yytext(), yyline)); }
 					case -53:
 						break;
-					case 60:
-						{ throw new RuntimeException("Unmatched lexeme " +
-                          yytext() + " at line " + yyline); }
+					case 54:
+						{ return new Symbol(TokenIds.LEX_ERROR,
+                            new Token("UNTERMINATED_STRING", yytext(), yyline)); }
 					case -54:
 						break;
-					case 62:
-						{ throw new RuntimeException("Unmatched lexeme " +
-                          yytext() + " at line " + yyline); }
+					case 56:
+						{
+    int initialChar = yytext().charAt(0);
+    if(initialChar == '_' || initialChar == '$' || Character.isDigit(initialChar)) {
+        return new Symbol(TokenIds.LEX_ERROR, new Token("ILLEGAL_ID", yytext(), yyline));
+    }
+    return new Symbol(TokenIds.ID,
+    new Token("ID", yytext(), yyline));
+}
 					case -55:
 						break;
-					case 64:
-						{ throw new RuntimeException("Unmatched lexeme " +
-                          yytext() + " at line " + yyline); }
+					case 57:
+						{ return new Symbol(TokenIds.LEX_ERROR,
+                            new Token("UNTERMINATED_STRING", yytext(), yyline)); }
 					case -56:
 						break;
-					case 66:
-						{ throw new RuntimeException("Unmatched lexeme " +
-                          yytext() + " at line " + yyline); }
+					case 59:
+						{
+    int initialChar = yytext().charAt(0);
+    if(initialChar == '_' || initialChar == '$' || Character.isDigit(initialChar)) {
+        return new Symbol(TokenIds.LEX_ERROR, new Token("ILLEGAL_ID", yytext(), yyline));
+    }
+    return new Symbol(TokenIds.ID,
+    new Token("ID", yytext(), yyline));
+}
 					case -57:
 						break;
-					case 68:
-						{ throw new RuntimeException("Unmatched lexeme " +
-                          yytext() + " at line " + yyline); }
+					case 61:
+						{
+    int initialChar = yytext().charAt(0);
+    if(initialChar == '_' || initialChar == '$' || Character.isDigit(initialChar)) {
+        return new Symbol(TokenIds.LEX_ERROR, new Token("ILLEGAL_ID", yytext(), yyline));
+    }
+    return new Symbol(TokenIds.ID,
+    new Token("ID", yytext(), yyline));
+}
 					case -58:
 						break;
-					case 104:
-						{ throw new RuntimeException("Unmatched lexeme " +
-                          yytext() + " at line " + yyline); }
+					case 62:
+						{
+    int initialChar = yytext().charAt(0);
+    if(initialChar == '_' || initialChar == '$' || Character.isDigit(initialChar)) {
+        return new Symbol(TokenIds.LEX_ERROR, new Token("ILLEGAL_ID", yytext(), yyline));
+    }
+    return new Symbol(TokenIds.ID,
+    new Token("ID", yytext(), yyline));
+}
 					case -59:
+						break;
+					case 63:
+						{
+    int initialChar = yytext().charAt(0);
+    if(initialChar == '_' || initialChar == '$' || Character.isDigit(initialChar)) {
+        return new Symbol(TokenIds.LEX_ERROR, new Token("ILLEGAL_ID", yytext(), yyline));
+    }
+    return new Symbol(TokenIds.ID,
+    new Token("ID", yytext(), yyline));
+}
+					case -60:
+						break;
+					case 64:
+						{
+    int initialChar = yytext().charAt(0);
+    if(initialChar == '_' || initialChar == '$' || Character.isDigit(initialChar)) {
+        return new Symbol(TokenIds.LEX_ERROR, new Token("ILLEGAL_ID", yytext(), yyline));
+    }
+    return new Symbol(TokenIds.ID,
+    new Token("ID", yytext(), yyline));
+}
+					case -61:
+						break;
+					case 65:
+						{
+    int initialChar = yytext().charAt(0);
+    if(initialChar == '_' || initialChar == '$' || Character.isDigit(initialChar)) {
+        return new Symbol(TokenIds.LEX_ERROR, new Token("ILLEGAL_ID", yytext(), yyline));
+    }
+    return new Symbol(TokenIds.ID,
+    new Token("ID", yytext(), yyline));
+}
+					case -62:
+						break;
+					case 66:
+						{
+    int initialChar = yytext().charAt(0);
+    if(initialChar == '_' || initialChar == '$' || Character.isDigit(initialChar)) {
+        return new Symbol(TokenIds.LEX_ERROR, new Token("ILLEGAL_ID", yytext(), yyline));
+    }
+    return new Symbol(TokenIds.ID,
+    new Token("ID", yytext(), yyline));
+}
+					case -63:
+						break;
+					case 67:
+						{
+    int initialChar = yytext().charAt(0);
+    if(initialChar == '_' || initialChar == '$' || Character.isDigit(initialChar)) {
+        return new Symbol(TokenIds.LEX_ERROR, new Token("ILLEGAL_ID", yytext(), yyline));
+    }
+    return new Symbol(TokenIds.ID,
+    new Token("ID", yytext(), yyline));
+}
+					case -64:
+						break;
+					case 68:
+						{
+    int initialChar = yytext().charAt(0);
+    if(initialChar == '_' || initialChar == '$' || Character.isDigit(initialChar)) {
+        return new Symbol(TokenIds.LEX_ERROR, new Token("ILLEGAL_ID", yytext(), yyline));
+    }
+    return new Symbol(TokenIds.ID,
+    new Token("ID", yytext(), yyline));
+}
+					case -65:
+						break;
+					case 69:
+						{
+    int initialChar = yytext().charAt(0);
+    if(initialChar == '_' || initialChar == '$' || Character.isDigit(initialChar)) {
+        return new Symbol(TokenIds.LEX_ERROR, new Token("ILLEGAL_ID", yytext(), yyline));
+    }
+    return new Symbol(TokenIds.ID,
+    new Token("ID", yytext(), yyline));
+}
+					case -66:
+						break;
+					case 70:
+						{
+    int initialChar = yytext().charAt(0);
+    if(initialChar == '_' || initialChar == '$' || Character.isDigit(initialChar)) {
+        return new Symbol(TokenIds.LEX_ERROR, new Token("ILLEGAL_ID", yytext(), yyline));
+    }
+    return new Symbol(TokenIds.ID,
+    new Token("ID", yytext(), yyline));
+}
+					case -67:
+						break;
+					case 71:
+						{
+    int initialChar = yytext().charAt(0);
+    if(initialChar == '_' || initialChar == '$' || Character.isDigit(initialChar)) {
+        return new Symbol(TokenIds.LEX_ERROR, new Token("ILLEGAL_ID", yytext(), yyline));
+    }
+    return new Symbol(TokenIds.ID,
+    new Token("ID", yytext(), yyline));
+}
+					case -68:
+						break;
+					case 72:
+						{
+    int initialChar = yytext().charAt(0);
+    if(initialChar == '_' || initialChar == '$' || Character.isDigit(initialChar)) {
+        return new Symbol(TokenIds.LEX_ERROR, new Token("ILLEGAL_ID", yytext(), yyline));
+    }
+    return new Symbol(TokenIds.ID,
+    new Token("ID", yytext(), yyline));
+}
+					case -69:
+						break;
+					case 73:
+						{
+    int initialChar = yytext().charAt(0);
+    if(initialChar == '_' || initialChar == '$' || Character.isDigit(initialChar)) {
+        return new Symbol(TokenIds.LEX_ERROR, new Token("ILLEGAL_ID", yytext(), yyline));
+    }
+    return new Symbol(TokenIds.ID,
+    new Token("ID", yytext(), yyline));
+}
+					case -70:
+						break;
+					case 74:
+						{
+    int initialChar = yytext().charAt(0);
+    if(initialChar == '_' || initialChar == '$' || Character.isDigit(initialChar)) {
+        return new Symbol(TokenIds.LEX_ERROR, new Token("ILLEGAL_ID", yytext(), yyline));
+    }
+    return new Symbol(TokenIds.ID,
+    new Token("ID", yytext(), yyline));
+}
+					case -71:
+						break;
+					case 75:
+						{
+    int initialChar = yytext().charAt(0);
+    if(initialChar == '_' || initialChar == '$' || Character.isDigit(initialChar)) {
+        return new Symbol(TokenIds.LEX_ERROR, new Token("ILLEGAL_ID", yytext(), yyline));
+    }
+    return new Symbol(TokenIds.ID,
+    new Token("ID", yytext(), yyline));
+}
+					case -72:
+						break;
+					case 76:
+						{
+    int initialChar = yytext().charAt(0);
+    if(initialChar == '_' || initialChar == '$' || Character.isDigit(initialChar)) {
+        return new Symbol(TokenIds.LEX_ERROR, new Token("ILLEGAL_ID", yytext(), yyline));
+    }
+    return new Symbol(TokenIds.ID,
+    new Token("ID", yytext(), yyline));
+}
+					case -73:
+						break;
+					case 77:
+						{
+    int initialChar = yytext().charAt(0);
+    if(initialChar == '_' || initialChar == '$' || Character.isDigit(initialChar)) {
+        return new Symbol(TokenIds.LEX_ERROR, new Token("ILLEGAL_ID", yytext(), yyline));
+    }
+    return new Symbol(TokenIds.ID,
+    new Token("ID", yytext(), yyline));
+}
+					case -74:
+						break;
+					case 78:
+						{
+    int initialChar = yytext().charAt(0);
+    if(initialChar == '_' || initialChar == '$' || Character.isDigit(initialChar)) {
+        return new Symbol(TokenIds.LEX_ERROR, new Token("ILLEGAL_ID", yytext(), yyline));
+    }
+    return new Symbol(TokenIds.ID,
+    new Token("ID", yytext(), yyline));
+}
+					case -75:
+						break;
+					case 79:
+						{
+    int initialChar = yytext().charAt(0);
+    if(initialChar == '_' || initialChar == '$' || Character.isDigit(initialChar)) {
+        return new Symbol(TokenIds.LEX_ERROR, new Token("ILLEGAL_ID", yytext(), yyline));
+    }
+    return new Symbol(TokenIds.ID,
+    new Token("ID", yytext(), yyline));
+}
+					case -76:
+						break;
+					case 80:
+						{
+    int initialChar = yytext().charAt(0);
+    if(initialChar == '_' || initialChar == '$' || Character.isDigit(initialChar)) {
+        return new Symbol(TokenIds.LEX_ERROR, new Token("ILLEGAL_ID", yytext(), yyline));
+    }
+    return new Symbol(TokenIds.ID,
+    new Token("ID", yytext(), yyline));
+}
+					case -77:
+						break;
+					case 81:
+						{
+    int initialChar = yytext().charAt(0);
+    if(initialChar == '_' || initialChar == '$' || Character.isDigit(initialChar)) {
+        return new Symbol(TokenIds.LEX_ERROR, new Token("ILLEGAL_ID", yytext(), yyline));
+    }
+    return new Symbol(TokenIds.ID,
+    new Token("ID", yytext(), yyline));
+}
+					case -78:
+						break;
+					case 82:
+						{
+    int initialChar = yytext().charAt(0);
+    if(initialChar == '_' || initialChar == '$' || Character.isDigit(initialChar)) {
+        return new Symbol(TokenIds.LEX_ERROR, new Token("ILLEGAL_ID", yytext(), yyline));
+    }
+    return new Symbol(TokenIds.ID,
+    new Token("ID", yytext(), yyline));
+}
+					case -79:
+						break;
+					case 83:
+						{
+    int initialChar = yytext().charAt(0);
+    if(initialChar == '_' || initialChar == '$' || Character.isDigit(initialChar)) {
+        return new Symbol(TokenIds.LEX_ERROR, new Token("ILLEGAL_ID", yytext(), yyline));
+    }
+    return new Symbol(TokenIds.ID,
+    new Token("ID", yytext(), yyline));
+}
+					case -80:
+						break;
+					case 84:
+						{
+    int initialChar = yytext().charAt(0);
+    if(initialChar == '_' || initialChar == '$' || Character.isDigit(initialChar)) {
+        return new Symbol(TokenIds.LEX_ERROR, new Token("ILLEGAL_ID", yytext(), yyline));
+    }
+    return new Symbol(TokenIds.ID,
+    new Token("ID", yytext(), yyline));
+}
+					case -81:
+						break;
+					case 85:
+						{
+    int initialChar = yytext().charAt(0);
+    if(initialChar == '_' || initialChar == '$' || Character.isDigit(initialChar)) {
+        return new Symbol(TokenIds.LEX_ERROR, new Token("ILLEGAL_ID", yytext(), yyline));
+    }
+    return new Symbol(TokenIds.ID,
+    new Token("ID", yytext(), yyline));
+}
+					case -82:
+						break;
+					case 86:
+						{
+    int initialChar = yytext().charAt(0);
+    if(initialChar == '_' || initialChar == '$' || Character.isDigit(initialChar)) {
+        return new Symbol(TokenIds.LEX_ERROR, new Token("ILLEGAL_ID", yytext(), yyline));
+    }
+    return new Symbol(TokenIds.ID,
+    new Token("ID", yytext(), yyline));
+}
+					case -83:
+						break;
+					case 87:
+						{
+    int initialChar = yytext().charAt(0);
+    if(initialChar == '_' || initialChar == '$' || Character.isDigit(initialChar)) {
+        return new Symbol(TokenIds.LEX_ERROR, new Token("ILLEGAL_ID", yytext(), yyline));
+    }
+    return new Symbol(TokenIds.ID,
+    new Token("ID", yytext(), yyline));
+}
+					case -84:
+						break;
+					case 88:
+						{
+    int initialChar = yytext().charAt(0);
+    if(initialChar == '_' || initialChar == '$' || Character.isDigit(initialChar)) {
+        return new Symbol(TokenIds.LEX_ERROR, new Token("ILLEGAL_ID", yytext(), yyline));
+    }
+    return new Symbol(TokenIds.ID,
+    new Token("ID", yytext(), yyline));
+}
+					case -85:
+						break;
+					case 89:
+						{
+    int initialChar = yytext().charAt(0);
+    if(initialChar == '_' || initialChar == '$' || Character.isDigit(initialChar)) {
+        return new Symbol(TokenIds.LEX_ERROR, new Token("ILLEGAL_ID", yytext(), yyline));
+    }
+    return new Symbol(TokenIds.ID,
+    new Token("ID", yytext(), yyline));
+}
+					case -86:
+						break;
+					case 90:
+						{
+    int initialChar = yytext().charAt(0);
+    if(initialChar == '_' || initialChar == '$' || Character.isDigit(initialChar)) {
+        return new Symbol(TokenIds.LEX_ERROR, new Token("ILLEGAL_ID", yytext(), yyline));
+    }
+    return new Symbol(TokenIds.ID,
+    new Token("ID", yytext(), yyline));
+}
+					case -87:
+						break;
+					case 91:
+						{
+    int initialChar = yytext().charAt(0);
+    if(initialChar == '_' || initialChar == '$' || Character.isDigit(initialChar)) {
+        return new Symbol(TokenIds.LEX_ERROR, new Token("ILLEGAL_ID", yytext(), yyline));
+    }
+    return new Symbol(TokenIds.ID,
+    new Token("ID", yytext(), yyline));
+}
+					case -88:
+						break;
+					case 92:
+						{
+    int initialChar = yytext().charAt(0);
+    if(initialChar == '_' || initialChar == '$' || Character.isDigit(initialChar)) {
+        return new Symbol(TokenIds.LEX_ERROR, new Token("ILLEGAL_ID", yytext(), yyline));
+    }
+    return new Symbol(TokenIds.ID,
+    new Token("ID", yytext(), yyline));
+}
+					case -89:
+						break;
+					case 93:
+						{
+    int initialChar = yytext().charAt(0);
+    if(initialChar == '_' || initialChar == '$' || Character.isDigit(initialChar)) {
+        return new Symbol(TokenIds.LEX_ERROR, new Token("ILLEGAL_ID", yytext(), yyline));
+    }
+    return new Symbol(TokenIds.ID,
+    new Token("ID", yytext(), yyline));
+}
+					case -90:
+						break;
+					case 94:
+						{
+    int initialChar = yytext().charAt(0);
+    if(initialChar == '_' || initialChar == '$' || Character.isDigit(initialChar)) {
+        return new Symbol(TokenIds.LEX_ERROR, new Token("ILLEGAL_ID", yytext(), yyline));
+    }
+    return new Symbol(TokenIds.ID,
+    new Token("ID", yytext(), yyline));
+}
+					case -91:
+						break;
+					case 95:
+						{
+    int initialChar = yytext().charAt(0);
+    if(initialChar == '_' || initialChar == '$' || Character.isDigit(initialChar)) {
+        return new Symbol(TokenIds.LEX_ERROR, new Token("ILLEGAL_ID", yytext(), yyline));
+    }
+    return new Symbol(TokenIds.ID,
+    new Token("ID", yytext(), yyline));
+}
+					case -92:
+						break;
+					case 96:
+						{
+    int initialChar = yytext().charAt(0);
+    if(initialChar == '_' || initialChar == '$' || Character.isDigit(initialChar)) {
+        return new Symbol(TokenIds.LEX_ERROR, new Token("ILLEGAL_ID", yytext(), yyline));
+    }
+    return new Symbol(TokenIds.ID,
+    new Token("ID", yytext(), yyline));
+}
+					case -93:
+						break;
+					case 97:
+						{
+    int initialChar = yytext().charAt(0);
+    if(initialChar == '_' || initialChar == '$' || Character.isDigit(initialChar)) {
+        return new Symbol(TokenIds.LEX_ERROR, new Token("ILLEGAL_ID", yytext(), yyline));
+    }
+    return new Symbol(TokenIds.ID,
+    new Token("ID", yytext(), yyline));
+}
+					case -94:
+						break;
+					case 98:
+						{
+    int initialChar = yytext().charAt(0);
+    if(initialChar == '_' || initialChar == '$' || Character.isDigit(initialChar)) {
+        return new Symbol(TokenIds.LEX_ERROR, new Token("ILLEGAL_ID", yytext(), yyline));
+    }
+    return new Symbol(TokenIds.ID,
+    new Token("ID", yytext(), yyline));
+}
+					case -95:
+						break;
+					case 99:
+						{
+    int initialChar = yytext().charAt(0);
+    if(initialChar == '_' || initialChar == '$' || Character.isDigit(initialChar)) {
+        return new Symbol(TokenIds.LEX_ERROR, new Token("ILLEGAL_ID", yytext(), yyline));
+    }
+    return new Symbol(TokenIds.ID,
+    new Token("ID", yytext(), yyline));
+}
+					case -96:
+						break;
+					case 100:
+						{
+    int initialChar = yytext().charAt(0);
+    if(initialChar == '_' || initialChar == '$' || Character.isDigit(initialChar)) {
+        return new Symbol(TokenIds.LEX_ERROR, new Token("ILLEGAL_ID", yytext(), yyline));
+    }
+    return new Symbol(TokenIds.ID,
+    new Token("ID", yytext(), yyline));
+}
+					case -97:
+						break;
+					case 101:
+						{
+    int initialChar = yytext().charAt(0);
+    if(initialChar == '_' || initialChar == '$' || Character.isDigit(initialChar)) {
+        return new Symbol(TokenIds.LEX_ERROR, new Token("ILLEGAL_ID", yytext(), yyline));
+    }
+    return new Symbol(TokenIds.ID,
+    new Token("ID", yytext(), yyline));
+}
+					case -98:
+						break;
+					case 102:
+						{
+    int initialChar = yytext().charAt(0);
+    if(initialChar == '_' || initialChar == '$' || Character.isDigit(initialChar)) {
+        return new Symbol(TokenIds.LEX_ERROR, new Token("ILLEGAL_ID", yytext(), yyline));
+    }
+    return new Symbol(TokenIds.ID,
+    new Token("ID", yytext(), yyline));
+}
+					case -99:
 						break;
 					default:
 						yy_error(YY_E_INTERNAL,false);
