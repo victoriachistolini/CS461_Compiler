@@ -2,7 +2,7 @@ class Main {
     void stuff() {
         return;
     }
-    void lain(int x, String y) {
+    void main(int x, String y) {
         int v = x;
         String w = "6";
         int a = 6;

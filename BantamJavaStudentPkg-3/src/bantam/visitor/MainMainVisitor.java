@@ -37,7 +37,7 @@ public class MainMainVisitor extends Visitor {
      */
     public boolean hasMain(Program ast) {
         ast.accept(this);
-        return hasClass && hasMethod;
+        return this.hasClass && this.hasMethod;
     }
 
     /**
