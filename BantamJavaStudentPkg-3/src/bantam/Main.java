@@ -33,6 +33,7 @@ import bantam.codegenjvm.JVMCodeGenerator;
 import bantam.codegenmips.MipsCodeGenerator;
 import bantam.codegenx86.X86CodeGenerator;
 import bantam.interp.Interpreter;
+import bantam.visitor.MainMainVisitor;
 import java_cup.runtime.Symbol;
 import bantam.lexer.Lexer;
 import bantam.opt.Optimizer;
@@ -66,6 +67,11 @@ public class Main {
      * intermediate representation of the phase before exiting
      */
     private static boolean stopAfterLexing, stopAfterParsing, stopAfterSemant, stopAfterOpt;
+    /**
+     * Boolean flags that indicate whether or not some visitors should be
+     * utilized at a particular time
+     */
+    private static boolean findMain, findStringConstants, findLogicalVariables;
     /**
      * Debugging flags for each phase of the compiler
      */
@@ -106,7 +112,7 @@ public class Main {
      */
     private static void showHelp() {
         System.err.println("Usage: bantamc [-h] [-o <output_file>] [-t <architecture>]");
-        System.err.println("               [-gc] [-int] [-bantam.opt <num>] [-dt] [-dl] [-dp] [-ds]");
+        System.err.println("               [-gc] [-int] [-bantam.opt <num>] [-dt] [-dl] [-dp] [-ds] [-mm]");
         System.err.println("               [-di] [-do] [-dc] [-sl] [-sp] [-ss] [-so] <input_files>");
         System.err.println("man bantamc for more details");
         System.exit(1);
@@ -200,6 +206,17 @@ public class Main {
             }
             else if (args[i].equals("-so")) {
                 stopAfterOpt = true;
+            }
+
+            // if -mm then run the MainMain visitor to figure out if the class has a main items
+            else if (args[i].equals("-mm")) {
+                findMain = true;
+            }
+            else if (args[i].equals("-sc")) {
+                findStringConstants = true;
+            }
+            else if (args[i].equals("-lv")) {
+                findLogicalVariables = true;
             }
 
             // if -int turn on interpreter mode
@@ -363,6 +380,20 @@ public class Main {
                 Drawer drawer = new Drawer();
                 drawer.draw("AST",(Program) result.value);
                 System.in.read(); //to pause the program
+                System.exit(0);
+            }
+
+            if (findMain) {
+                MainMainVisitor visitor = new MainMainVisitor();
+                System.out.println(visitor.hasMain((Program) result.value));
+                System.exit(0);
+            }
+            if (findStringConstants) {
+                //do stuff Victoria!
+                System.exit(0);
+            }
+            if (findLogicalVariables) {
+                //do stuff Ed
                 System.exit(0);
             }
 
