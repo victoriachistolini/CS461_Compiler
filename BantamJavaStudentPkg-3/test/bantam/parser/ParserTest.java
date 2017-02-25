@@ -41,47 +41,6 @@ public class ParserTest
          you might want to initialize some fields here. */
     }
 
-    /**
-     * A generic legality test, the input string should be a representation of
-     * a legal bantam java file
-     * @params legalCode a String of legal Bantam Java code.
-     */
-    private void legalCodetest(String legalCode) throws Exception {
-        Parser parser = new Parser(new Lexer(new StringReader(legalCode)));
-        boolean thrown = false;
-
-        try {
-            parser.parse();
-        } catch (RuntimeException e) {
-            thrown = true;
-            assertEquals("Bantam parser found errors.", e.getMessage());
-            for (ErrorHandler.Error err : parser.getErrorHandler().getErrorList()) {
-                System.out.println(err);
-            }
-        }
-        assertFalse(thrown);
-    }
-
-    /**
-     * A generic illegality test, the input string should be a representation of
-     * an illegal bantam java file
-     * @params illegalCode a String of illegal Bantam Java code.
-     */
-    private void illegalCodetest(String illegalCode) throws Exception {
-        Parser parser = new Parser(new Lexer(new StringReader(illegalCode)));
-        boolean thrown = false;
-        try {
-            parser.parse();
-        } catch (RuntimeException e) {
-            thrown = true;
-            assertEquals("Bantam parser found errors.", e.getMessage());
-            for (ErrorHandler.Error err : parser.getErrorHandler().getErrorList()) {
-                System.out.println(err);
-            }
-        }
-        assertTrue(thrown);
-    }
-
     /** tests the case of a Main class with no members */
     @Test
     public void emptyMainClassTest() throws Exception {
@@ -135,7 +94,7 @@ public class ParserTest
      */
     @Test
     public void methodTest() throws Exception {
-        legalCodetest("class A { void stuff(){ int a = 4+5; }}");
+        legalCodetest("void stuff(){ int a = 4+5; }");
     }
 
     /**
@@ -145,10 +104,11 @@ public class ParserTest
     public void ifTest() throws Exception {
         String ifStmt = "int x = 4; if (x>10) return;";
         String ifElseStmt = "int x = 4; if (x <15) x++ ; else return;";
-        String ifElseNestedStmt = "int x = 4; if (x <15) x++ ; else if (d < 5) f = 7; else  return;";
-        legalCodetest("class A { void ifMethod(){ "+ ifStmt + " }}");
-        legalCodetest("class A { void ifMethod(){ "+ ifElseStmt + " }}");
-        legalCodetest("class A { void ifMethod(){ "+ ifElseNestedStmt + " }}");
+        String ifElseNestedStmt = "int x = 4; if (x <15) x++ ; " +
+                "                  else if (d < 5) f = 7; else  return;";
+        legalCodetest("void ifMethod(){ "+ ifStmt + " }");
+        legalCodetest("void ifMethod(){ "+ ifElseStmt + " }");
+        legalCodetest("void ifMethod(){ "+ ifElseNestedStmt + " }");
     }
 
     /**
@@ -156,8 +116,8 @@ public class ParserTest
      */
     @Test
     public void boolExprTest() throws Exception {
-        legalCodetest("class A { void sillyMethod(){if (true || false) return;}}");
-        legalCodetest("class A { void sillyMethod(){if (true && false) return;}}");
+        legalCodetest("void sillyMethod(){if (true || false) return;}");
+        legalCodetest("void sillyMethod(){if (true && false) return;}");
     }
 
     /**
@@ -166,7 +126,7 @@ public class ParserTest
      */
     @Test
     public void lexErrorMessageTest() throws Exception {
-        illegalCodetest("class A { \nint 9a = 3; }");
+        illegalCodetest("\nint 9a = 3; ");
     }
 
 
@@ -177,18 +137,18 @@ public class ParserTest
      */
     @Test
     public void forTest() throws Exception {
-        legalCodetest("class A { void ifMethod(){ for(;;) x=2;  }}");
-        legalCodetest("class A { void ifMethod(){ for(;;x=2) x=2;  }}");
+        legalCodetest("void ifMethod(){ for(;;) x=2; }");
+        legalCodetest("void ifMethod(){ for(;;x=2) x=2; }");
 
-        legalCodetest("class A { void ifMethod(){ for(;x=2;) x=2;  }}");
+        legalCodetest("void ifMethod(){ for(;x=2;) x=2; }");
 
-        legalCodetest("class A { void ifMethod(){ for(;x=2;x=3) x=2;  }}");
-        legalCodetest("class A { void ifMethod(){ for(x=2;;) x=2;  }}");
+        legalCodetest("void ifMethod(){ for(;x=2;x=3) x=2; }");
+        legalCodetest("void ifMethod(){ for(x=2;;) x=2; }");
 
-        legalCodetest("class A { void ifMethod(){ for(x=2;;x=2) x=2;  }}");
+        legalCodetest("void ifMethod(){ for(x=2;;x=2) x=2; }");
 
-        legalCodetest("class A { void ifMethod(){ for(x=2;x=2;) x=2;  }}");
-        legalCodetest("class A { void ifMethod(){ for(x=2;x< 3;x++) x=2;  }}");
+        legalCodetest("void ifMethod(){ for(x=2;x=2;) x=2; }");
+        legalCodetest("void ifMethod(){ for(x=2;x< 3;x++) x=2; }");
     }
 
     /**
@@ -196,7 +156,7 @@ public class ParserTest
      */
     @Test
     public void whileTest() throws Exception {
-        legalCodetest("class A { void whileMethod(){ while(x=2 ) x++;  }}");
+        legalCodetest("void whileMethod(){ while(x=2 ) x++;  }");
     }
 
     /**
@@ -204,7 +164,7 @@ public class ParserTest
      */
     @Test
     public void breakTest() throws Exception {
-        legalCodetest("class A { void breakMethod(){ break; }}");
+        legalCodetest("void breakMethod(){ break; }");
     }
 
     /**
@@ -212,7 +172,7 @@ public class ParserTest
      */
     @Test
     public void blockTest() throws Exception {
-        legalCodetest("class A { void blockMethod(){ while(a < 3){ a=3;b=4;c=9;} }}");
+        legalCodetest("void blockMethod(){ while(a < 3){ a=3;b=4;c=9;} }");
     }
 
     /**
@@ -220,8 +180,8 @@ public class ParserTest
      */
     @Test
     public void newTest() throws Exception {
-        legalCodetest("class A { void newMethod(){ a = new Stuff(); }}");
-        legalCodetest("class A { void newMethod(){ a = new String[5+6]; }}");
+        legalCodetest("void newMethod(){ a = new Stuff(); }");
+        legalCodetest("void newMethod(){ a = new String[5+6]; }");
     }
 
 
@@ -230,8 +190,8 @@ public class ParserTest
      */
     @Test
     public void castTest() throws Exception {
-        legalCodetest("class A { void newMethod(){ a = (int)( 6+9); }}");
-        legalCodetest("class A { void newMethod(){ a = (int[])(\"String\"); }}");
+        legalCodetest("void newMethod(){ a = (int)( 6+9); }");
+        legalCodetest("void newMethod(){ a = (int[])(\"String\"); }");
     }
 
 
@@ -242,19 +202,18 @@ public class ParserTest
     public void binaryArithTest() throws Exception {
 
         // try minus binary arith test with stringConstExpr and newExpr
-        legalCodetest("class A { void newMethod(){ a = \"String\"++ - new array[10]; }}");
+        legalCodetest("void newMethod(){ a = \"String\"++ - new array[10]; }");
 
         // try modulus bin arith with an instanceof expr
-        legalCodetest("class A { void newMethod(){ q = thing1 instanceof A % thing2 instanceof B; }}");
-
-        // try multiplication bin arith with a dispatch and a varExpr
-        //legalCodetest("class A { void newMethod(int x,int y){result =  a.shape() * q.shape ; }}");
+        legalCodetest("void newMethod(){ q = thing1 instanceof A % " +
+                "                            thing2 instanceof B; }");
 
         // try addition bin arith with dynamic dispatches
-        legalCodetest("class A { void newMethod(){ this.Stuff[x++] + x=5.number(); }}");
+        legalCodetest("void newMethod(){ this.Stuff[x++] + x=5.number(); }");
 
         // try divide bin arith with
-        legalCodetest("class A { void newMethod(){ q = (((thing[]) (junk)) / ((cooolerJunk) (intJunk) )); }}");
+        legalCodetest("void newMethod(){ q = (((thing[]) (junk)) / " +
+                "      ((cooolerJunk) (intJunk) )); }");
     }
 
 
@@ -265,9 +224,11 @@ public class ParserTest
     @Test
     public void binaryCompTest() throws Exception {
         // testing all binary comparisons with the binary logic OR
-        legalCodetest("class A { void newCompMethod(){ int a =0; if ( (--a == b) || (b !=c) ) { b = ( (c < d) || (d <= e) ); f = ((g > h) || (h >= i));} } }");
+        legalCodetest("void newCompMethod(){ int a =0; if ( (--a == b) || (b !=c) ) " +
+                      "{ b = ( (c < d) || (d <= e) ); f = ((g > h) || (h >= i));} }");
         // testing all binary comparisions with binary logic OR / AND
-        legalCodetest("class A { void newCompMethod(){ int a =0; if ( (a == b) || (b !=c) ) { b = ( (c < d) && (d <= e) ); f = ((g > h) || (h >= i));} } }");
+        legalCodetest("void newCompMethod(){ int a =0; if ( (a == b) || (b !=c) ) " +
+                      "{ b = ( (c < d) && (d <= e) ); f = ((g > h) || (h >= i));} }");
 
 
     }
@@ -276,9 +237,9 @@ public class ParserTest
     @Test
     public void unaryTest() throws Exception {
         // testing negative unary
-        legalCodetest("class A { void unaryMethod(){ a=-b; b=!a; } }");
+        legalCodetest("void unaryMethod(){ a=-b; b=!a; }");
         // unary incr
-        legalCodetest("class A { void unaryMethod(){ a=++b; b=a++; c = --d; d = c--; } }");
+        legalCodetest("void unaryMethod(){ a=++b; b=a++; c = --d; d = c--; }");
 
 
     }
@@ -289,7 +250,7 @@ public class ParserTest
      */
     @Test
     public void dispatchTest() throws Exception {
-        legalCodetest("class A { void newMethod(){ int x = 4; a = blah.number(); }}");
+        legalCodetest("void newMethod(){ int x = 4; a = blah.number(); }");
     }
 
     /**
@@ -297,14 +258,14 @@ public class ParserTest
      */
     @Test
     public void missingSEMITest() throws Exception {
-        legalCodetest("class A { void sillyMethod() { int a = 4+5; }}");
-        legalCodetest("class A { void sillyMethod() { return; }}");
-        legalCodetest("class A { void sillyMethod() { break; }}");
-        legalCodetest("class A { int i; void sillyMethod() { for(i=0 ; i<3 ; i++) { return; }}}");
-        illegalCodetest("class A { void sillyMethod() { int a = 4 }}");
-        illegalCodetest("class A { void sillyMethod() { return }}");
-        illegalCodetest("class A { void sillyMethod() { break }}");
-        illegalCodetest("class A { void sillyMethod() { for(int i=0 i<3 i++) { return; }}}");
+        legalCodetest("void sillyMethod() { int a = 4+5; }");
+        legalCodetest("void sillyMethod() { return; }");
+        legalCodetest("void sillyMethod() { break; }");
+        legalCodetest("int i; void sillyMethod() { for(i=0 ; i<3 ; i++) { return; }}");
+        illegalCodetest("void sillyMethod() { int a = 4 }");
+        illegalCodetest("void sillyMethod() { return }");
+        illegalCodetest("void sillyMethod() { break }");
+        illegalCodetest("void sillyMethod() { for(int i=0 i<3 i++) { return; }");
     }
 
     /**
@@ -312,8 +273,57 @@ public class ParserTest
      */
     @Test
     public void unmatchedParensTest() throws Exception {
-        legalCodetest("class A { void sillyMethod(){}}");
-        illegalCodetest("class A { void sillyMethod({}}");
-        illegalCodetest("class A { void sillyMethod){}}");
+        legalCodetest("void sillyMethod(){}");
+        illegalCodetest("void sillyMethod({}");
+        illegalCodetest("void sillyMethod){}");
     }
+
+    @Test
+    public void stringTest() throws Exception {
+        legalCodetest("/**/ S h = \"b\";\n void b() { a = \"r\"; }");
+    }
+
+    /**
+     * A generic legality test, the input string should be a representation of
+     * a legal bantam java file
+     * @params legalCode a String of legal Bantam Java code.
+     */
+    private void legalCodetest(String legalCode) throws Exception {
+        Parser parser = new Parser(
+                            new Lexer(new StringReader("class A {"+ legalCode +"}")));
+        boolean thrown = false;
+
+        try {
+            parser.parse();
+        } catch (RuntimeException e) {
+            thrown = true;
+            assertEquals("Bantam parser found errors.", e.getMessage());
+            for (ErrorHandler.Error err : parser.getErrorHandler().getErrorList()) {
+                System.out.println(err);
+            }
+        }
+        assertFalse(thrown);
+    }
+
+    /**
+     * A generic illegality test, the input string should be a representation of
+     * an illegal bantam java file
+     * @params illegalCode a String of illegal Bantam Java code.
+     */
+    private void illegalCodetest(String illegalCode) throws Exception {
+        Parser parser = new Parser(
+                            new Lexer(new StringReader("class A {"+ illegalCode +"}")));
+        boolean thrown = false;
+        try {
+            parser.parse();
+        } catch (RuntimeException e) {
+            thrown = true;
+            assertEquals("Bantam parser found errors.", e.getMessage());
+            for (ErrorHandler.Error err : parser.getErrorHandler().getErrorList()) {
+                System.out.println(err);
+            }
+        }
+        assertTrue(thrown);
+    }
+
 }

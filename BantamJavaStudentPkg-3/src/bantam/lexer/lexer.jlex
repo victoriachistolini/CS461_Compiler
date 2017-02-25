@@ -212,9 +212,9 @@ import java_cup.runtime.Symbol;
 
 <YYINITIAL>//.*            {  }
 
-<YYINITIAL>\/\*([^*]|[\r\n]|(\*+([^*\/]|[\r\n])))*\*\/  {  }
+<YYINITIAL>/\*([^*]|[\n]|(\*+([^*/]|[\n])))*\*+/  {  }
 
-<YYINITIAL>\/\*([^*]|[\r\n]|(\*+([^*\/]|[\r\n])))*       { return new Symbol(TokenIds.LEX_ERROR,
+<YYINITIAL>/\*([^*]|[\n]|(\*+([^*/]|[\n])))*       { return new Symbol(TokenIds.LEX_ERROR,
 						                                    new Token("UNTERMINATED_COMMENT", yyline)); }
 
 <YYINITIAL>[ \r\n\b\t\f]+   {  }
@@ -377,7 +377,7 @@ import java_cup.runtime.Symbol;
 	                    new Token("STRING_CONST", yytext(), yyline));
 }
 
-<YYINITIAL>\"(.|\n)+\"       { return new Symbol(TokenIds.LEX_ERROR,
+<YYINITIAL>\"([^\"\n]*|\n)*\"      { return new Symbol(TokenIds.LEX_ERROR,
                             new Token("MULTILINE_STRING", yyline)); }
 
 <YYINITIAL>\"[^\"]*       { return new Symbol(TokenIds.LEX_ERROR,
