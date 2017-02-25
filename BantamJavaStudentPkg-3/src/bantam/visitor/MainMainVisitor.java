@@ -1,16 +1,24 @@
 /**
- *
+ * File: StringConstantsVisitor.java
+ * @author Victoria Chistolini
+ * @author Edward (osan) Zhou
+ * @author Alex Rinker
+ * @author Vivek Sah
+ * Class: CS461
+ * Project: 2.5
+ * Date: Feb 25, 2017
  */
 
 package bantam.visitor;
-
 import bantam.ast.*;
 
 /**
- * Created by Alex on 2/25/17.
+ * Determine if there is a main class and main method in set of files
  */
 public class MainMainVisitor extends Visitor {
+    // if we found a main class
     private boolean hasClass;
+    // if we found a main method
     private boolean hasMethod;
 
     /**
@@ -47,6 +55,12 @@ public class MainMainVisitor extends Visitor {
         return null;
     }
 
+
+    /**
+     * For each method checks if it is the main method
+     * @param methodNode
+     * @return
+     */
     @Override
     public Object visit(Method methodNode) {
         if(methodNode.getName().equals("main")) {
@@ -67,10 +81,11 @@ public class MainMainVisitor extends Visitor {
     }
 
     /**
-     * very simple test
+     * does nothing
      * @param args unused
      */
     public static void main(String[] args) {
         return;
     }
+
 }

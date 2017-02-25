@@ -34,6 +34,7 @@ import bantam.codegenmips.MipsCodeGenerator;
 import bantam.codegenx86.X86CodeGenerator;
 import bantam.interp.Interpreter;
 import bantam.visitor.MainMainVisitor;
+import bantam.visitor.StringConstantsVisitor;
 import java_cup.runtime.Symbol;
 import bantam.lexer.Lexer;
 import bantam.opt.Optimizer;
@@ -290,21 +291,9 @@ public class Main {
                 i++;
                 // otherwise set output file
                 outFile = args[i];
-                /* NO LONGER FORCING .s extension
-        		// check filename ends in .s
-        		if (outFile.length() < 3 ||
-        		    !outFile.substring(outFile.length()-2).equals(".s")) {
-        		    // if not, then print error message and call showHelp()
-        		    // (which eventually exits)
-        		    System.err.println("Usage error: bad output file name: " + outFile);
-        		    System.err.println("             file name must end with '.s'");
-        		    showHelp();
-        		}
-		        */
             }
 
             // any other arguments must be input files
-
             // check if argument ends in .btm
             else if (args[i].length() >= 5 && args[i].substring(args[i].length() - 4).equals(".btm")) {
                 // if so then set next entry in inFiles
@@ -389,7 +378,8 @@ public class Main {
                 System.exit(0);
             }
             if (findStringConstants) {
-                //do stuff Victoria!
+                StringConstantsVisitor stringConstants = new StringConstantsVisitor();
+                System.out.println(stringConstants.getStringConstants((Program) result.value));
                 System.exit(0);
             }
             if (findLogicalVariables) {

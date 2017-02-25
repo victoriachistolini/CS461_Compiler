@@ -4,10 +4,11 @@ class Main {
     }
     void lain(int x, String y) {
         int v = x;
-        String w = y;
+        String w = "6";
         int a = 6;
+        //String x = "3";
         a = a.thingy();
-        if( true || false ) { return; }
+        if( true || false ) { return ; }
     }
 }
 
