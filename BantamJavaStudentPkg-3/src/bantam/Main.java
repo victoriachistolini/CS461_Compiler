@@ -34,6 +34,7 @@ import bantam.codegenmips.MipsCodeGenerator;
 import bantam.codegenx86.X86CodeGenerator;
 import bantam.interp.Interpreter;
 import bantam.visitor.MainMainVisitor;
+import bantam.visitor.NumLocalVarsVisitor;
 import bantam.visitor.StringConstantsVisitor;
 import java_cup.runtime.Symbol;
 import bantam.lexer.Lexer;
@@ -113,8 +114,9 @@ public class Main {
      */
     private static void showHelp() {
         System.err.println("Usage: bantamc [-h] [-o <output_file>] [-t <architecture>]");
-        System.err.println("               [-gc] [-int] [-bantam.opt <num>] [-dt] [-dl] [-dp] [-ds] [-mm]");
-        System.err.println("               [-di] [-do] [-dc] [-sl] [-sp] [-ss] [-so] <input_files>");
+        System.err.println("               [-gc] [-int] [-bantam.opt <num>] [-dt] [-dl] [-dp] [-ds]");
+        System.err.println("               [-di] [-do] [-dc] [-sl] [-sp] [-ss] [-so]");
+        System.err.println("               [-mm] [-sc] [-lv] <input_files>");
         System.err.println("man bantamc for more details");
         System.exit(1);
     }
@@ -383,7 +385,8 @@ public class Main {
                 System.exit(0);
             }
             if (findLogicalVariables) {
-                //do stuff Ed
+                NumLocalVarsVisitor localVars = new NumLocalVarsVisitor();
+                System.out.println(localVars.getNumLocalVars((Program) result.value));
                 System.exit(0);
             }
 

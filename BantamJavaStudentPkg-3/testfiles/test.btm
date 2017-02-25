@@ -10,10 +10,17 @@ class Main {
         a = a.thingy();
         if( true || false ) { return ; }
     }
+
+    int otherMethod(String v) {
+        int w = 99;
+        return w;
+    }
 }
 
 class Vain {
+    int blah = 5;
     void main() {
+        int gtfo = 5;
         return;
     }
 }
