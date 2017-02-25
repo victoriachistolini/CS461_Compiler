@@ -1,5 +1,5 @@
 /**
- * File: StringConstantsVisitor.java
+ * File: NumLocalVarsVisitor.java
  * @author Victoria Chistolini
  * @author Edward (osan) Zhou
  * @author Alex Rinker
@@ -41,6 +41,11 @@ public class NumLocalVarsVisitor extends Visitor {
         return localVars;
     }
 
+    /**
+     * Handles traversing the class node
+     * @param classNode the class AST node
+     * @return nothing
+     */
     @Override
     public Object visit(Class_ classNode) {
         currClass = classNode.getName();
@@ -48,6 +53,11 @@ public class NumLocalVarsVisitor extends Visitor {
         return null;
     }
 
+    /**
+     * Handles traversing a method node
+     * @param methodNode the method AST node
+     * @return nothing
+     */
     @Override
     public Object visit(Method methodNode) {
         currMethod = methodNode.getName();
@@ -55,19 +65,29 @@ public class NumLocalVarsVisitor extends Visitor {
         return null;
     }
 
+    /**
+     * Handles traversing the Formal node
+     * @param formalNode the formal AST Node
+     * @return nothing
+     */
     @Override
     public Object visit(Formal formalNode) {
         addVar();
         return null;
     }
 
+    /**
+     * Handles traversing the DeclStmt node
+     * @param declNode the AST node
+     * @return nothing
+     */
     @Override
     public Object visit(DeclStmt declNode) {
         addVar();
         return null;
     }
 
-    //The following hanlde Nodes to terminate traversal on
+    //The following handle Nodes to terminate traversal on
     @Override
     public Object visit(Field fieldNode) {
         return null;
@@ -82,6 +102,12 @@ public class NumLocalVarsVisitor extends Visitor {
     @Override
     public Object visit(BreakStmt breakNode) { return null; }
 
+    //End Handling traversal termination
+
+    /**
+     * This helper method adds to variable count based on the
+     * current class and method
+     */
     private void addVar() {
         String key = this.currClass + "." + this.currMethod;
         if(localVars.containsKey(key)) {

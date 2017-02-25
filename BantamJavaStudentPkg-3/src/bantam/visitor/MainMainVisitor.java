@@ -1,5 +1,5 @@
 /**
- * File: StringConstantsVisitor.java
+ * File: MainMainVisitor.java
  * @author Victoria Chistolini
  * @author Edward (osan) Zhou
  * @author Alex Rinker

@@ -1,3 +1,14 @@
+/**
+ * File: Main.java
+ * @author Victoria Chistolini
+ * @author Edward (osan) Zhou
+ * @author Alex Rinker
+ * @author Vivek Sah
+ * Class: CS461
+ * Project: 2.5
+ * Date: Feb 25, 2017
+ */
+
 package bantam;/* Bantam Java Compiler and Language Toolset.
 
    Copyright (C) 2007 by Marc Corliss (corliss@hws.edu) and 
