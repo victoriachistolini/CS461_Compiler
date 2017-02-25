@@ -1,0 +1,18 @@
+class Main {
+    void stuff() {
+        return;
+    }
+    void lain(int x, String y) {
+        int v = x;
+        String w = y;
+        int a = 6;
+        a = a.thingy();
+        if( true || false ) { return; }
+    }
+}
+
+class Vain {
+    void main() {
+        return;
+    }
+}
