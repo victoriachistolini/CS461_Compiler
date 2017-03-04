@@ -28,6 +28,7 @@ package bantam.semant;
 
 import bantam.ast.*;
 import bantam.util.*;
+import bantam.visitor.ClassVisitor;
 import bantam.visitor.MethodSymbolTableVisitor;
 
 import java.util.*;
@@ -85,7 +86,7 @@ public class SemanticAnalyzer {
     public ClassTreeNode analyze() {
 	    // 1 - add built in classes to class tree
 	    updateBuiltins();
-        //ed does stuff
+        buildClassHierarchy();
         populateMethodTables();
 
         // comment out
@@ -251,6 +252,14 @@ public class SemanticAnalyzer {
 	// create class tree node for Sys, add it to the mapping
 	classMap.put("Sys", new ClassTreeNode(astNode, /*built-in?*/true, /*extendable?*/false, classMap));
     }
+
+	/**
+	 * Builds the class hierarchy
+	 */
+	private void buildClassHierarchy() {
+		ClassVisitor classVisitor = new ClassVisitor();
+		classVisitor.buildClassHierarchy(this.program, this.classMap, this.errorHandler);
+	}
 
     /**
      * This method populates the method symbol table with the desired information
