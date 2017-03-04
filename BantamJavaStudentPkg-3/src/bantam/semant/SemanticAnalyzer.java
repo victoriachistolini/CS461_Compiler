@@ -86,14 +86,7 @@ public class SemanticAnalyzer {
 	    // 1 - add built in classes to class tree
 	    updateBuiltins();
         //ed does stuff
-        MethodSymbolTableVisitor methodVisitor = new MethodSymbolTableVisitor();
-        for( Map.Entry<String, ClassTreeNode> entry : this.classMap.entrySet() ) {
-            methodVisitor.populateSymbolTable(
-                    entry.getValue().getASTNode(),
-                    entry.getValue().getMethodSymbolTable(),
-                    errorHandler);
-        }
-
+        populateMethodTables();
 
         // comment out
         throw new RuntimeException("Semantic analyzer unimplemented");
@@ -257,5 +250,31 @@ public class SemanticAnalyzer {
 		       );
 	// create class tree node for Sys, add it to the mapping
 	classMap.put("Sys", new ClassTreeNode(astNode, /*built-in?*/true, /*extendable?*/false, classMap));
+    }
+
+    /**
+     * This method populates the method symbol table with the desired information
+     */
+    private void populateMethodTables() {
+        MethodSymbolTableVisitor methodVisitor = new MethodSymbolTableVisitor();
+        populateMethodTables(this.root, methodVisitor);
+    }
+
+    /**
+     * Recursive helper method for populateMethodTables
+     * @param root the current node of the tree
+     * @param visitor the visitor object used to handle the nitty gritty stuff
+     */
+    private void populateMethodTables(
+            ClassTreeNode root,
+            MethodSymbolTableVisitor visitor
+    ) {
+        visitor.populateSymbolTable(
+                root.getASTNode(),
+                root.getMethodSymbolTable(),
+                this.errorHandler);
+        root.getChildrenList().forEachRemaining(
+                child -> populateMethodTables(child, visitor)
+        );
     }
 }

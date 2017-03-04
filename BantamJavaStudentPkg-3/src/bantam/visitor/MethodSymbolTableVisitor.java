@@ -18,16 +18,14 @@ public class MethodSymbolTableVisitor extends Visitor {
      * returns whether a Main class exists and has a main method
      * within it
      * @param classNode the ASTNode forming the root of the class
-     * @return the populated symbol table for the given class
      */
-    public SymbolTable populateSymbolTable(Class_ classNode,
+    public void populateSymbolTable(Class_ classNode,
                                            SymbolTable table,
                                            ErrorHandler e) {
         this.errHandler = e;
         this.currClass = classNode;
         this.methodTable = table;
         classNode.accept(this);
-        return methodTable;
     }
 
     /**
@@ -37,7 +35,7 @@ public class MethodSymbolTableVisitor extends Visitor {
      */
     @Override
     public Object visit(Method methodNode) {
-        if(this.methodTable.lookup(methodNode.getName()) == null) {
+        if(this.methodTable.lookup(methodNode.getName()) != null) {
             errHandler.register(
                     errHandler.SEMANT_ERROR,
                     currClass.getFilename(),
