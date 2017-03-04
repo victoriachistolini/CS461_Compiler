@@ -11,6 +11,8 @@
 package bantam.visitor;
 
 import bantam.ast.*;
+import com.sun.org.apache.bcel.internal.generic.INSTANCEOF;
+import com.sun.org.apache.bcel.internal.generic.NEW;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,19 +26,13 @@ public class NumLocalVarsVisitor extends Visitor {
     private String currMethod;
 
     /**
-     * set up the classes fields
-     */
-    public NumLocalVarsVisitor() {
-        localVars = new HashMap<String, Integer>();
-    }
-
-    /**
      * returns whether a Main class exists and has a main method
      * within it
      * @param ast the ASTNode forming the root of the tree
      * @return whether a Main class exists with a main method
      */
     public Map<String, Integer> getNumLocalVars(Program ast) {
+        localVars = new HashMap<String, Integer>();
         ast.accept(this);
         return localVars;
     }
@@ -94,13 +90,34 @@ public class NumLocalVarsVisitor extends Visitor {
     }
 
     @Override
-    public Object visit(Expr exprNode) { return null; }
+    public Object visit(AssignExpr assNode) { return null; }
+
+    @Override
+    public Object visit(DispatchExpr disNode) { return null; }
+
+    @Override
+    public Object visit(NewExpr newNode) { return null; }
+
+    @Override
+    public Object visit(InstanceofExpr instNode) { return null; }
+
+    @Override
+    public Object visit(CastExpr castNode) { return null; }
+
+    @Override
+    public Object visit(BinaryExpr binNode) { return null; }
+
+    @Override
+    public Object visit(UnaryExpr unNode) { return null; }
+
+    @Override
+    public Object visit(ConstExpr conNode) { return null; }
+
+    @Override
+    public Object visit(VarExpr varNode) { return null; }
 
     @Override
     public Object visit(ReturnStmt returnNode) { return null; }
-
-    @Override
-    public Object visit(BreakStmt breakNode) { return null; }
 
     //End Handling traversal termination
 
@@ -116,14 +133,6 @@ public class NumLocalVarsVisitor extends Visitor {
         else {
             localVars.put(currClass + "." + currMethod, 1);
         }
-    }
-
-    /**
-     * very simple test
-     * @param args unused
-     */
-    public static void main(String[] args) {
-        return;
     }
 }
 

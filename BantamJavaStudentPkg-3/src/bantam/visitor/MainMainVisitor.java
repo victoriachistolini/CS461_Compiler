@@ -22,20 +22,14 @@ public class MainMainVisitor extends Visitor {
     private boolean hasMethod;
 
     /**
-     * set up the classes fields
-     */
-    public MainMainVisitor() {
-        this.hasClass = false;
-        this.hasMethod = false;
-    }
-
-    /**
      * returns whether a Main class exists and has a main method
      * within it
      * @param ast the ASTNode forming the root of the tree
      * @return whether a Main class exists with a main method
      */
     public boolean hasMain(Program ast) {
+        this.hasClass = false;
+        this.hasMethod = false;
         ast.accept(this);
         return this.hasClass && this.hasMethod;
     }
@@ -79,13 +73,4 @@ public class MainMainVisitor extends Visitor {
     public Object visit(Field fieldNode){
         return null;
     }
-
-    /**
-     * does nothing
-     * @param args unused
-     */
-    public static void main(String[] args) {
-        return;
-    }
-
 }
