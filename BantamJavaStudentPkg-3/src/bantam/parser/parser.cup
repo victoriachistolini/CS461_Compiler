@@ -438,10 +438,6 @@ return_stmt
 
 block_stmt
      ::=
-        /* empty block statement */
-        LBRACE RBRACE
-        {: RESULT = new BlockStmt(getCurrLineNum(), null); :}
-        |
         /* block statement with statement list */
         LBRACE stmt_list:st RBRACE
         {: RESULT = new BlockStmt(getCurrLineNum(), st); :}

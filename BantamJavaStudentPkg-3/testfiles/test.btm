@@ -1,0 +1,26 @@
+class Main {
+    void stuff() {
+        return;
+    }
+    void main(int x, String y) {
+        int v = x;
+        String w = "6";
+        int a = 6;
+        String x = "3";
+        a = a.thingy();
+        if( true || false ) { return ; }
+    }
+
+    int otherMethod(String v) {
+        int w = 99;
+        return w;
+    }
+}
+
+class Vain {
+    int blah = 5;
+    void main() {
+        int gtfo = 5;
+        return;
+    }
+}

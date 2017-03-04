@@ -1,3 +1,14 @@
+/**
+ * File: Main.java
+ * @author Victoria Chistolini
+ * @author Edward (osan) Zhou
+ * @author Alex Rinker
+ * @author Vivek Sah
+ * Class: CS461
+ * Project: 2.5
+ * Date: Feb 25, 2017
+ */
+
 package bantam;/* Bantam Java Compiler and Language Toolset.
 
    Copyright (C) 2007 by Marc Corliss (corliss@hws.edu) and 
@@ -33,6 +44,9 @@ import bantam.codegenjvm.JVMCodeGenerator;
 import bantam.codegenmips.MipsCodeGenerator;
 import bantam.codegenx86.X86CodeGenerator;
 import bantam.interp.Interpreter;
+import bantam.visitor.MainMainVisitor;
+import bantam.visitor.NumLocalVarsVisitor;
+import bantam.visitor.StringConstantsVisitor;
 import java_cup.runtime.Symbol;
 import bantam.lexer.Lexer;
 import bantam.opt.Optimizer;
@@ -66,6 +80,11 @@ public class Main {
      * intermediate representation of the phase before exiting
      */
     private static boolean stopAfterLexing, stopAfterParsing, stopAfterSemant, stopAfterOpt;
+    /**
+     * Boolean flags that indicate whether or not some visitors should be
+     * utilized at a particular time
+     */
+    private static boolean findMain, findStringConstants, findLogicalVariables;
     /**
      * Debugging flags for each phase of the compiler
      */
@@ -107,7 +126,8 @@ public class Main {
     private static void showHelp() {
         System.err.println("Usage: bantamc [-h] [-o <output_file>] [-t <architecture>]");
         System.err.println("               [-gc] [-int] [-bantam.opt <num>] [-dt] [-dl] [-dp] [-ds]");
-        System.err.println("               [-di] [-do] [-dc] [-sl] [-sp] [-ss] [-so] <input_files>");
+        System.err.println("               [-di] [-do] [-dc] [-sl] [-sp] [-ss] [-so]");
+        System.err.println("               [-mm] [-sc] [-lv] <input_files>");
         System.err.println("man bantamc for more details");
         System.exit(1);
     }
@@ -202,6 +222,17 @@ public class Main {
                 stopAfterOpt = true;
             }
 
+            // if -mm then run the MainMain visitor to figure out if the class has a main items
+            else if (args[i].equals("-mm")) {
+                findMain = true;
+            }
+            else if (args[i].equals("-sc")) {
+                findStringConstants = true;
+            }
+            else if (args[i].equals("-lv")) {
+                findLogicalVariables = true;
+            }
+
             // if -int turn on interpreter mode
             else if (args[i].equals("-int")) {
                 intMode = true;
@@ -273,21 +304,9 @@ public class Main {
                 i++;
                 // otherwise set output file
                 outFile = args[i];
-                /* NO LONGER FORCING .s extension
-        		// check filename ends in .s
-        		if (outFile.length() < 3 ||
-        		    !outFile.substring(outFile.length()-2).equals(".s")) {
-        		    // if not, then print error message and call showHelp()
-        		    // (which eventually exits)
-        		    System.err.println("Usage error: bad output file name: " + outFile);
-        		    System.err.println("             file name must end with '.s'");
-        		    showHelp();
-        		}
-		        */
             }
 
             // any other arguments must be input files
-
             // check if argument ends in .btm
             else if (args[i].length() >= 5 && args[i].substring(args[i].length() - 4).equals(".btm")) {
                 // if so then set next entry in inFiles
@@ -363,6 +382,22 @@ public class Main {
                 Drawer drawer = new Drawer();
                 drawer.draw("AST",(Program) result.value);
                 System.in.read(); //to pause the program
+                System.exit(0);
+            }
+
+            if (findMain) {
+                MainMainVisitor visitor = new MainMainVisitor();
+                System.out.println(visitor.hasMain((Program) result.value));
+                System.exit(0);
+            }
+            if (findStringConstants) {
+                StringConstantsVisitor stringConstants = new StringConstantsVisitor();
+                System.out.println(stringConstants.getStringConstants((Program) result.value));
+                System.exit(0);
+            }
+            if (findLogicalVariables) {
+                NumLocalVarsVisitor localVars = new NumLocalVarsVisitor();
+                System.out.println(localVars.getNumLocalVars((Program) result.value));
                 System.exit(0);
             }
 
