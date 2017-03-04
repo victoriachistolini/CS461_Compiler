@@ -28,6 +28,7 @@ package bantam.semant;
 
 import bantam.ast.*;
 import bantam.util.*;
+import bantam.visitor.MethodSymbolTableVisitor;
 
 import java.util.*;
 
@@ -82,16 +83,25 @@ public class SemanticAnalyzer {
       * See the lab manual for more details on each of these steps.
       * */
     public ClassTreeNode analyze() {
-	// 1 - add built in classes to class tree
-	updateBuiltins();
+	    // 1 - add built in classes to class tree
+	    updateBuiltins();
+        //ed does stuff
+        MethodSymbolTableVisitor methodVisitor = new MethodSymbolTableVisitor();
+        for( Map.Entry<String, ClassTreeNode> entry : this.classMap.entrySet() ) {
+            methodVisitor.populateSymbolTable(
+                    entry.getValue().getASTNode(),
+                    entry.getValue().getMethodSymbolTable(),
+                    errorHandler);
+        }
 
-	// comment out
-	throw new RuntimeException("Semantic analyzer unimplemented");
 
-	// add code below...
+        // comment out
+        throw new RuntimeException("Semantic analyzer unimplemented");
 
-	// uncomment out
-	// return root;
+        // add code below...
+
+        // uncomment out
+        // return root;
     }
 
     /**
