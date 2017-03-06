@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class varSymbolTableVisitor extends  Visitor {
+public class VarSymbolTableVisitor extends  Visitor {
     private ErrorHandler errHandler;
     private Class_ currClass;
     private SymbolTable varSymbolTable;
