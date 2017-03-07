@@ -25,13 +25,13 @@ public class VarSymbolTableVisitor extends  Visitor {
         this.currClass = ast;
         ast.accept(this);
     }
-    @Override
+
 
     /***
      * visits a Field node and adds it to the symbol table
      * @param fieldNode field node
      */
-
+    @Override
     public Object visit(Field fieldNode) {
         if (this.varSymbolTable.lookup(fieldNode.getName()) != null){
             errHandler.register(
