@@ -49,10 +49,7 @@ public class SemanticTools {
      * @return the contents of the file in String form
      */
     public static String generateStringFromTestfile(String filename) {
-        //filename = "../../../testfiles/" + filename;
-        File currentDir = new File(".");
-        File parentDir = currentDir.getParentFile();
-        File newFile = new File(parentDir,"Example.txt");
+        filename = "testfiles/" + filename;
         String file = "";
         try {
             // \\Z represents the end of a file
