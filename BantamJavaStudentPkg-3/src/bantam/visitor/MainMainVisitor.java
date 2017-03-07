@@ -26,6 +26,8 @@ public class MainMainVisitor extends Visitor {
     private boolean hasMethod;
     // class inheritance tree
     private Hashtable<String, ClassTreeNode> classMap;
+    // searching inheritance tree
+    private boolean searchingSuper;
 
     /**
      * checks if there exists a main method in a main class
@@ -37,6 +39,7 @@ public class MainMainVisitor extends Visitor {
                            ErrorHandler errorHandler) {
         this.hasClass = false;
         this.hasMethod = false;
+        this.searchingSuper = false;
         this.classMap = classMap;
         ast.accept(this);
         if (!(this.hasClass && this.hasMethod)) {
@@ -53,15 +56,21 @@ public class MainMainVisitor extends Visitor {
      */
     @Override
     public Object visit(Class_ classNode) {
+        //if already found main class and searching inheritance for method
+        if(this.searchingSuper) {
+            super.visit(classNode);
+        }
         if(classNode.getName().equals("Main")) {
             this.hasClass = true;
             super.visit(classNode);
             if(!this.hasMethod) {
+                searchingSuper = true;
                 ClassTreeNode currentClass = classMap.get("Main");
                 while(currentClass.getParent() != null) {
                     currentClass = currentClass.getParent();
                     currentClass.getASTNode().accept(this);
                 }
+                searchingSuper = false;
             }
         }
         return null;

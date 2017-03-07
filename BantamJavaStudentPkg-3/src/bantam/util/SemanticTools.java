@@ -9,7 +9,9 @@ package bantam.util;
  * semantic analyzer
  */
 public class SemanticTools {
-    private static enum keywords { NULL, VOID, SUPER, THIS, BOOLEAN, INT };
+    private enum keywords { NULL, VOID, SUPER, THIS, BOOLEAN, INT };
+
+    private enum primitives {INT, BOOLEAN}
 
     /**
      * Returns true if the input string is a keyword, else returns false
@@ -18,7 +20,19 @@ public class SemanticTools {
      */
     public static boolean isKeyword(String word) {
         for ( keywords k : keywords.values()) {
-            if (k.name().equals(word)) { return true; }
+            if (k.name().equalsIgnoreCase(word)) { return true; }
+        }
+        return false;
+    }
+
+    /**
+     * Returns true if the input string is a defined primitive else returns false
+     * @param word the input in question
+     * @return boolean
+     */
+    public static boolean isPrimitive(String word) {
+        for ( primitives p : primitives.values()) {
+            if (p.name().equalsIgnoreCase(word)) { return true; }
         }
         return false;
     }
