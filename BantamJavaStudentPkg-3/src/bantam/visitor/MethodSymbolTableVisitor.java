@@ -4,6 +4,7 @@ import bantam.ast.Class_;
 import bantam.ast.Field;
 import bantam.ast.Method;
 import bantam.util.ErrorHandler;
+import bantam.util.SemanticTools;
 import bantam.util.SymbolTable;
 
 /**
@@ -43,6 +44,13 @@ public class MethodSymbolTableVisitor extends Visitor {
                     "Two methods declared with the same name '" +
                             methodNode.getName() + "'"
             );
+        }
+        if (SemanticTools.isKeyword(methodNode.getName())) {
+            this.errHandler.register(
+                    this.errHandler.SEMANT_ERROR,
+                    currClass.getFilename(),
+                    methodNode.getLineNum(),
+                    "Method Name is a Reserved Keyword: " + methodNode.getName());
         }
         this.methodTable.add(methodNode.getName(), methodNode);
         return null;
