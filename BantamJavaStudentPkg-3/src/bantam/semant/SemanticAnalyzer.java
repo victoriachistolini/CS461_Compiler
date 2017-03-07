@@ -87,18 +87,22 @@ public class SemanticAnalyzer {
     public ClassTreeNode analyze() {
 	    // 1 - add built in classes to class tree
 	    updateBuiltins();
-        buildClassHierarchy();
-        populateMethodTables();
-        populateVarTables();
 
+        //Build the ClassMap
+        buildClassHierarchy();
+
+        //Build the Method Symbol Tables (and check method name validity)
+        populateMethodTables();
+
+        //Build the Variable Symbol Tables a(and check variable name validity)
+        populateVarTables();
 
         // comment out
         throw new RuntimeException("Semantic analyzer unimplemented");
 
-        // add code below...
-
         // uncomment out
-        // return root;
+        // this.errorHandler.checkErrors();
+        // return this.root;
     }
 
     /**
