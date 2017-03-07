@@ -5,7 +5,7 @@ import bantam.util.ErrorHandler;
 import bantam.util.SemanticTools;
 import bantam.util.SymbolTable;
 
-public class VarSymbolTableVisitor extends  Visitor {
+public class VarSymbolTableVisitor extends Visitor {
     private ErrorHandler errHandler;
     private Class_ currClass;
     private SymbolTable varSymbolTable;
