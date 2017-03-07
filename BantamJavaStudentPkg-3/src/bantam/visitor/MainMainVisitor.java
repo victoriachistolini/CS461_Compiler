@@ -11,6 +11,10 @@
 
 package bantam.visitor;
 import bantam.ast.*;
+import bantam.util.ClassTreeNode;
+import bantam.util.ErrorHandler;
+
+import java.util.Hashtable;
 
 /**
  * Determine if there is a main class and main method in set of files
@@ -20,18 +24,25 @@ public class MainMainVisitor extends Visitor {
     private boolean hasClass;
     // if we found a main method
     private boolean hasMethod;
+    // class inheritance tree
+    private Hashtable<String, ClassTreeNode> classMap;
 
     /**
-     * returns whether a Main class exists and has a main method
-     * within it
+     * checks if there exists a main method in a main class
+     * else register an error
      * @param ast the ASTNode forming the root of the tree
-     * @return whether a Main class exists with a main method
      */
-    public boolean hasMain(Program ast) {
+    public void hasMain(Program ast,
+                           Hashtable<String, ClassTreeNode> classMap,
+                           ErrorHandler errorHandler) {
         this.hasClass = false;
         this.hasMethod = false;
+        this.classMap = classMap;
         ast.accept(this);
-        return this.hasClass && this.hasMethod;
+        if (!(this.hasClass && this.hasMethod)) {
+            errorHandler.register(errorHandler.SEMANT_ERROR,
+                    "Missing Main method in a Main Class");
+        }
     }
 
     /**
@@ -45,6 +56,13 @@ public class MainMainVisitor extends Visitor {
         if(classNode.getName().equals("Main")) {
             this.hasClass = true;
             super.visit(classNode);
+            if(!this.hasMethod) {
+                ClassTreeNode currentClass = classMap.get("Main");
+                while(currentClass.getParent() != null) {
+                    currentClass = currentClass.getParent();
+                    currentClass.getASTNode().accept(this);
+                }
+            }
         }
         return null;
     }

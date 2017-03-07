@@ -5,7 +5,6 @@ import bantam.util.ErrorHandler;
 import bantam.util.SemanticTools;
 import bantam.util.SymbolTable;
 
-
 public class VarSymbolTableVisitor extends  Visitor {
     private ErrorHandler errHandler;
     private Class_ currClass;
@@ -58,6 +57,7 @@ public class VarSymbolTableVisitor extends  Visitor {
      * visits a Method node and adds all the variable & the type to the symbol table
      * @param methodNode method node
      */
+    @Override
     public Object visit(Method methodNode) {
         this.varSymbolTable.enterScope();
         super.visit(methodNode);
@@ -70,6 +70,7 @@ public class VarSymbolTableVisitor extends  Visitor {
      * @param declStmt declarartion statement
      * @return
      */
+    @Override
     public Object visit(DeclStmt declStmt) {
         if (SemanticTools.isKeyword(declStmt.getName())) {
             this.errHandler.register(
@@ -78,12 +79,92 @@ public class VarSymbolTableVisitor extends  Visitor {
                     declStmt.getLineNum(),
                     "Method Name is a Reserved Keyword: " + declStmt.getName());
         }
-        if (this.varSymbolTable.lookup(declStmt.getName()) == null){
-            this.varSymbolTable.add(declStmt.getName(), declStmt.getType());
+        if (this.varSymbolTable.lookup(declStmt.getName()) != null){
+            errHandler.register(
+                    errHandler.SEMANT_ERROR,
+                    currClass.getFilename(),
+                    declStmt.getLineNum(),
+                    "Variable with the same name already declared '" +
+                            declStmt.getName() + "'"
+            );
         }
+        this.varSymbolTable.add(declStmt.getName(), declStmt.getType());
+        return null;
+    }
+
+
+
+    /**
+     * visits a formal parameters and adds it to the symbol table
+     * @param formal
+     * @return
+     */
+    @Override
+    public Object visit(Formal formal){
+        if (this.varSymbolTable.peek(formal.getName()) != null){
+            errHandler.register(
+                    errHandler.SEMANT_ERROR,
+                    currClass.getFilename(),
+                    formal.getLineNum(),
+                    "Two parameters declared with the same name '" +
+                            formal.getName() + "'"
+            );
+        }
+        this.varSymbolTable.add(formal.getName(),formal.getType());
+        return null;
+    }
+
+    /**
+     * Visits a while statement and adds to the symbol table
+     * @param whileStmt
+     * @return
+     */
+    @Override
+    public Object visit(WhileStmt whileStmt){
+        this.varSymbolTable.enterScope();
+        super.visit(whileStmt);
+        this.varSymbolTable.exitScope();
         return  null;
     }
 
+    /**
+     * visits a if statement and adds the variables to the symbol table
+     * @param ifStmt
+     * @return
+     */
+    @Override
+    public Object visit(IfStmt ifStmt){
+        this.varSymbolTable.enterScope();
+        super.visit(ifStmt);
+        this.varSymbolTable.exitScope();
+        return null;
+    }
+
+    /**
+     * visits a for loop and adds the variables to a symbol table
+     * @param forStmt
+     * @return
+     */
+    @Override
+    public Object visit(ForStmt forStmt){
+        this.varSymbolTable.enterScope();
+        super.visit(forStmt);
+        this.varSymbolTable.exitScope();
+        return null;
+    }
+
+    /**
+     * visits a block statement
+     * @param blockStmt
+     * @return
+     */
+    public Object visit(BlockStmt blockStmt){
+        this.varSymbolTable.enterScope();
+        super.visit(blockStmt);
+        this.varSymbolTable.exitScope();
+        return null;
+
+    }
 
 
     //The following handle Nodes to terminate traversal on
