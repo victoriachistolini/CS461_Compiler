@@ -2,13 +2,10 @@ package bantam.visitor;
 
 import bantam.ast.*;
 import bantam.util.ErrorHandler;
+import bantam.util.SemanticTools;
 import bantam.util.SymbolTable;
 
-import java.util.HashMap;
-import java.util.Map;
-
-
-public class VarSymbolTableVisitor extends  Visitor {
+public class VarSymbolTableVisitor extends Visitor {
     private ErrorHandler errHandler;
     private Class_ currClass;
     private SymbolTable varSymbolTable;
@@ -19,10 +16,13 @@ public class VarSymbolTableVisitor extends  Visitor {
      * @param ast the ASTNode forming the root of the tree
      * @return whether a Main class exists with a main method
      */
-    public void populateSymbolTable(Class_ ast, SymbolTable table) {
+    public void populateSymbolTable(Class_ ast,
+                                    SymbolTable table,
+                                    ErrorHandler errHandler) {
         this.varSymbolTable = table;
         this.varSymbolTable.enterScope();
         this.currClass = ast;
+        this.errHandler = errHandler;
         ast.accept(this);
     }
 
@@ -33,6 +33,13 @@ public class VarSymbolTableVisitor extends  Visitor {
      */
     @Override
     public Object visit(Field fieldNode) {
+        if (SemanticTools.isKeyword(fieldNode.getName())) {
+            this.errHandler.register(
+                    this.errHandler.SEMANT_ERROR,
+                    currClass.getFilename(),
+                    fieldNode.getLineNum(),
+                    "Field Name is a Reserved Keyword: " + fieldNode.getName());
+        }
         if (this.varSymbolTable.lookup(fieldNode.getName()) != null){
             errHandler.register(
                     errHandler.SEMANT_ERROR,
@@ -41,12 +48,9 @@ public class VarSymbolTableVisitor extends  Visitor {
                     "Two methods declared with the same name '" +
                             fieldNode.getName() + "'"
             );
-
-
         }
         this.varSymbolTable.add(fieldNode.getName(), fieldNode.getType());
         return  null;
-
     }
 
     /***
@@ -68,6 +72,13 @@ public class VarSymbolTableVisitor extends  Visitor {
      */
     @Override
     public Object visit(DeclStmt declStmt) {
+        if (SemanticTools.isKeyword(declStmt.getName())) {
+            this.errHandler.register(
+                    this.errHandler.SEMANT_ERROR,
+                    currClass.getFilename(),
+                    declStmt.getLineNum(),
+                    "Method Name is a Reserved Keyword: " + declStmt.getName());
+        }
         if (this.varSymbolTable.lookup(declStmt.getName()) != null){
             errHandler.register(
                     errHandler.SEMANT_ERROR,
@@ -76,10 +87,9 @@ public class VarSymbolTableVisitor extends  Visitor {
                     "Variable with the same name already declared '" +
                             declStmt.getName() + "'"
             );
-
         }
         this.varSymbolTable.add(declStmt.getName(), declStmt.getType());
-        return  null;
+        return null;
     }
 
 
@@ -155,8 +165,6 @@ public class VarSymbolTableVisitor extends  Visitor {
         return null;
 
     }
-
-
 
 
     //The following handle Nodes to terminate traversal on

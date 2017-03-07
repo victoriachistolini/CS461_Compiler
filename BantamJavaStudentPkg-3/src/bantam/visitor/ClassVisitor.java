@@ -13,6 +13,7 @@ package bantam.visitor;
 import bantam.ast.*;
 import bantam.util.ClassTreeNode;
 import bantam.util.ErrorHandler;
+import bantam.util.SemanticTools;
 
 import java.util.Hashtable;
 import java.util.Map;
@@ -51,7 +52,14 @@ public class ClassVisitor extends Visitor{
                     node.getFilename(),
                     node.getLineNum(),
                     "Duplicate Class name -" + node.getName());
-        } else {
+        }else if (SemanticTools.isKeyword(node.getName())) {
+            this.errorHandler.register(
+                    this.errorHandler.SEMANT_ERROR,
+                    node.getFilename(),
+                    node.getLineNum(),
+                    "Class Name is a Reserved Keyword: " + node.getName());
+        }
+        else {
             this.classMap.put(node.getName(),
                     new ClassTreeNode(node, false, true, this.classMap));
         }

@@ -30,6 +30,7 @@ import bantam.ast.*;
 import bantam.util.*;
 import bantam.visitor.ClassVisitor;
 import bantam.visitor.MethodSymbolTableVisitor;
+import bantam.visitor.VarSymbolTableVisitor;
 
 import java.util.*;
 
@@ -88,6 +89,8 @@ public class SemanticAnalyzer {
 	    updateBuiltins();
         buildClassHierarchy();
         populateMethodTables();
+        populateVarTables();
+
 
         // comment out
         throw new RuntimeException("Semantic analyzer unimplemented");
@@ -270,6 +273,14 @@ public class SemanticAnalyzer {
     }
 
     /**
+     * populates the var symbol table with the desired information
+     */
+    private void populateVarTables() {
+        VarSymbolTableVisitor varVisitor = new VarSymbolTableVisitor();
+        populateVarTables(this.root, varVisitor);
+    }
+
+    /**
      * Recursive helper method for populateMethodTables
      * @param root the current node of the tree
      * @param visitor the visitor object used to handle the nitty gritty stuff
@@ -284,6 +295,24 @@ public class SemanticAnalyzer {
                 this.errorHandler);
         root.getChildrenList().forEachRemaining(
                 child -> populateMethodTables(child, visitor)
+        );
+    }
+
+    /**
+     * Recursive helper method for populateVarTables
+     * @param root the current node of the tree
+     * @param visitor the visitor object used to handle the operations
+     */
+    private void populateVarTables(
+            ClassTreeNode root,
+            VarSymbolTableVisitor visitor
+    ) {
+        visitor.populateSymbolTable(
+                root.getASTNode(),
+                root.getMethodSymbolTable(),
+                this.errorHandler);
+        root.getChildrenList().forEachRemaining(
+                child -> populateVarTables(child, visitor)
         );
     }
 }
