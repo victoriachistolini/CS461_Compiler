@@ -23,7 +23,9 @@ public class VarSymbolTableVisitor extends Visitor {
         this.varSymbolTable.enterScope();
         this.currClass = ast;
         this.errHandler = errHandler;
+        this.varSymbolTable.enterScope();
         ast.accept(this);
+        this.varSymbolTable.exitScope();
     }
 
 
