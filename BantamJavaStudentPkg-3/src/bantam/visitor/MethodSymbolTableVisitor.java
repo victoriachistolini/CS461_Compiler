@@ -43,7 +43,7 @@ public class MethodSymbolTableVisitor extends Visitor {
                     methodNode.getLineNum(),
                     "Method Name is a Reserved Keyword: " + methodNode.getName());
         }
-        if(this.methodTable.lookup(methodNode.getName()) != null) {
+        if(this.methodTable.peek(methodNode.getName()) != null) {
             errHandler.register(
                     errHandler.SEMANT_ERROR,
                     currClass.getFilename(),
