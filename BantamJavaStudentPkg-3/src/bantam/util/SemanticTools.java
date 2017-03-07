@@ -55,7 +55,6 @@ public class SemanticTools {
             // \\Z represents the end of a file
             file = new Scanner(new File(filename)).useDelimiter("\\Z").next();
         } catch (FileNotFoundException e) {
-            System.out.println(e);
             System.out.println("File '" + filename + "' was unable to be read");
         }
         return file;

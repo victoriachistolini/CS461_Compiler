@@ -23,9 +23,7 @@ public class VarSymbolTableVisitor extends Visitor {
         this.varSymbolTable.enterScope();
         this.currClass = ast;
         this.errHandler = errHandler;
-        this.varSymbolTable.enterScope();
         ast.accept(this);
-        this.varSymbolTable.exitScope();
     }
 
 
@@ -79,7 +77,7 @@ public class VarSymbolTableVisitor extends Visitor {
                     this.errHandler.SEMANT_ERROR,
                     currClass.getFilename(),
                     declStmt.getLineNum(),
-                    "Method Name is a Reserved Keyword: " + declStmt.getName());
+                    "Variable Name is a Reserved Keyword: " + declStmt.getName());
         }
         if (this.varSymbolTable.lookup(declStmt.getName()) != null){
             errHandler.register(

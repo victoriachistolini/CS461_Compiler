@@ -293,6 +293,7 @@ public class SemanticAnalyzer {
             ClassTreeNode root,
             MethodSymbolTableVisitor visitor
     ) {
+        root.getMethodSymbolTable().enterScope();
         visitor.populateSymbolTable(
                 root.getASTNode(),
                 root.getMethodSymbolTable(),
@@ -300,6 +301,7 @@ public class SemanticAnalyzer {
         root.getChildrenList().forEachRemaining(
                 child -> populateMethodTables(child, visitor)
         );
+        root.getMethodSymbolTable().exitScope();
     }
 
     /**
@@ -311,6 +313,7 @@ public class SemanticAnalyzer {
             ClassTreeNode root,
             VarSymbolTableVisitor visitor
     ) {
+        root.getVarSymbolTable().enterScope();
         visitor.populateSymbolTable(
                 root.getASTNode(),
                 root.getMethodSymbolTable(),
@@ -318,5 +321,6 @@ public class SemanticAnalyzer {
         root.getChildrenList().forEachRemaining(
                 child -> populateVarTables(child, visitor)
         );
+        root.getVarSymbolTable().exitScope();
     }
 }
