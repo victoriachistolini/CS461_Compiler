@@ -33,7 +33,7 @@ public class VarSymbolTableVisitor extends Visitor {
      */
     @Override
     public Object visit(Field fieldNode) {
-        if (SemanticTools.isKeyword(fieldNode.getName())) {
+        if (SemanticTools.isReservedWord(fieldNode.getName())) {
             this.errHandler.register(
                     this.errHandler.SEMANT_ERROR,
                     currClass.getFilename(),
@@ -72,7 +72,7 @@ public class VarSymbolTableVisitor extends Visitor {
      */
     @Override
     public Object visit(DeclStmt declStmt) {
-        if (SemanticTools.isKeyword(declStmt.getName())) {
+        if (SemanticTools.isReservedWord(declStmt.getName())) {
             this.errHandler.register(
                     this.errHandler.SEMANT_ERROR,
                     currClass.getFilename(),

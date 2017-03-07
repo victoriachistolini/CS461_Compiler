@@ -52,7 +52,7 @@ public class ClassVisitor extends Visitor{
                     node.getFilename(),
                     node.getLineNum(),
                     "Duplicate Class name -" + node.getName());
-        }else if (SemanticTools.isKeyword(node.getName())) {
+        }else if (SemanticTools.isReservedWord(node.getName())) {
             this.errorHandler.register(
                     this.errorHandler.SEMANT_ERROR,
                     node.getFilename(),

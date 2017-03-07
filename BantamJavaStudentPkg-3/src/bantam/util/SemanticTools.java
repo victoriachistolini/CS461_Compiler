@@ -4,12 +4,18 @@ package bantam.util;
  * Created by Alex on 3/6/17.
  */
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
+
+import static javafx.scene.input.KeyCode.Z;
+
 /**
  * This class holds utility methods for use with the
  * semantic analyzer
  */
 public class SemanticTools {
-    private enum keywords { NULL, VOID, SUPER, THIS, BOOLEAN, INT };
+    private enum reservedWords { NULL, VOID, SUPER, THIS, BOOLEAN, INT };
 
     private enum primitives {INT, BOOLEAN}
 
@@ -18,9 +24,9 @@ public class SemanticTools {
      * @param word the word in question
      * @return boolean corresponding to whether or not the word is a keyword
      */
-    public static boolean isKeyword(String word) {
-        for ( keywords k : keywords.values()) {
-            if (k.name().equalsIgnoreCase(word)) { return true; }
+    public static boolean isReservedWord(String word) {
+        for ( reservedWords r : reservedWords.values()) {
+            if (r.name().equalsIgnoreCase(word)) { return true; }
         }
         return false;
     }
@@ -35,5 +41,26 @@ public class SemanticTools {
             if (p.name().equalsIgnoreCase(word)) { return true; }
         }
         return false;
+    }
+
+    /**
+     * Generates a string from the input file
+     * @param filename the file to be read
+     * @return the contents of the file in String form
+     */
+    public static String generateStringFromTestfile(String filename) {
+        //filename = "../../../testfiles/" + filename;
+        File currentDir = new File(".");
+        File parentDir = currentDir.getParentFile();
+        File newFile = new File(parentDir,"Example.txt");
+        String file = "";
+        try {
+            // \\Z represents the end of a file
+            file = new Scanner(new File(filename)).useDelimiter("\\Z").next();
+        } catch (FileNotFoundException e) {
+            System.out.println(e);
+            System.out.println("File '" + filename + "' was unable to be read");
+        }
+        return file;
     }
 }

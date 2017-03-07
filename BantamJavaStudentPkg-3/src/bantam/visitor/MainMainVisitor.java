@@ -13,6 +13,7 @@ package bantam.visitor;
 import bantam.ast.*;
 import bantam.util.ClassTreeNode;
 import bantam.util.ErrorHandler;
+import com.sun.source.tree.ClassTree;
 
 import java.util.Hashtable;
 
@@ -35,8 +36,8 @@ public class MainMainVisitor extends Visitor {
      * @param ast the ASTNode forming the root of the tree
      */
     public void hasMain(Program ast,
-                           Hashtable<String, ClassTreeNode> classMap,
-                           ErrorHandler errorHandler) {
+                        Hashtable<String, ClassTreeNode> classMap,
+                        ErrorHandler errorHandler) {
         this.hasClass = false;
         this.hasMethod = false;
         this.searchingSuper = false;
@@ -46,6 +47,15 @@ public class MainMainVisitor extends Visitor {
             errorHandler.register(errorHandler.SEMANT_ERROR,
                     "Missing Main method in a Main Class");
         }
+    }
+
+    /**
+     * Simple version of hasMain for easier use in main.java
+     */
+    public boolean hasMain(Program ast) {
+        hasMain(ast, new Hashtable<String, ClassTreeNode>(), new ErrorHandler());
+        if (!(this.hasClass && this.hasMethod)) { return false; }
+        return true;
     }
 
     /**

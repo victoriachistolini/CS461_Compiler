@@ -2,6 +2,7 @@ package bantam.semant;
 
 import bantam.ast.Program;
 import bantam.lexer.Lexer;
+import bantam.util.SemanticTools;
 import org.junit.Test;
 import bantam.parser.Parser;
 import bantam.util.ErrorHandler;
@@ -40,5 +41,29 @@ public class SemanticAnalyzerTest
         assertTrue(thrown);
     }
 
+    @Test
+    public void testReservedNameRecognition() throws Exception {
+        boolean thrown = false;
+        //Generate the AST from the btm file
+        Parser parser = new Parser(
+            new Lexer(
+                new StringReader(
+                    SemanticTools.generateStringFromTestfile("reservedWords.btm")
+                )
+            )
+        );
+        Program program = (Program) parser.parse().value;
+        SemanticAnalyzer analyzer = new SemanticAnalyzer(program, false);
+        try {
+            analyzer.analyze();
+        } catch (RuntimeException e) {
+            thrown = true;
+            //assertEquals("Bantam semantic analyzer found errors.", e.getMessage());
+            for (ErrorHandler.Error err : analyzer.getErrorHandler().getErrorList()) {
+                System.out.println(err);
+            }
+        }
+        assertTrue(thrown);
+    }
 
 }

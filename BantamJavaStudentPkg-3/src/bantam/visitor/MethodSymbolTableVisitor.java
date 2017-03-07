@@ -45,7 +45,7 @@ public class MethodSymbolTableVisitor extends Visitor {
                             methodNode.getName() + "'"
             );
         }
-        if (SemanticTools.isKeyword(methodNode.getName())) {
+        if (SemanticTools.isReservedWord(methodNode.getName())) {
             this.errHandler.register(
                     this.errHandler.SEMANT_ERROR,
                     currClass.getFilename(),
