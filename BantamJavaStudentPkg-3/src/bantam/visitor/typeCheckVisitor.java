@@ -15,6 +15,7 @@ public class typeCheckVisitor extends Visitor {
     private final String BOOLEAN = "boolean";
     private final String STRING = "String";
     private final String INT = "int";
+    private final String OBJECT = "Object";
     private final String VOID = "void";
     private final String THIS = "this";
 
@@ -95,9 +96,16 @@ public class typeCheckVisitor extends Visitor {
         super.visit(node);
 
         if(node.getInit() != null) {
-            checkType(node.getType(), node.getInit().getExprType(), node);
+            checkType(node.getType(), node.getInit().getExprType(), node, true);
         }
-        this.currentVarSymbolTable.add(node.getName(), node.getType());
+        if(this.currentVarSymbolTable.lookup(node.getName()) != null) {
+            errorHandler.register(errorHandler.SEMANT_ERROR,
+                    this.currentClass,
+                    node.getLineNum(),
+                    "Variable already declared");
+        } else {
+            this.currentVarSymbolTable.add(node.getName(), node.getType());
+        }
         return null;
     }
 
@@ -198,7 +206,7 @@ public class typeCheckVisitor extends Visitor {
             }
         } else {
             if(node.getExpr() != null) {
-                checkType(returnType, node.getExpr().getExprType(), node);
+                checkType(returnType, node.getExpr().getExprType(), node, true);
             } else {
                 errorHandler.register(errorHandler.SEMANT_ERROR,
                         this.currentClass,
@@ -225,7 +233,7 @@ public class typeCheckVisitor extends Visitor {
         }
 
         node.getActualList().accept(this);
-
+        node.setExprType(OBJECT); //default error type. overwritten if below passes
         // Check method compatibility
         if(this.classMap.contains(referenceType)) {
             Method method = (Method) this.classMap.get(referenceType)
@@ -242,12 +250,18 @@ public class typeCheckVisitor extends Visitor {
                         node.getLineNum(),
                         "Mismatched number of expected parameters");
             } else {
+                boolean isCorrect = true;
                 for(int i = 0; i < node.getActualList().getSize(); i++) {
-                    this.checkType(
+                    isCorrect &= this.checkType(
                             ((Formal)method.getFormalList().get(i)).getType(),
                             ((Expr)node.getActualList().get(i)).getExprType(),
-                            node);
+                            node,
+                            true);
                 }
+                if(isCorrect) {
+                    node.setExprType(method.getReturnType());
+                }
+
             }
         } else {
             errorHandler.register(errorHandler.SEMANT_ERROR,
@@ -258,6 +272,11 @@ public class typeCheckVisitor extends Visitor {
         return true;
     }
 
+    /**
+     * sets type in parser
+     * @param node the new expression node
+     * @return
+     */
     @Override
     public Object visit(NewExpr node) {
         return true;
@@ -287,28 +306,134 @@ public class typeCheckVisitor extends Visitor {
                     node.getLineNum(),
                     "Primitives cannot be checked for instance");
         }
-        node.setUpCheck(true);
+        node.setUpCheck(true); // this is always true
+        node.setExprType(BOOLEAN);
+        return false;
+    }
+
+
+    @Override
+    public Object visit(CastExpr node) {
+        node.getExpr().accept(this);
+        if (SemanticTools.isPrimitive(node.getType()) ||
+                SemanticTools.isPrimitive(node.getExpr().getExprType())) {
+            errorHandler.register(errorHandler.SEMANT_ERROR,
+                    this.currentClass,
+                    node.getLineNum(),
+                    "Primitives cannot be casted");
+        } else {
+            boolean upcast;
+            boolean downcast;
+            upcast = checkType(node.getType(), node.getExpr().getExprType(), node, false);
+            downcast = checkType(node.getExpr().getExprType(), node.getType(), node, false);
+            if (!(upcast || downcast)) {
+                errorHandler.register(errorHandler.SEMANT_ERROR,
+                        this.currentClass,
+                        node.getLineNum(),
+                        "Invalid types for casting");
+            } else {
+                node.setUpCast(upcast);
+                node.setExprType(node.getType());
+                return false;
+            }
+        }
+        node.setExprType(OBJECT); //only if expr is illegal
         return false;
     }
 
     @Override
-    public Object visit(CastExpr node) {
-        return super.visit(node);
-    }
-
-    @Override
     public Object visit(AssignExpr node) {
-        return super.visit(node);
+        node.getExpr().accept(this);
+        node.setExprType(OBJECT);
+        String variableType;
+        if(node.getRefName()!=null) {
+            //check the class map
+            if(classMap.containsKey(node.getRefName())) {
+                variableType = (String)classMap.get(node.getRefName()).getVarSymbolTable().lookup(node.getName());
+                if(variableType != null) {
+                    boolean legal = checkType(variableType, node.getExpr().getExprType(), node, true);
+                    if(legal) {
+                        node.setExprType(variableType);
+                    }
+                } else {
+                    errorHandler.register(errorHandler.SEMANT_ERROR,
+                            this.currentClass,
+                            node.getLineNum(),
+                            "Undeclared field " + node.getName() + " in " + node.getRefName());
+                }
+            } else {
+                errorHandler.register(errorHandler.SEMANT_ERROR,
+                        this.currentClass,
+                        node.getLineNum(),
+                        "Undeclared class " + node.getRefName());
+            }
+
+        } else {
+            variableType = (String) this.currentVarSymbolTable.lookup(node.getName());
+            if(variableType != null) {
+                boolean legal = checkType(variableType, node.getExpr().getExprType(), node, true);
+                if(legal) {
+                    node.setExprType(variableType);
+                }
+            } else {
+                errorHandler.register(errorHandler.SEMANT_ERROR,
+                        this.currentClass,
+                        node.getLineNum(),
+                        "Undeclared variable " + node.getName());
+            }
+        }
+        return true;
     }
 
     @Override
     public Object visit(ArrayAssignExpr node) {
-        return super.visit(node);
+        node.getExpr().accept(this);
+        node.setExprType(OBJECT);
+        String variableType;
+        if(node.getRefName()!=null) {
+            //check the class map
+            if(classMap.containsKey(node.getRefName())) {
+                variableType = (String)classMap.get(node.getRefName()).getVarSymbolTable().lookup(node.getName());
+                if(variableType != null) {
+                    boolean legal = checkType(variableType, node.getExpr().getExprType(), node, true);
+                    if(legal) {
+                        node.setExprType(variableType);
+                    }
+                } else {
+                    errorHandler.register(errorHandler.SEMANT_ERROR,
+                            this.currentClass,
+                            node.getLineNum(),
+                            "Undeclared field " + node.getName() + " in " + node.getRefName());
+                }
+            } else {
+                errorHandler.register(errorHandler.SEMANT_ERROR,
+                        this.currentClass,
+                        node.getLineNum(),
+                        "Undeclared class " + node.getRefName());
+            }
+
+        } else {
+            variableType = (String) this.currentVarSymbolTable.lookup(node.getName());
+            if(variableType != null) {
+                boolean legal = checkType(variableType, node.getExpr().getExprType(), node, true);
+                if(legal) {
+                    node.setExprType(variableType);
+                }
+            } else {
+                errorHandler.register(errorHandler.SEMANT_ERROR,
+                        this.currentClass,
+                        node.getLineNum(),
+                        "Undeclared variable " + node.getName());
+            }
+        }
+        return true;
     }
 
     @Override
     public Object visit(BinaryCompEqExpr node) {
-        return super.visit(node);
+        super.visit(node);
+        node.setExprType(BOOLEAN);
+        return 1==1;
     }
 
     @Override
@@ -431,10 +556,11 @@ public class typeCheckVisitor extends Visitor {
      * @param type parent type
      * @param subtype possible subtype
      * @param ast the associated ast node for error printing
+     * @param debug true if one wishes to report errors to the errorhandler
      */
-    private void checkType(String type, String subtype, ASTNode ast) {
+    private boolean checkType(String type, String subtype, ASTNode ast, boolean debug) {
         if(type.equals(subtype)) {
-            return;
+            return true;
         }
 
         //primitive check
@@ -445,33 +571,40 @@ public class typeCheckVisitor extends Visitor {
                 while (currClass.getParent() != null) {
                     currClass = currClass.getParent();
                     if (currClass.getName().equals(type)) {
-                        return;
+                        return true;
                     }
                 }
-                errorHandler.register(errorHandler.SEMANT_ERROR,
-                        this.currentClass,
-                        ast.getLineNum(),
-                        "Invalid subtype " + subtype + " of type " + type);
-            } else {
-                if (!classMap.containsKey(type)) {
+                if(debug) {
                     errorHandler.register(errorHandler.SEMANT_ERROR,
                             this.currentClass,
                             ast.getLineNum(),
-                            "Invalid type " + type);
+                            "Invalid subtype " + subtype + " of type " + type);
                 }
-                if (!classMap.containsKey(subtype)) {
-                    errorHandler.register(errorHandler.SEMANT_ERROR,
-                            this.currentClass,
-                            ast.getLineNum(),
-                            "Invalid type " + subtype);
+            } else {
+                if(debug) {
+                    if (!classMap.containsKey(type)) {
+                        errorHandler.register(errorHandler.SEMANT_ERROR,
+                                this.currentClass,
+                                ast.getLineNum(),
+                                "Invalid type " + type);
+                    }
+                    if (!classMap.containsKey(subtype)) {
+                        errorHandler.register(errorHandler.SEMANT_ERROR,
+                                this.currentClass,
+                                ast.getLineNum(),
+                                "Invalid type " + subtype);
+                    }
                 }
             }
         } else {
-            errorHandler.register(errorHandler.SEMANT_ERROR,
-                    this.currentClass,
-                    ast.getLineNum(),
-                    "Incompatible types " + type + " and " + subtype);
+            if(debug) {
+                errorHandler.register(errorHandler.SEMANT_ERROR,
+                        this.currentClass,
+                        ast.getLineNum(),
+                        "Incompatible types " + type + " and " + subtype);
+            }
         }
+        return false;
     }
 
 
