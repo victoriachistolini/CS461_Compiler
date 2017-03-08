@@ -5,8 +5,6 @@ import bantam.lexer.Lexer;
 import bantam.util.SemanticTools;
 import org.junit.Test;
 import bantam.parser.Parser;
-import bantam.util.ErrorHandler;
-
 import java.io.StringReader;
 import java.util.HashSet;
 import java.util.Set;
@@ -36,44 +34,83 @@ public class SemanticAnalyzerTest
         } catch (RuntimeException e) {
             thrown = true;
             assertEquals("Bantam semantic analyzer found errors.", e.getMessage());
-            for (ErrorHandler.Error err : analyzer.getErrorHandler().getErrorList()) {
-                System.out.println(err);
-            }
+            analyzer.getErrorHandler().getErrorList().forEach(error ->
+                    System.out.println(error)
+            );
         }
         assertTrue(thrown);
     }
 
+    /**
+     * Tests the Semantic Analyzer's recognition of reserved words as class names,
+     * identifiers, or method names
+     * @throws Exception Can throw parser errors
+     */
     @Test
     public void testReservedNameRecognition() throws Exception {
         boolean thrown = false;
-        //Generate the AST from the btm file
-        Parser parser = new Parser(
-            new Lexer(
-                new StringReader(
-                    SemanticTools.generateStringFromTestfile("reservedWords.btm")
-                )
-            )
-        );
-        Program program = (Program) parser.parse().value;
-        SemanticAnalyzer analyzer = new SemanticAnalyzer(program, false);
+        SemanticAnalyzer analyzer = setupSemanFromFile("ReservedWordsTest.btm");
         try {
             analyzer.analyze();
         } catch (RuntimeException e) {
             thrown = true;
             Set<String> errors = new HashSet<>();
-            for (ErrorHandler.Error err : analyzer.getErrorHandler().getErrorList()) {
-                errors.add(err.getMessage());
-                System.out.println(err);
-            }
-            System.out.println(errors);
-            assertTrue(errors.contains("Variable Name is a Reserved Keyword: boolean"));
-            assertTrue(errors.contains("Method Name is a Reserved Keyword: int"));
-            assertTrue(errors.contains("Variable Name is a Reserved Keyword: void"));
-            assertTrue(errors.contains("Class Name is a Reserved Keyword: null"));
-            assertTrue(errors.contains("Variable Name is a Reserved Keyword: super"));
-            assertTrue(errors.contains("Method Name is a Reserved Keyword: this"));
+            analyzer.getErrorHandler().getErrorList().forEach( error ->
+                errors.add(error.getMessage())
+            );
+            assertTrue(errors.remove("Variable name is a reserved keyword: boolean"));
+            assertTrue(errors.remove("Method name is a reserved keyword: int"));
+            assertTrue(errors.remove("Variable name is a reserved keyword: void"));
+            assertTrue(errors.remove("Class name is a reserved keyword: null"));
+            assertTrue(errors.remove("Variable name is a reserved keyword: super"));
+            assertTrue(errors.remove("Method name is a reserved keyword: this"));
+            assertTrue(errors.isEmpty());
         }
         assertTrue(thrown);
+    }
+
+    /**
+     * Tests all functions of the MethodSymbolTableVisitor
+     * @throws Exception
+     */
+    @Test
+    public void testMethodSymbolTableVisitor() throws Exception {
+        boolean thrown = false;
+        SemanticAnalyzer analyzer = setupSemanFromFile("MethodVisitorTest.btm");
+        try {
+            analyzer.analyze();
+        } catch (RuntimeException e) {
+            thrown = true;
+            Set<String> errors = new HashSet<>();
+            analyzer.getErrorHandler().getErrorList().forEach( error ->
+                    errors.add(error.getMessage())
+            );
+            assertTrue(errors.remove("Method name is a reserved keyword: this"));
+            assertTrue(errors.remove(
+                    "Two methods declared with the same name 'sameNameSameClass'")
+            );
+            assertTrue(errors.isEmpty());
+        }
+        assertTrue(thrown);
+    }
+
+    /**
+     * generates a Semantic Analyzer from the input testfile
+     * @param filename the btm file
+     * @return a Semantic Analyzer Object for the input file
+     * @throws Exception parser errors could be thrown
+     */
+    private SemanticAnalyzer setupSemanFromFile(String filename) throws Exception {
+        //Generate the AST from the btm file
+        Parser parser = new Parser(
+                new Lexer(
+                        new StringReader(
+                                SemanticTools.generateStringFromTestfile(filename)
+                        )
+                )
+        );
+        Program program = (Program) parser.parse().value;
+        return new SemanticAnalyzer(program, false);
     }
 
 }

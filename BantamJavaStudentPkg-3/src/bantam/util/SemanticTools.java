@@ -8,7 +8,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
-import static javafx.scene.input.KeyCode.Z;
 
 /**
  * This class holds utility methods for use with the

@@ -16,9 +16,10 @@ public class MethodSymbolTableVisitor extends Visitor {
     private Class_ currClass;
 
     /**
-     * returns whether a Main class exists and has a main method
-     * within it
+     * populates a symbol table with all of the methods in the given class
      * @param classNode the ASTNode forming the root of the class
+     * @param table the SymbolTable to populate
+     * @param e the ErrorHandler with which to register Semantic analyzer errors
      */
     public void populateSymbolTable(Class_ classNode,
                                            SymbolTable table,
@@ -30,8 +31,8 @@ public class MethodSymbolTableVisitor extends Visitor {
     }
 
     /**
-     * For each method checks if it is the main method
-     * @param methodNode
+     * For each method populate the symbol table
+     * @param methodNode the method node
      * @return
      */
     @Override
@@ -41,7 +42,7 @@ public class MethodSymbolTableVisitor extends Visitor {
                     this.errHandler.SEMANT_ERROR,
                     currClass.getFilename(),
                     methodNode.getLineNum(),
-                    "Method Name is a Reserved Keyword: " + methodNode.getName());
+                    "Method name is a reserved keyword: " + methodNode.getName());
         }
         if(this.methodTable.peek(methodNode.getName()) != null) {
             errHandler.register(

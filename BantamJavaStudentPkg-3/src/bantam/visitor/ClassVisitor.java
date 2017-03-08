@@ -51,7 +51,7 @@ public class ClassVisitor extends Visitor{
                     this.errorHandler.SEMANT_ERROR,
                     node.getFilename(),
                     node.getLineNum(),
-                    "Class Name is a Reserved Keyword: " + node.getName());
+                    "Class name is a reserved keyword: " + node.getName());
         }
         if (this.classMap.containsKey(node.getName())) {
             this.errorHandler.register(

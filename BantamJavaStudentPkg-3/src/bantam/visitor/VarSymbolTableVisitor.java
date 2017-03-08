@@ -78,7 +78,7 @@ public class VarSymbolTableVisitor extends Visitor {
                     this.errHandler.SEMANT_ERROR,
                     currClass.getFilename(),
                     declStmt.getLineNum(),
-                    "Variable Name is a Reserved Keyword: " + declStmt.getName());
+                    "Variable name is a reserved keyword: " + declStmt.getName());
         }
         if (this.varSymbolTable.lookup(declStmt.getName()) != null){
             errHandler.register(
