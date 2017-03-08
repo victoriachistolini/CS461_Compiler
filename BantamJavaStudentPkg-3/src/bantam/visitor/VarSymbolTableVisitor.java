@@ -33,7 +33,7 @@ public class VarSymbolTableVisitor extends Visitor {
      */
     @Override
     public Object visit(Field fieldNode) {
-        if (SemanticTools.isKeyword(fieldNode.getName())) {
+        if (SemanticTools.isReservedWord(fieldNode.getName())) {
             this.errHandler.register(
                     this.errHandler.SEMANT_ERROR,
                     currClass.getFilename(),
@@ -48,8 +48,9 @@ public class VarSymbolTableVisitor extends Visitor {
                     "Two methods declared with the same name '" +
                             fieldNode.getName() + "'"
             );
+        } else {
+            this.varSymbolTable.add(fieldNode.getName(), fieldNode.getType());
         }
-        this.varSymbolTable.add(fieldNode.getName(), fieldNode.getType());
         return  null;
     }
 
@@ -72,12 +73,12 @@ public class VarSymbolTableVisitor extends Visitor {
      */
     @Override
     public Object visit(DeclStmt declStmt) {
-        if (SemanticTools.isKeyword(declStmt.getName())) {
+        if (SemanticTools.isReservedWord(declStmt.getName())) {
             this.errHandler.register(
                     this.errHandler.SEMANT_ERROR,
                     currClass.getFilename(),
                     declStmt.getLineNum(),
-                    "Method Name is a Reserved Keyword: " + declStmt.getName());
+                    "Variable Name is a Reserved Keyword: " + declStmt.getName());
         }
         if (this.varSymbolTable.lookup(declStmt.getName()) != null){
             errHandler.register(
@@ -87,8 +88,10 @@ public class VarSymbolTableVisitor extends Visitor {
                     "Variable with the same name already declared '" +
                             declStmt.getName() + "'"
             );
+        } else {
+            this.varSymbolTable.add(declStmt.getName(), declStmt.getType());
         }
-        this.varSymbolTable.add(declStmt.getName(), declStmt.getType());
+
         return null;
     }
 
@@ -101,6 +104,14 @@ public class VarSymbolTableVisitor extends Visitor {
      */
     @Override
     public Object visit(Formal formal){
+        if (SemanticTools.isReservedWord(formal.getName())) {
+            this.errHandler.register(
+                    this.errHandler.SEMANT_ERROR,
+                    currClass.getFilename(),
+                    formal.getLineNum(),
+                    "Variable Name is a Reserved Keyword: " + formal.getName());
+        }
+
         if (this.varSymbolTable.peek(formal.getName()) != null){
             errHandler.register(
                     errHandler.SEMANT_ERROR,
@@ -109,8 +120,10 @@ public class VarSymbolTableVisitor extends Visitor {
                     "Two parameters declared with the same name '" +
                             formal.getName() + "'"
             );
+        } else {
+            this.varSymbolTable.add(formal.getName(),formal.getType());
         }
-        this.varSymbolTable.add(formal.getName(),formal.getType());
+
         return null;
     }
 

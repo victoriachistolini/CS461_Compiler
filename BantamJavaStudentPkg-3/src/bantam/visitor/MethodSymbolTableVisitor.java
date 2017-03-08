@@ -36,7 +36,14 @@ public class MethodSymbolTableVisitor extends Visitor {
      */
     @Override
     public Object visit(Method methodNode) {
-        if(this.methodTable.lookup(methodNode.getName()) != null) {
+        if (SemanticTools.isReservedWord(methodNode.getName())) {
+            this.errHandler.register(
+                    this.errHandler.SEMANT_ERROR,
+                    currClass.getFilename(),
+                    methodNode.getLineNum(),
+                    "Method Name is a Reserved Keyword: " + methodNode.getName());
+        }
+        if(this.methodTable.peek(methodNode.getName()) != null) {
             errHandler.register(
                     errHandler.SEMANT_ERROR,
                     currClass.getFilename(),
@@ -44,15 +51,9 @@ public class MethodSymbolTableVisitor extends Visitor {
                     "Two methods declared with the same name '" +
                             methodNode.getName() + "'"
             );
+        } else {
+            this.methodTable.add(methodNode.getName(), methodNode);
         }
-        if (SemanticTools.isKeyword(methodNode.getName())) {
-            this.errHandler.register(
-                    this.errHandler.SEMANT_ERROR,
-                    currClass.getFilename(),
-                    methodNode.getLineNum(),
-                    "Method Name is a Reserved Keyword: " + methodNode.getName());
-        }
-        this.methodTable.add(methodNode.getName(), methodNode);
         return null;
     }
 

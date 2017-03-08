@@ -46,24 +46,23 @@ public class ClassVisitor extends Visitor{
 
     @Override
     public Object visit(Class_ node) {
-        if (this.classMap.containsKey(node.getName())) {
-            this.errorHandler.register(
-                    this.errorHandler.SEMANT_ERROR,
-                    node.getFilename(),
-                    node.getLineNum(),
-                    "Duplicate Class name -" + node.getName());
-        }else if (SemanticTools.isKeyword(node.getName())) {
+        if (SemanticTools.isReservedWord(node.getName())) {
             this.errorHandler.register(
                     this.errorHandler.SEMANT_ERROR,
                     node.getFilename(),
                     node.getLineNum(),
                     "Class Name is a Reserved Keyword: " + node.getName());
         }
-        else {
+        if (this.classMap.containsKey(node.getName())) {
+            this.errorHandler.register(
+                    this.errorHandler.SEMANT_ERROR,
+                    node.getFilename(),
+                    node.getLineNum(),
+                    "Duplicate Class name -" + node.getName());
+        } else {
             this.classMap.put(node.getName(),
                     new ClassTreeNode(node, false, true, this.classMap));
         }
-
         return null;
     }
 
