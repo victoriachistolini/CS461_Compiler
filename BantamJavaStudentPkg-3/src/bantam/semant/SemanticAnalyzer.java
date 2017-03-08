@@ -29,6 +29,7 @@ package bantam.semant;
 import bantam.ast.*;
 import bantam.util.*;
 import bantam.visitor.ClassVisitor;
+import bantam.visitor.MainMainVisitor;
 import bantam.visitor.MethodSymbolTableVisitor;
 import bantam.visitor.VarSymbolTableVisitor;
 
@@ -97,12 +98,15 @@ public class SemanticAnalyzer {
         //Build the Variable Symbol Tables a(and check variable name validity)
         populateVarTables();
 
+        //Check whether or not a Main Class with Main Method exists
+        checkMainMain();
+
         // comment out
-        throw new RuntimeException("Semantic analyzer unimplemented");
+        //throw new RuntimeException("Semantic analyzer unimplemented");
 
         // uncomment out
-        // this.errorHandler.checkErrors();
-        // return this.root;
+        this.errorHandler.checkErrors();
+        return this.root;
     }
 
     /**
@@ -322,5 +326,14 @@ public class SemanticAnalyzer {
                 child -> populateVarTables(child, visitor)
         );
         root.getVarSymbolTable().exitScope();
+    }
+
+    /**
+     * Checks the program to see if it has a Main class with
+     * a main method in it
+     */
+    private void checkMainMain() {
+        MainMainVisitor visitor = new MainMainVisitor();
+        visitor.hasMain(this.program, this.classMap, this.errorHandler);
     }
 }

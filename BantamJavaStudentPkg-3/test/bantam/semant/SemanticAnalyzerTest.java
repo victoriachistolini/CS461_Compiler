@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 /*
@@ -92,6 +93,49 @@ public class SemanticAnalyzerTest
             assertTrue(errors.isEmpty());
         }
         assertTrue(thrown);
+    }
+
+    /**
+     * Tests the MainMainVisitor in its ability to locate the Main Class and
+     * associated main method through inheritance
+     * @throws Exception
+     */
+    @Test
+    public void testMainMainVisitor() throws Exception {
+        boolean validThrown = false;
+        boolean invalidThrown = false;
+        SemanticAnalyzer validAnalyzer = (
+                setupSemanFromFile("MainVisitorValidTest.btm")
+        );
+        SemanticAnalyzer invalidAnalyzer = (
+                setupSemanFromFile("MainVisitorInvalidTest.btm")
+        );
+
+        //Test the valid Main visitor
+        try {
+            validAnalyzer.analyze();
+        } catch (RuntimeException e) {
+            validThrown = true;
+            validAnalyzer.getErrorHandler().getErrorList().forEach( error ->
+                    System.out.println(error)
+            );
+        }
+
+        //Test the invalid Main Visitor
+        try {
+            invalidAnalyzer.analyze();
+        } catch (RuntimeException e) {
+            invalidThrown = true;
+            Set<String> errors = new HashSet<>();
+            invalidAnalyzer.getErrorHandler().getErrorList().forEach( error ->
+                    errors.add(error.getMessage())
+            );
+            assertTrue(errors.remove("Missing Main method in a Main Class"));
+            assertTrue(errors.isEmpty());
+        }
+
+        assertFalse(validThrown);
+        assertTrue(invalidThrown);
     }
 
     /**

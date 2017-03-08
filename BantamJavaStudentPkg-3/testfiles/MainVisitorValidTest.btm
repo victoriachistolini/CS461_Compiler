@@ -1,0 +1,12 @@
+/**
+ * This Bantam java file is for use in testing the Semantic Analyzer.
+ * The Lexer and Parser should pass
+ * This file tests the ability of the Semantic analyzer to correctly identify
+ * the main Class and method via inheritance
+ */
+
+class A {
+    void main() {}
+}
+
+class Main extends A {}
