@@ -8,6 +8,8 @@ import bantam.parser.Parser;
 import bantam.util.ErrorHandler;
 
 import java.io.StringReader;
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -58,10 +60,18 @@ public class SemanticAnalyzerTest
             analyzer.analyze();
         } catch (RuntimeException e) {
             thrown = true;
-            //assertEquals("Bantam semantic analyzer found errors.", e.getMessage());
+            Set<String> errors = new HashSet<>();
             for (ErrorHandler.Error err : analyzer.getErrorHandler().getErrorList()) {
+                errors.add(err.getMessage());
                 System.out.println(err);
             }
+            System.out.println(errors);
+            assertTrue(errors.contains("Variable Name is a Reserved Keyword: boolean"));
+            assertTrue(errors.contains("Method Name is a Reserved Keyword: int"));
+            assertTrue(errors.contains("Variable Name is a Reserved Keyword: void"));
+            assertTrue(errors.contains("Class Name is a Reserved Keyword: null"));
+            assertTrue(errors.contains("Variable Name is a Reserved Keyword: super"));
+            assertTrue(errors.contains("Method Name is a Reserved Keyword: this"));
         }
         assertTrue(thrown);
     }
