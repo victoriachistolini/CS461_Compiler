@@ -13,8 +13,6 @@ package bantam.visitor;
 import bantam.ast.*;
 import bantam.util.ClassTreeNode;
 import bantam.util.ErrorHandler;
-import com.sun.source.tree.ClassTree;
-
 import java.util.Hashtable;
 
 /**
