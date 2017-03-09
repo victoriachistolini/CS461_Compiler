@@ -139,6 +139,30 @@ public class SemanticAnalyzerTest
     }
 
     /**
+     * Tests all functions of the UnaryExprVisitor
+     * @throws Exception
+     */
+    @Test
+    public void testUnaryExprVisitor() throws Exception {
+        boolean thrown = false;
+        SemanticAnalyzer analyzer = setupSemanFromFile("UnaryExprVisitorTest.btm");
+        try {
+            analyzer.analyze();
+        } catch (RuntimeException e) {
+            thrown = true;
+            Set<String> errors = new HashSet<>();
+            analyzer.getErrorHandler().getErrorList().forEach( error ->
+                    errors.add(error.getMessage() + " " + error.getLineNum())
+            );
+            assertTrue(errors.remove("UnaryDecrExpr must have VarExpr as expression 12"));
+            assertTrue(errors.remove("UnaryIncrExpr must have VarExpr as expression 10"));
+            assertTrue(errors.remove("UnaryIncrExpr must have VarExpr as expression 11"));
+            assertTrue(errors.isEmpty());
+        }
+        assertTrue(thrown);
+    }
+
+    /**
      * generates a Semantic Analyzer from the input testfile
      * @param filename the btm file
      * @return a Semantic Analyzer Object for the input file

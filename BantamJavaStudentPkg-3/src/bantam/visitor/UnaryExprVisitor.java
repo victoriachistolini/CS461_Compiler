@@ -9,8 +9,21 @@ import bantam.util.ErrorHandler;
 public class UnaryExprVisitor extends Visitor {
     private ErrorHandler errHandler;
     private Class_ currClass;
-    public void checkUnaryExpr(Class_ ast){
+
+    public void checkUnaryExpr(Program ast, ErrorHandler e){
+        this.errHandler = e;
         ast.accept(this);
+    }
+
+    /**
+     * visits the class node and updates the current class value
+     * @param classNode
+     * @return
+     */
+    @Override
+    public Object visit(Class_ classNode) {
+        this.currClass = classNode;
+        return super.visit(classNode);
     }
 
     /**
@@ -20,12 +33,12 @@ public class UnaryExprVisitor extends Visitor {
      */
     @Override
     public Object visit(UnaryDecrExpr unaryDecrExpr) {
-       if (!(unaryDecrExpr.getExpr() instanceof VarExpr)) {
-           errHandler.register(
-                   errHandler.SEMANT_ERROR,
-                   currClass.getFilename(),
-                   unaryDecrExpr.getLineNum(),
-                   "Unary decr expression must have varexp as expression '"
+        if (!(unaryDecrExpr.getExpr() instanceof VarExpr)) {
+            errHandler.register(
+                errHandler.SEMANT_ERROR,
+                currClass.getFilename(),
+                unaryDecrExpr.getLineNum(),
+                "UnaryDecrExpr must have VarExpr as expression"
            );
         }
         return null;
@@ -43,7 +56,7 @@ public class UnaryExprVisitor extends Visitor {
                     errHandler.SEMANT_ERROR,
                     currClass.getFilename(),
                     unaryIncrExpr.getLineNum(),
-                    "Unary Incr expression must have varexp as expression '"
+                    "UnaryIncrExpr must have VarExpr as expression"
             );
         }
         return null;
@@ -58,7 +71,5 @@ public class UnaryExprVisitor extends Visitor {
 
     @Override
     public Object visit(VarExpr varNode) { return null; }
-
-
 }
 

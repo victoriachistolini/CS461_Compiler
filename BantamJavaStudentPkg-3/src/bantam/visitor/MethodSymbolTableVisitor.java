@@ -3,31 +3,54 @@ package bantam.visitor;
 import bantam.ast.Class_;
 import bantam.ast.Field;
 import bantam.ast.Method;
+import bantam.ast.Program;
+import bantam.util.ClassTreeNode;
 import bantam.util.ErrorHandler;
 import bantam.util.SemanticTools;
 import bantam.util.SymbolTable;
+import jdk.internal.dynalink.support.ClassMap;
+
+import java.util.Hashtable;
 
 /**
  * Created by Alex on 3/4/17.
  */
 public class MethodSymbolTableVisitor extends Visitor {
-    private SymbolTable methodTable;
+    private SymbolTable currTable;
     private ErrorHandler errHandler;
     private Class_ currClass;
+    private Hashtable<String,ClassTreeNode> classMap;
 
     /**
      * populates a symbol table with all of the methods in the given class
-     * @param classNode the ASTNode forming the root of the class
-     * @param table the SymbolTable to populate
+     * @param ast the ASTNode forming the root of the program
+     * @param classMap the classmap for the gien program
      * @param e the ErrorHandler with which to register Semantic analyzer errors
      */
-    public void populateSymbolTable(Class_ classNode,
-                                           SymbolTable table,
-                                           ErrorHandler e) {
+    public void populateSymbolTable(Program ast,
+                                    Hashtable<String,ClassTreeNode> classMap,
+                                    ErrorHandler e) {
         this.errHandler = e;
+        this.classMap = classMap;
+        ast.accept(this);
+    }
+
+    /**
+     * updates the current class and symbol table pointers and then
+     * Visits the Class node
+     * @param classNode
+     * @return
+     */
+    @Override
+    public Object visit(Class_ classNode) {
         this.currClass = classNode;
-        this.methodTable = table;
-        classNode.accept(this);
+        this.currTable = (
+                this.classMap.get(this.currClass.getName()).getMethodSymbolTable()
+        );
+        this.currTable.enterScope();
+        super.visit(classNode);
+        this.currTable.exitScope();
+        return null;
     }
 
     /**
@@ -44,7 +67,7 @@ public class MethodSymbolTableVisitor extends Visitor {
                     methodNode.getLineNum(),
                     "Method name is a reserved keyword: " + methodNode.getName());
         }
-        if(this.methodTable.peek(methodNode.getName()) != null) {
+        if(this.currTable.peek(methodNode.getName()) != null) {
             errHandler.register(
                     errHandler.SEMANT_ERROR,
                     currClass.getFilename(),
@@ -53,7 +76,7 @@ public class MethodSymbolTableVisitor extends Visitor {
                             methodNode.getName() + "'"
             );
         } else {
-            this.methodTable.add(methodNode.getName(), methodNode);
+            this.currTable.add(methodNode.getName(), methodNode);
         }
         return null;
     }
