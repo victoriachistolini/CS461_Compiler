@@ -11,7 +11,7 @@ import java.util.Hashtable;
 /**
  * Checks type semantics of the program
  */
-public class typeCheckVisitor extends Visitor {
+public class TypeCheckVisitor extends Visitor {
     private final String BOOLEAN = "boolean";
     private final String STRING = "String";
     private final String INT = "int";

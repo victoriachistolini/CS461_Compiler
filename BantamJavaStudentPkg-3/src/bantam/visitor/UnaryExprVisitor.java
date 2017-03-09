@@ -11,7 +11,6 @@ public class UnaryExprVisitor extends Visitor {
     private Class_ currClass;
     public void checkUnaryExpr(Class_ ast){
         ast.accept(this);
-
     }
 
     /**
