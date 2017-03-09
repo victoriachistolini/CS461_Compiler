@@ -18,6 +18,7 @@ public class typeCheckVisitor extends Visitor {
     private final String OBJECT = "Object";
     private final String VOID = "void";
     private final String THIS = "this";
+    private final String SUPER = "super";
 
     /** Error Handler to register semantic errors in class declarations */
     private ErrorHandler errorHandler;
@@ -30,7 +31,8 @@ public class typeCheckVisitor extends Visitor {
     private Method currentMethod;
     private String currentClass;
     /**
-     * check type semantics of the program
+     * check type semantics of the program and annotates expr types
+     * undeclared variables report errors
      * @param program root AST node of the program
      * @param classMap global class map
      * @param errorHandler errorhandler to report errors
@@ -73,6 +75,12 @@ public class typeCheckVisitor extends Visitor {
 
     @Override
     public Object visit(Field node) {
+        if(this.currentVarSymbolTable.lookup(node.getName()) != null) {
+            errorHandler.register(errorHandler.SEMANT_ERROR,
+                    this.currentClass,
+                    node.getLineNum(),
+                    "Variable " + node.getName() + " already declared");
+        }
         return super.visit(node);
     }
 
@@ -102,7 +110,7 @@ public class typeCheckVisitor extends Visitor {
             errorHandler.register(errorHandler.SEMANT_ERROR,
                     this.currentClass,
                     node.getLineNum(),
-                    "Variable already declared");
+                    "Variable " + node.getName() + " already declared");
         } else {
             this.currentVarSymbolTable.add(node.getName(), node.getType());
         }
@@ -432,103 +440,191 @@ public class typeCheckVisitor extends Visitor {
     @Override
     public Object visit(BinaryCompEqExpr node) {
         super.visit(node);
-        node.setExprType(BOOLEAN);
-        return 1==1;
+        checkBinaryExpr(node);
+        return false;
     }
 
     @Override
     public Object visit(BinaryCompNeExpr node) {
-        return super.visit(node);
+        super.visit(node);
+        checkBinaryExpr(node);
+        return false;
     }
 
     @Override
     public Object visit(BinaryCompLtExpr node) {
-        return super.visit(node);
+        super.visit(node);
+        checkBinaryExpr(node);
+        return false;
     }
 
     @Override
     public Object visit(BinaryCompLeqExpr node) {
-        return super.visit(node);
+        super.visit(node);
+        checkBinaryExpr(node);
+        return false;
     }
 
     @Override
     public Object visit(BinaryCompGtExpr node) {
-        return super.visit(node);
+        super.visit(node);
+        checkBinaryExpr(node);
+        return false;
     }
 
     @Override
     public Object visit(BinaryCompGeqExpr node) {
-        return super.visit(node);
+        super.visit(node);
+        checkBinaryExpr(node);
+        return false;
     }
 
     @Override
     public Object visit(BinaryArithPlusExpr node) {
-        return super.visit(node);
+        super.visit(node);
+        checkBinaryExpr(node);
+        return false;
     }
 
     @Override
     public Object visit(BinaryArithMinusExpr node) {
-        return super.visit(node);
+        super.visit(node);
+        checkBinaryExpr(node);
+        return false;
     }
 
     @Override
     public Object visit(BinaryArithTimesExpr node) {
-        return super.visit(node);
+        super.visit(node);
+        checkBinaryExpr(node);
+        return false;
     }
 
     @Override
     public Object visit(BinaryArithDivideExpr node) {
-        return super.visit(node);
+        super.visit(node);
+        checkBinaryExpr(node);
+        return false;
     }
 
     @Override
     public Object visit(BinaryArithModulusExpr node) {
-        return super.visit(node);
+        super.visit(node);
+        checkBinaryExpr(node);
+        return false;
     }
 
     @Override
     public Object visit(BinaryLogicAndExpr node) {
-        return super.visit(node);
+        super.visit(node);
+        checkBinaryExpr(node);
+        return false;
     }
 
     @Override
     public Object visit(BinaryLogicOrExpr node) {
-        return super.visit(node);
+        super.visit(node);
+        checkBinaryExpr(node);
+        return false;
     }
 
     @Override
     public Object visit(UnaryNegExpr node) {
-        return super.visit(node);
+        super.visit(node);
+        checkUnaryExpr(node);
+        return false;
     }
 
     @Override
     public Object visit(UnaryNotExpr node) {
-        return super.visit(node);
+        super.visit(node);
+        checkUnaryExpr(node);
+        return false;
     }
 
     @Override
     public Object visit(UnaryIncrExpr node) {
-        return super.visit(node);
+        super.visit(node);
+        checkUnaryExpr(node);
+        return false;
     }
 
     @Override
     public Object visit(UnaryDecrExpr node) {
-        return super.visit(node);
+        super.visit(node);
+        checkUnaryExpr(node);
+        return false;
     }
 
     @Override
     public Object visit(VarExpr node) {
+        String varType = null;
         if (node.getRef() != null) {
             node.getRef().accept(this);
-            //node.setExprType(classMap.get());
+            if(((VarExpr) node.getRef()).getName().equals(THIS)) {
+                varType =(String) this.currentVarSymbolTable.lookup(node.getName());
+            } else if(((VarExpr) node.getRef()).getName().equals(SUPER)) {
+                ClassTreeNode currClass = classMap.get(currentClass);
+                while (currClass.getParent() != null) {
+                    currClass = currClass.getParent();
+                    if (currClass.getVarSymbolTable().lookup(node.getName())!=null) {
+                        varType = (String) currClass.getVarSymbolTable().lookup(node.getName());
+                    }
+                }
+            } else {
+                errorHandler.register(errorHandler.SEMANT_ERROR,
+                        this.currentClass,
+                        node.getLineNum(),
+                        "Only super or this are allowed for variable references");
+            }
+        } else {
+            varType = (String) currentVarSymbolTable.lookup(node.getName());
         }
-        return null;
+        if (varType != null) {
+            node.setExprType(varType);
+        } else {
+            errorHandler.register(errorHandler.SEMANT_ERROR,
+                    this.currentClass,
+                    node.getLineNum(),
+                    "Undeclared variable " + node.getName());
+        }
+        return false;
     }
 
     @Override
     public Object visit(ArrayExpr node) {
         super.visit(node);
-        node.setExprType(node.getIndex().getExprType());
+        String varType = null;
+        if (node.getRef() != null) {
+            node.getRef().accept(this);
+            if(((VarExpr) node.getRef()).getName().equals(THIS)) {
+                varType =(String) this.currentVarSymbolTable.lookup(node.getName());
+            } else if(((VarExpr) node.getRef()).getName().equals(SUPER)) {
+                ClassTreeNode currClass = classMap.get(currentClass);
+                while (currClass.getParent() != null) {
+                    currClass = currClass.getParent();
+                    if (currClass.getVarSymbolTable().lookup(node.getName())!=null) {
+                        varType = (String) currClass.getVarSymbolTable().lookup(node.getName());
+                    }
+                }
+            } else {
+                errorHandler.register(errorHandler.SEMANT_ERROR,
+                        this.currentClass,
+                        node.getLineNum(),
+                        "Only super or this are allowed for variable references");
+            }
+        } else {
+            varType = (String) currentVarSymbolTable.lookup(node.getName());
+        }
+        if (varType != null) {
+            node.setExprType(varType);
+        } else {
+            errorHandler.register(errorHandler.SEMANT_ERROR,
+                    this.currentClass,
+                    node.getLineNum(),
+                    "Undeclared variable " + node.getName());
+        }
+
         return null;
     }
 
@@ -607,6 +703,71 @@ public class typeCheckVisitor extends Visitor {
         return false;
     }
 
+    /**
+     * Check types for a binary expr
+     * reports error if not legal
+     * @param node
+     */
+    private void checkBinaryExpr(BinaryExpr node) {
+        String leftType = node.getLeftExpr().getExprType();
+        String rightType = node.getRightExpr().getExprType();
+        String operandType = node.getOperandType();
 
+        // compexpr check
+        if(operandType != null) {
+            if(!(operandType.equals(leftType) && operandType.equals(rightType))) {
+                errorHandler.register(errorHandler.SEMANT_ERROR,
+                        this.currentClass,
+                        node.getLineNum(),
+                        "Operands " + leftType + " and "+ rightType
+                                + " must be of both type " + operandType );
+            } else {
+                node.setExprType(operandType);
+            }
+        } else {
+            // if operandtype isnt defined for some crazy reason
+            if(SemanticTools.isPrimitive(leftType) || SemanticTools.isPrimitive(rightType)) {
+                if(!leftType.equals(rightType)) {
+                    errorHandler.register(errorHandler.SEMANT_ERROR,
+                            this.currentClass,
+                            node.getLineNum(),
+                            "Operands " + leftType + " and "+ rightType + " are incompatible");
+                }
+            } else {
+                // types
+                if(!(checkType(leftType, rightType, node, false) && checkType(rightType, leftType, node, false))) {
+                    errorHandler.register(errorHandler.SEMANT_ERROR,
+                            this.currentClass,
+                            node.getLineNum(),
+                            "Operands " + leftType + " and "+ rightType + " are incompatible");
+                }
+            }
+        }
+    }
 
+    /**
+     * check unary expression type legality
+     * reports errors to error handler
+     * @param node the UnaryExpr node in question
+     */
+    private void checkUnaryExpr(UnaryExpr node) {
+        node.setExprType(node.getOperandType());
+        if (!node.getOperandType().equals(node.getExpr().getExprType())) {
+            errorHandler.register(errorHandler.SEMANT_ERROR,
+                    this.currentClass,
+                    node.getLineNum(),
+                    "Unary operator " + node.getOpName() + " incompatible with type "
+                            + node.getExpr().getExprType());
+        }
+        if (node.getOpName().equals("++") || node.getOpName().equals("--")) {
+            if (!(node.getExpr() instanceof VarExpr) &&
+                    !(node.getExpr() instanceof ArrayExpr)) {
+                errorHandler.register(errorHandler.SEMANT_ERROR,
+                        this.currentClass,
+                        node.getLineNum(),
+                        "Var expression required for unary operation");
+            }
+
+        }
+    }
 }
