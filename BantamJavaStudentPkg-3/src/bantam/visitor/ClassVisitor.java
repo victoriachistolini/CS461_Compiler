@@ -19,7 +19,7 @@ import java.util.Hashtable;
 import java.util.Map;
 
 /**
- * Populates the class map hierarchy with classtreenodes
+ * Populates the class map hierarchy with class treenodes
  */
 public class ClassVisitor extends Visitor{
 
@@ -58,7 +58,7 @@ public class ClassVisitor extends Visitor{
                     this.errorHandler.SEMANT_ERROR,
                     node.getFilename(),
                     node.getLineNum(),
-                    "Duplicate Class name -" + node.getName());
+                    "Duplicate Class name " + node.getName());
         } else {
             this.classMap.put(node.getName(),
                     new ClassTreeNode(node, false, true, this.classMap));
@@ -98,7 +98,7 @@ public class ClassVisitor extends Visitor{
 
         //Check for inheritance loops
         if (classMap.get("Object").getNumDescendants() != (classMap.size()-1)) {
-            errorHandler.register(errorHandler.SEMANT_ERROR, "Inheritance loop detected!");
+            errorHandler.register(errorHandler.SEMANT_ERROR, "Class inheritance loop detected!");
         }
     }
 }

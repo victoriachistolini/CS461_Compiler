@@ -25,19 +25,23 @@ public class SemanticAnalyzerTest
      * because a Bantam Java program must have a Main class with a main
      * method. */
     @Test
-    public void testEmptyMainClass() throws Exception {
+    public void testClassHierarchy() throws Exception {
         boolean thrown = false;
-        Parser parser = new Parser(new Lexer(new StringReader("class Main {  }")));
-        Program program = (Program) parser.parse().value;
-        SemanticAnalyzer analyzer = new SemanticAnalyzer(program, false);
+        SemanticAnalyzer analyzer = setupSemanFromFile("ClassHierarchyTest.btm");
         try {
             analyzer.analyze();
         } catch (RuntimeException e) {
             thrown = true;
-            assertEquals("Bantam semantic analyzer found errors.", e.getMessage());
-            analyzer.getErrorHandler().getErrorList().forEach(error ->
-                    System.out.println(error)
+            Set<String> errors = new HashSet<>();
+            analyzer.getErrorHandler().getErrorList().forEach( error ->
+                    errors.add(error.getMessage())
             );
+            assertTrue(errors.remove("Duplicate Class name Object"));
+            assertTrue(errors.remove("Class String is not Extendable"));
+            assertTrue(errors.remove("Class inheritance loop detected!"));
+            assertTrue(errors.remove("Class name is a reserved keyword: super"));
+            assertTrue(errors.remove("Class C has an invalid parent"));
+            assertTrue(errors.isEmpty());
         }
         assertTrue(thrown);
     }

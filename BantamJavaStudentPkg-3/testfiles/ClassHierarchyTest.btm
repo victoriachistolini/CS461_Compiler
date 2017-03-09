@@ -1,0 +1,21 @@
+class Main {
+    void main() {}
+}
+
+class Object {
+}
+
+class Test extends String {
+}
+
+class A extends B {
+}
+
+class B extends A {
+}
+
+class C extends D {
+}
+
+class super {
+}
