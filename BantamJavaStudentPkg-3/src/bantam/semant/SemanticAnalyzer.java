@@ -101,6 +101,9 @@ public class SemanticAnalyzer {
         //Check UnaryExpr Statements to assure they contain VarExpr
         checkUnaryExpressions();
 
+		//Check if types are valid
+		checkTypes();
+
         // comment out
         //throw new RuntimeException("Semantic analyzer unimplemented");
 
@@ -270,6 +273,11 @@ public class SemanticAnalyzer {
 	private void buildClassHierarchy() {
 		ClassVisitor classVisitor = new ClassVisitor();
 		classVisitor.buildClassHierarchy(this.program, this.classMap, this.errorHandler);
+	}
+
+	private void checkTypes() {
+		TypeCheckVisitor typeVisitor= new TypeCheckVisitor();
+		typeVisitor.analyzeTypes(this.program, this.classMap, this.errorHandler);
 	}
 
     /**
