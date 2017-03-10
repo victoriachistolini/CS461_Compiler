@@ -45,7 +45,7 @@ public class VarSymbolTableVisitor extends Visitor {
                     errHandler.SEMANT_ERROR,
                     currClass.getFilename(),
                     fieldNode.getLineNum(),
-                    "Two methods declared with the same name '" +
+                    "Field with the same name already declared: '" +
                             fieldNode.getName() + "'"
             );
         } else {
@@ -85,7 +85,7 @@ public class VarSymbolTableVisitor extends Visitor {
                     errHandler.SEMANT_ERROR,
                     currClass.getFilename(),
                     declStmt.getLineNum(),
-                    "Variable with the same name already declared '" +
+                    "Variable with the same name already declared: '" +
                             declStmt.getName() + "'"
             );
         } else {
@@ -117,7 +117,7 @@ public class VarSymbolTableVisitor extends Visitor {
                     errHandler.SEMANT_ERROR,
                     currClass.getFilename(),
                     formal.getLineNum(),
-                    "Two parameters declared with the same name '" +
+                    "Parameter with the same name already declared: '" +
                             formal.getName() + "'"
             );
         } else {
