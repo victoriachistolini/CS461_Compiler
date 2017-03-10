@@ -47,9 +47,7 @@ public class MethodSymbolTableVisitor extends Visitor {
         this.currTable = (
                 this.classMap.get(this.currClass.getName()).getMethodSymbolTable()
         );
-        this.currTable.enterScope();
         super.visit(classNode);
-        this.currTable.exitScope();
         return null;
     }
 

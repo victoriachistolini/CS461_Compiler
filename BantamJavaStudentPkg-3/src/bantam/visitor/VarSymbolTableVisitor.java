@@ -41,10 +41,8 @@ public class VarSymbolTableVisitor extends Visitor {
         this.varSymbolTable = (
                 this.classMap.get(this.currClass.getName()).getVarSymbolTable()
         );
-        System.out.println(classNode.getName() + " " + this.varSymbolTable.getClass().getName());
-        this.varSymbolTable.enterScope();
+        System.out.println(this.varSymbolTable.getCurrScopeLevel());
         super.visit(classNode);
-        this.varSymbolTable.exitScope();
         return null;
     }
 
