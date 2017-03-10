@@ -20,9 +20,7 @@ import static org.junit.Assert.assertTrue;
 public class SemanticAnalyzerTest
 {
 
-    /** tests the case of a Main class with no members.  This is illegal
-     * because a Bantam Java program must have a Main class with a main
-     * method. */
+    /** Semantic check to make sure class hierarchies are fully set up*/
     @Test
     public void testClassHierarchy() throws Exception {
         boolean thrown = false;
@@ -40,6 +38,32 @@ public class SemanticAnalyzerTest
             assertTrue(errors.remove("Class inheritance loop detected!"));
             assertTrue(errors.remove("Class name is a reserved keyword: super"));
             assertTrue(errors.remove("Class C has an invalid parent"));
+            assertTrue(errors.isEmpty());
+        }
+        assertTrue(thrown);
+    }
+
+    /** Semantic check to make sure type errors are caught*/
+    @Test
+    public void testTypes() throws Exception {
+        boolean thrown = false;
+        SemanticAnalyzer analyzer = setupSemanFromFile("TypeCheck.btm");
+        try {
+            analyzer.analyze();
+        } catch (RuntimeException e) {
+            thrown = true;
+            Set<String> errors = new HashSet<>();
+            analyzer.getErrorHandler().getErrorList().forEach( error ->
+                    errors.add(error.getMessage())
+            );
+            //e.printStackTrace();
+            analyzer.getErrorHandler().printErrors();
+            assertTrue(errors.remove("Incompatible types int and String"));
+            assertTrue(errors.remove("Invalid subtype A of type String"));
+            assertTrue(errors.remove("Invalid type B"));
+            assertTrue(errors.remove("Invalid expression for expression statement"));
+            assertTrue(errors.remove("Undeclared method bello"));
+            assertTrue(errors.remove("Undeclared variable q"));
             assertTrue(errors.isEmpty());
         }
         assertTrue(thrown);

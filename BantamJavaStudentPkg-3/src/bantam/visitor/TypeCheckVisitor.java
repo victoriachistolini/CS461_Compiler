@@ -46,26 +46,6 @@ public class TypeCheckVisitor extends Visitor {
     }
 
     @Override
-    public Object visit(ASTNode node) {
-        return super.visit(node);
-    }
-
-    @Override
-    public Object visit(ListNode node) {
-        return super.visit(node);
-    }
-
-    @Override
-    public Object visit(Program node) {
-        return super.visit(node);
-    }
-
-    @Override
-    public Object visit(ClassList node) {
-        return super.visit(node);
-    }
-
-    @Override
     public Object visit(Class_ node) {
         this.currentVarSymbolTable = classMap.get(node.getName()).getVarSymbolTable();
         this.currentMethodSymbolTable = classMap.get(node.getName()).getMethodSymbolTable();
@@ -75,13 +55,11 @@ public class TypeCheckVisitor extends Visitor {
 
     @Override
     public Object visit(Field node) {
-        if(this.currentVarSymbolTable.lookup(node.getName()) != null) {
-            errorHandler.register(errorHandler.SEMANT_ERROR,
-                    this.currentClass,
-                    node.getLineNum(),
-                    "Variable " + node.getName() + " already declared");
+        super.visit(node);
+        if(this.currentVarSymbolTable.peek(node.getName()) != null) {
+            checkType(node.getType(), node.getInit().getExprType(), node, true);
         }
-        return super.visit(node);
+        return null;
     }
 
     @Override
@@ -127,7 +105,7 @@ public class TypeCheckVisitor extends Visitor {
      * new object constructions
      */
     public Object visit(ExprStmt node) {
-        if(!(boolean)super.visit(node)) {
+        if(!(boolean)node.getExpr().accept(this)) {
             errorHandler.register(errorHandler.SEMANT_ERROR,
                     this.currentClass,
                     node.getLineNum(),
@@ -204,6 +182,7 @@ public class TypeCheckVisitor extends Visitor {
 
     @Override
     public Object visit(ReturnStmt node) {
+        super.visit(node);
         String returnType = this.currentMethod.getReturnType();
         if(returnType.equals(VOID)) {
             if(node.getExpr() != null) {
@@ -222,7 +201,7 @@ public class TypeCheckVisitor extends Visitor {
                         "Missing return value");
             }
         }
-        return super.visit(node);
+        return null;
     }
 
     @Override
@@ -243,7 +222,7 @@ public class TypeCheckVisitor extends Visitor {
         node.getActualList().accept(this);
         node.setExprType(OBJECT); //default error type. overwritten if below passes
         // Check method compatibility
-        if(this.classMap.contains(referenceType)) {
+        if(this.classMap.containsKey(referenceType)) {
             Method method = (Method) this.classMap.get(referenceType)
                     .getMethodSymbolTable()
                     .lookup(node.getMethodName());
@@ -287,12 +266,14 @@ public class TypeCheckVisitor extends Visitor {
      */
     @Override
     public Object visit(NewExpr node) {
+        node.setExprType(node.getType());
         return true;
     }
 
     @Override
     public Object visit(NewArrayExpr node) {
         //make sure expr evaluates to int
+        node.setExprType(node.getType());
         if(node.getSize().getExprType() != INT) {
             errorHandler.register(errorHandler.SEMANT_ERROR,
                     this.currentClass,
@@ -656,11 +637,31 @@ public class TypeCheckVisitor extends Visitor {
      */
     private boolean checkType(String type, String subtype, ASTNode ast, boolean debug) {
         if(type.equals(subtype)) {
+            if(!(SemanticTools.isPrimitive(subtype) && SemanticTools.isPrimitive(type))) {
+                if(!(classMap.containsKey(type) && classMap.containsKey(subtype))) {
+                    if(debug) {
+                        if (!classMap.containsKey(type)) {
+                            errorHandler.register(errorHandler.SEMANT_ERROR,
+                                    this.currentClass,
+                                    ast.getLineNum(),
+                                    "Invalid type " + type);
+                        }
+                        if (!classMap.containsKey(subtype)) {
+                            errorHandler.register(errorHandler.SEMANT_ERROR,
+                                    this.currentClass,
+                                    ast.getLineNum(),
+                                    "Invalid type " + subtype);
+                        }
+                    }
+                }
+            }
             return true;
         }
 
         //primitive check
-        if(!(SemanticTools.isPrimitive(subtype) && SemanticTools.isPrimitive(type))) {
+        if(!(SemanticTools.isPrimitive(subtype) && SemanticTools.isPrimitive(type)) &&
+                !(SemanticTools.isPrimitive(subtype) || SemanticTools.isPrimitive(type))
+                ) {
             //check class tree
             if (classMap.containsKey(type) && classMap.containsKey(subtype)) {
                 ClassTreeNode currClass = classMap.get(subtype);

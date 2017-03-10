@@ -42,6 +42,7 @@ public class ClassVisitor extends Visitor{
 
         //Manually intialize variable scopes for built in classes
         classMap.get("Object").getVarSymbolTable().enterScope();
+        classMap.get("Object").getMethodSymbolTable().enterScope();
 
         program.accept(this);
 
