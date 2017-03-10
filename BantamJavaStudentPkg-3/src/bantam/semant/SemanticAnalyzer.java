@@ -101,6 +101,9 @@ public class SemanticAnalyzer {
         //Check UnaryExpr Statements to assure they contain VarExpr
         checkUnaryExpressions();
 
+        //Check Break Statements to assure they are called within loops
+        checkBreakStatements();
+
 		//Check if types are valid
 		checkTypes();
 
@@ -313,5 +316,15 @@ public class SemanticAnalyzer {
     private void checkUnaryExpressions() {
         UnaryExprVisitor visitor = new UnaryExprVisitor();
         visitor.checkUnaryExpr(this.program, this.errorHandler);
+    }
+
+    /**
+     * Checks the program to see if any break statments occur
+     * outside of loops
+     * a main method in it
+     */
+    private void checkBreakStatements() {
+        BreakCheckVisitor visitor = new BreakCheckVisitor();
+        visitor.checkBreakStmts(this.program, this.errorHandler);
     }
 }
