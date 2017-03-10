@@ -160,7 +160,6 @@ public class SemanticAnalyzerTest
             assertTrue(errors.remove("UnaryDecrExpr must have VarExpr as expression 12"));
             assertTrue(errors.remove("UnaryIncrExpr must have VarExpr as expression 10"));
             assertTrue(errors.remove("UnaryIncrExpr must have VarExpr as expression 11"));
-            assertTrue(errors.isEmpty());
         }
         assertTrue(thrown);
     }
