@@ -1,11 +1,14 @@
 /**
  * File: ClassVisitor.java
+ * This file was written in loving memory of our former
+ * group member Victoria Chistolini who sadly did not
+ * survive project 2.5. R.I.P.
  * @author Edward (osan) Zhou
  * @author Alex Rinker
  * @author Vivek Sah
  * Class: CS461
  * Project: 3
- * Date: Mar 4, 2017
+ * Date: March 9 2017
  */
 
 package bantam.visitor;
@@ -49,6 +52,12 @@ public class ClassVisitor extends Visitor{
         establishHierarchy();
     }
 
+    /**
+     * Visits a class node and checks to see if the name is valid
+     * Then creates the class's node, and initializes its symbol tables
+     * @param node the class node
+     * @return
+     */
     @Override
     public Object visit(Class_ node) {
         if (SemanticTools.isReservedWord(node.getName())) {
