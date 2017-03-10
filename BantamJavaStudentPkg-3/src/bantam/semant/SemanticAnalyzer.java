@@ -28,10 +28,7 @@ package bantam.semant;
 
 import bantam.ast.*;
 import bantam.util.*;
-import bantam.visitor.ClassVisitor;
-import bantam.visitor.MainMainVisitor;
-import bantam.visitor.MethodSymbolTableVisitor;
-import bantam.visitor.VarSymbolTableVisitor;
+import bantam.visitor.*;
 
 import java.util.*;
 
@@ -101,6 +98,8 @@ public class SemanticAnalyzer {
         //Check whether or not a Main Class with Main Method exists
         checkMainMain();
 
+		//Check if types are valid
+		checkTypes();
         // comment out
         //throw new RuntimeException("Semantic analyzer unimplemented");
 
@@ -270,6 +269,11 @@ public class SemanticAnalyzer {
 	private void buildClassHierarchy() {
 		ClassVisitor classVisitor = new ClassVisitor();
 		classVisitor.buildClassHierarchy(this.program, this.classMap, this.errorHandler);
+	}
+
+	private void checkTypes() {
+		TypeCheckVisitor typeVisitor= new TypeCheckVisitor();
+		typeVisitor.analyzeTypes(this.program, this.classMap, this.errorHandler);
 	}
 
     /**
