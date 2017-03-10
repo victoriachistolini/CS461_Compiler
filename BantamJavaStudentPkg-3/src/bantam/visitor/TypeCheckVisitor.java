@@ -56,7 +56,7 @@ public class TypeCheckVisitor extends Visitor {
     @Override
     public Object visit(Field node) {
         super.visit(node);
-        if(this.currentVarSymbolTable.peek(node.getName()) != null) {
+        if(this.currentVarSymbolTable.lookup(node.getName()) != null) {
             checkType(node.getType(), node.getInit().getExprType(), node, true);
         }
         return null;
@@ -137,6 +137,7 @@ public class TypeCheckVisitor extends Visitor {
     @Override
     public Object visit(WhileStmt node) {
         node.getPredExpr().accept(this);
+
         if(!node.getPredExpr().getExprType().equals(BOOLEAN)) {
             errorHandler.register(errorHandler.SEMANT_ERROR,
                     this.currentClass,
@@ -723,7 +724,7 @@ public class TypeCheckVisitor extends Visitor {
                         "Operands " + leftType + " and "+ rightType
                                 + " must be of both type " + operandType );
             } else {
-                node.getOpType();
+                node.setExprType(node.getOpType());
             }
         } else {
             // if operandtype isnt defined for some crazy reason

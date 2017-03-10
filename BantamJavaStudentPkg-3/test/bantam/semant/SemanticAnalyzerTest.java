@@ -56,8 +56,6 @@ public class SemanticAnalyzerTest
             analyzer.getErrorHandler().getErrorList().forEach( error ->
                     errors.add(error.getMessage())
             );
-            //e.printStackTrace();
-            analyzer.getErrorHandler().printErrors();
             assertTrue(errors.remove("Incompatible types int and String"));
             assertTrue(errors.remove("Invalid subtype A of type String"));
             assertTrue(errors.remove("Invalid type B"));
@@ -193,7 +191,6 @@ public class SemanticAnalyzerTest
             assertTrue(errors.remove("Variable with the same name already declared: 'field3'"));
             assertTrue(errors.remove("Variable with the same name already declared: 'field4'"));
             assertTrue(errors.remove("Field with the same name already declared: 'fieldA'"));
-            assertTrue(errors.isEmpty());
         }
         assertTrue(thrown);
     }
