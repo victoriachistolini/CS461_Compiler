@@ -9,7 +9,6 @@ import java.io.StringReader;
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -140,6 +139,30 @@ public class SemanticAnalyzerTest
 
         assertFalse(validThrown);
         assertTrue(invalidThrown);
+    }
+
+    /**
+     * Tests all functions of the UnaryExprVisitor
+     * @throws Exception
+     */
+    @Test
+    public void testUnaryExprVisitor() throws Exception {
+        boolean thrown = false;
+        SemanticAnalyzer analyzer = setupSemanFromFile("UnaryExprVisitorTest.btm");
+        try {
+            analyzer.analyze();
+        } catch (RuntimeException e) {
+            thrown = true;
+            Set<String> errors = new HashSet<>();
+            analyzer.getErrorHandler().getErrorList().forEach( error ->
+                    errors.add(error.getMessage() + " " + error.getLineNum())
+            );
+            assertTrue(errors.remove("UnaryDecrExpr must have VarExpr as expression 12"));
+            assertTrue(errors.remove("UnaryIncrExpr must have VarExpr as expression 10"));
+            assertTrue(errors.remove("UnaryIncrExpr must have VarExpr as expression 11"));
+            assertTrue(errors.isEmpty());
+        }
+        assertTrue(thrown);
     }
 
     /**

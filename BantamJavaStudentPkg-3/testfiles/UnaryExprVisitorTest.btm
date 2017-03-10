@@ -1,0 +1,23 @@
+/**
+ * This Bantam java file is for use in testing the Semantic Analyzer.
+ * The Lexer and Parser should pass
+ * This file tests the ability of the Semantic analyzer to check
+ * UnaryExpr statements for their validity
+ */
+
+class Main {
+    void main() {
+        int x = true++;
+        int y = (3 + 3)++;
+        int z = false--;
+    }
+}
+
+class WellImplementedClass {
+    void method() {
+        int x = 3;
+        int y = x++;
+        int z = y--;
+    }
+}
+

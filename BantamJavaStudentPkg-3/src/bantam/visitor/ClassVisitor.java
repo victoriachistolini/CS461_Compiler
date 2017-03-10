@@ -39,6 +39,10 @@ public class ClassVisitor extends Visitor{
                                     ErrorHandler errorHandler) {
         this.errorHandler=errorHandler;
         this.classMap=classMap;
+
+        //Manually intialize variable scopes for built in classes
+        classMap.get("Object").getVarSymbolTable().enterScope();
+
         program.accept(this);
 
         establishHierarchy();
@@ -60,8 +64,10 @@ public class ClassVisitor extends Visitor{
                     node.getLineNum(),
                     "Duplicate Class name " + node.getName());
         } else {
-            this.classMap.put(node.getName(),
-                    new ClassTreeNode(node, false, true, this.classMap));
+            ClassTreeNode classNode = new ClassTreeNode(node, false, true, this.classMap);
+            classNode.getMethodSymbolTable().enterScope();
+            classNode.getVarSymbolTable().enterScope();
+            this.classMap.put(node.getName(), classNode);
         }
         return null;
     }

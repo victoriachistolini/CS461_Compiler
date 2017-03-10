@@ -1,14 +1,19 @@
 package bantam.visitor;
 
 import bantam.ast.*;
+import bantam.util.ClassTreeNode;
 import bantam.util.ErrorHandler;
 import bantam.util.SemanticTools;
 import bantam.util.SymbolTable;
+
+import java.util.HashMap;
+import java.util.Hashtable;
 
 public class VarSymbolTableVisitor extends Visitor {
     private ErrorHandler errHandler;
     private Class_ currClass;
     private SymbolTable varSymbolTable;
+    private Hashtable<String,ClassTreeNode> classMap;
 
     /**
      * returns whether a Main class exists and has a main method
@@ -16,16 +21,29 @@ public class VarSymbolTableVisitor extends Visitor {
      * @param ast the ASTNode forming the root of the tree
      * @return whether a Main class exists with a main method
      */
-    public void populateSymbolTable(Class_ ast,
-                                    SymbolTable table,
+    public void populateSymbolTable(Program ast,
+                                    Hashtable<String, ClassTreeNode> classMap,
                                     ErrorHandler errHandler) {
-        this.varSymbolTable = table;
-        this.varSymbolTable.enterScope();
-        this.currClass = ast;
         this.errHandler = errHandler;
+        this.classMap = classMap;
         ast.accept(this);
     }
 
+    /**
+     * updates the current class and symbol table pointers and then
+     * Visits the Class node
+     * @param classNode
+     * @return
+     */
+    @Override
+    public Object visit(Class_ classNode) {
+        this.currClass = classNode;
+        this.varSymbolTable = (
+                this.classMap.get(this.currClass.getName()).getVarSymbolTable()
+        );
+        super.visit(classNode);
+        return null;
+    }
 
     /***
      * visits a Field node and adds it to the symbol table
@@ -91,10 +109,8 @@ public class VarSymbolTableVisitor extends Visitor {
         } else {
             this.varSymbolTable.add(declStmt.getName(), declStmt.getType());
         }
-
         return null;
     }
-
 
 
     /**
