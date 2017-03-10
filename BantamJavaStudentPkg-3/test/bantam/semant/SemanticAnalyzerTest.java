@@ -205,6 +205,8 @@ public class SemanticAnalyzerTest
             assertTrue(errors.remove("Variable with the same name already declared: 'field3'"));
             assertTrue(errors.remove("Variable with the same name already declared: 'field4'"));
             assertTrue(errors.remove("Field with the same name already declared: 'fieldA'"));
+            assertTrue(errors.remove("Incompatible types boolean and int"));
+            assertTrue(errors.isEmpty());
         }
         assertTrue(thrown);
     }
