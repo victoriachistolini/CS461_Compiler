@@ -1,0 +1,61 @@
+/**
+ * This Bantam java file is for use in testing the Semantic Analyzer.
+ * The Lexer and Parser should pass
+ * This file tests the ability of the Semantic analyzer to correctly populate
+ * the method symbol table
+ */
+
+class Main {
+    int field1 = 5;
+    int field1 = 4; //fail
+    int field2 = 3;
+    int field3 = 3;
+    int field4 = 3;
+    int testFnc(int parameter1, int parameter1){ //fail
+        int field1 = 7; //should fail
+        int newVar1 = 4; //should pass
+        while(field1 < 5){
+            bool field2 = 5; //should fail
+            int parameter1 = 32; //should fail
+            int newVar1 = 6;//fail
+            int newVar2 = 7; //pass
+        }
+        int newVar2 = 8; //pass
+
+        return 0;
+    }
+
+
+    int testfunc2(int parameter1, int field1){  //different parameter,pass
+        if(field1 < 5){
+            int field3 = 3; //fail
+            int newVar4 = 7; //pass
+        }
+        int newVar4 = 7; //should pass
+    }
+
+    int testfunc3(){
+        int k =0  ;
+        for (k = 0; k < 9; k++){
+            int field4 = 7; //fail
+            int newVar5 = 8; //pass
+        }
+        int newVar5 = 9; //pass
+
+    }
+
+
+
+   void main() {}
+}
+
+class A {
+    int fieldA = 5;
+
+
+}
+
+class B extends A {
+    int fieldA = 6; //should fail
+
+}

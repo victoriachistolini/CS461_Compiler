@@ -165,6 +165,40 @@ public class SemanticAnalyzerTest
         assertTrue(invalidThrown);
     }
 
+
+    /**
+     * Tests the VarSymbolTableVisitor in its ability to add new vars
+     * to the symbol table and check for errors
+     * @throws Exception
+     */
+    @Test
+    public void testVarSymbolTableVisitor() throws Exception {
+        boolean thrown = false;
+        SemanticAnalyzer analyzer = setupSemanFromFile("VarSymbolTableTest.btm");
+        try {
+            analyzer.analyze();
+        } catch (RuntimeException e) {
+            thrown = true;
+            Set<String> errors = new HashSet<>();
+            analyzer.getErrorHandler().getErrorList().forEach( error ->
+
+                    errors.add(error.getMessage())
+            );
+            assertTrue(errors.remove("Field with the same name already declared: 'field1'"));
+            assertTrue(errors.remove("Variable with the same name already declared: 'field1'"));
+            assertTrue(errors.remove("Variable with the same name already declared: 'field2'"));
+            assertTrue(errors.remove("Parameter with the same name already declared: 'parameter1'"));
+            assertTrue(errors.remove("Variable with the same name already declared: 'parameter1'"));
+            assertTrue(errors.remove("Variable with the same name already declared: 'newVar1'"));
+            assertTrue(errors.remove("Variable with the same name already declared: 'field3'"));
+            assertTrue(errors.remove("Variable with the same name already declared: 'field4'"));
+            assertTrue(errors.remove("Field with the same name already declared: 'fieldA'"));
+            assertTrue(errors.isEmpty());
+        }
+        assertTrue(thrown);
+    }
+
+
     /**
      * Tests all functions of the UnaryExprVisitor
      * @throws Exception
@@ -189,6 +223,28 @@ public class SemanticAnalyzerTest
     }
 
     /**
+     * Tests all functions of the BreakCheckVisitor
+     * @throws Exception
+     */
+    @Test
+    public void testBreakCheckVisitor() throws Exception {
+        boolean thrown = false;
+        SemanticAnalyzer analyzer = setupSemanFromFile("BreakCheckTest.btm");
+        try {
+            analyzer.analyze();
+        } catch (RuntimeException e) {
+            thrown = true;
+            Set<String> errors = new HashSet<>();
+            analyzer.getErrorHandler().getErrorList().forEach( error ->
+                    errors.add(error.getMessage())
+            );
+            assertTrue(errors.remove("Break statement called outside of loop"));
+            assertTrue(errors.isEmpty());
+        }
+        assertTrue(thrown);
+    }
+
+    /**
      * generates a Semantic Analyzer from the input testfile
      * @param filename the btm file
      * @return a Semantic Analyzer Object for the input file
@@ -206,5 +262,4 @@ public class SemanticAnalyzerTest
         Program program = (Program) parser.parse().value;
         return new SemanticAnalyzer(program, false);
     }
-
 }
