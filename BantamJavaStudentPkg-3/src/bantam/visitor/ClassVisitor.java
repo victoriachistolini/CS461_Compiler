@@ -39,6 +39,10 @@ public class ClassVisitor extends Visitor{
                                     ErrorHandler errorHandler) {
         this.errorHandler=errorHandler;
         this.classMap=classMap;
+
+        //Manually intialize variable scopes for built in classes
+        classMap.get("Object").getVarSymbolTable().enterScope();
+
         program.accept(this);
 
         establishHierarchy();
