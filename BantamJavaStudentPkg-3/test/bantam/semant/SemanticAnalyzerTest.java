@@ -9,7 +9,6 @@ import java.io.StringReader;
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -25,19 +24,23 @@ public class SemanticAnalyzerTest
      * because a Bantam Java program must have a Main class with a main
      * method. */
     @Test
-    public void testEmptyMainClass() throws Exception {
+    public void testClassHierarchy() throws Exception {
         boolean thrown = false;
-        Parser parser = new Parser(new Lexer(new StringReader("class Main {  }")));
-        Program program = (Program) parser.parse().value;
-        SemanticAnalyzer analyzer = new SemanticAnalyzer(program, false);
+        SemanticAnalyzer analyzer = setupSemanFromFile("ClassHierarchyTest.btm");
         try {
             analyzer.analyze();
         } catch (RuntimeException e) {
             thrown = true;
-            assertEquals("Bantam semantic analyzer found errors.", e.getMessage());
-            analyzer.getErrorHandler().getErrorList().forEach(error ->
-                    System.out.println(error)
+            Set<String> errors = new HashSet<>();
+            analyzer.getErrorHandler().getErrorList().forEach( error ->
+                    errors.add(error.getMessage())
             );
+            assertTrue(errors.remove("Duplicate Class name Object"));
+            assertTrue(errors.remove("Class String is not Extendable"));
+            assertTrue(errors.remove("Class inheritance loop detected!"));
+            assertTrue(errors.remove("Class name is a reserved keyword: super"));
+            assertTrue(errors.remove("Class C has an invalid parent"));
+            assertTrue(errors.isEmpty());
         }
         assertTrue(thrown);
     }
@@ -173,6 +176,51 @@ public class SemanticAnalyzerTest
 
 
     /**
+     * Tests all functions of the UnaryExprVisitor
+     * @throws Exception
+     */
+    @Test
+    public void testUnaryExprVisitor() throws Exception {
+        boolean thrown = false;
+        SemanticAnalyzer analyzer = setupSemanFromFile("UnaryExprVisitorTest.btm");
+        try {
+            analyzer.analyze();
+        } catch (RuntimeException e) {
+            thrown = true;
+            Set<String> errors = new HashSet<>();
+            analyzer.getErrorHandler().getErrorList().forEach( error ->
+                    errors.add(error.getMessage() + " " + error.getLineNum())
+            );
+            assertTrue(errors.remove("UnaryDecrExpr must have VarExpr as expression 12"));
+            assertTrue(errors.remove("UnaryIncrExpr must have VarExpr as expression 10"));
+            assertTrue(errors.remove("UnaryIncrExpr must have VarExpr as expression 11"));
+        }
+        assertTrue(thrown);
+    }
+
+    /**
+     * Tests all functions of the BreakCheckVisitor
+     * @throws Exception
+     */
+    @Test
+    public void testBreakCheckVisitor() throws Exception {
+        boolean thrown = false;
+        SemanticAnalyzer analyzer = setupSemanFromFile("BreakCheckTest.btm");
+        try {
+            analyzer.analyze();
+        } catch (RuntimeException e) {
+            thrown = true;
+            Set<String> errors = new HashSet<>();
+            analyzer.getErrorHandler().getErrorList().forEach( error ->
+                    errors.add(error.getMessage())
+            );
+            assertTrue(errors.remove("Break statement called outside of loop"));
+            assertTrue(errors.isEmpty());
+        }
+        assertTrue(thrown);
+    }
+
+    /**
      * generates a Semantic Analyzer from the input testfile
      * @param filename the btm file
      * @return a Semantic Analyzer Object for the input file
@@ -190,5 +238,4 @@ public class SemanticAnalyzerTest
         Program program = (Program) parser.parse().value;
         return new SemanticAnalyzer(program, false);
     }
-
 }

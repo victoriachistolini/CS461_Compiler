@@ -722,7 +722,7 @@ public class TypeCheckVisitor extends Visitor {
                         "Operands " + leftType + " and "+ rightType
                                 + " must be of both type " + operandType );
             } else {
-                node.setExprType(operandType);
+                node.getOpType();
             }
         } else {
             // if operandtype isnt defined for some crazy reason

@@ -28,10 +28,7 @@ package bantam.semant;
 
 import bantam.ast.*;
 import bantam.util.*;
-import bantam.visitor.ClassVisitor;
-import bantam.visitor.MainMainVisitor;
-import bantam.visitor.MethodSymbolTableVisitor;
-import bantam.visitor.VarSymbolTableVisitor;
+import bantam.visitor.*;
 
 import java.util.*;
 
@@ -100,6 +97,15 @@ public class SemanticAnalyzer {
 
         //Check whether or not a Main Class with Main Method exists
         checkMainMain();
+
+        //Check UnaryExpr Statements to assure they contain VarExpr
+        checkUnaryExpressions();
+
+        //Check Break Statements to assure they are called within loops
+        checkBreakStatements();
+
+		//Check if types are valid
+		checkTypes();
 
         // comment out
         //throw new RuntimeException("Semantic analyzer unimplemented");
@@ -272,12 +278,17 @@ public class SemanticAnalyzer {
 		classVisitor.buildClassHierarchy(this.program, this.classMap, this.errorHandler);
 	}
 
+	private void checkTypes() {
+		TypeCheckVisitor typeVisitor= new TypeCheckVisitor();
+		typeVisitor.analyzeTypes(this.program, this.classMap, this.errorHandler);
+	}
+
     /**
      * This method populates the method symbol table with the desired information
      */
     private void populateMethodTables() {
         MethodSymbolTableVisitor methodVisitor = new MethodSymbolTableVisitor();
-        populateMethodTables(this.root, methodVisitor);
+        methodVisitor.populateSymbolTable(this.program, this.classMap, this.errorHandler);
     }
 
     /**
@@ -285,47 +296,7 @@ public class SemanticAnalyzer {
      */
     private void populateVarTables() {
         VarSymbolTableVisitor varVisitor = new VarSymbolTableVisitor();
-        populateVarTables(this.root, varVisitor);
-    }
-
-    /**
-     * Recursive helper method for populateMethodTables
-     * @param root the current node of the tree
-     * @param visitor the visitor object used to handle the nitty gritty stuff
-     */
-    private void populateMethodTables(
-            ClassTreeNode root,
-            MethodSymbolTableVisitor visitor
-    ) {
-        root.getMethodSymbolTable().enterScope();
-        visitor.populateSymbolTable(
-                root.getASTNode(),
-                root.getMethodSymbolTable(),
-                this.errorHandler);
-        root.getChildrenList().forEachRemaining(
-                child -> populateMethodTables(child, visitor)
-        );
-        root.getMethodSymbolTable().exitScope();
-    }
-
-    /**
-     * Recursive helper method for populateVarTables
-     * @param root the current node of the tree
-     * @param visitor the visitor object used to handle the operations
-     */
-    private void populateVarTables(
-            ClassTreeNode root,
-            VarSymbolTableVisitor visitor
-    ) {
-        root.getVarSymbolTable().enterScope();
-        visitor.populateSymbolTable(
-                root.getASTNode(),
-                root.getMethodSymbolTable(),
-                this.errorHandler);
-        root.getChildrenList().forEachRemaining(
-                child -> populateVarTables(child, visitor)
-        );
-        root.getVarSymbolTable().exitScope();
+        varVisitor.populateSymbolTable(this.program, this.classMap, this.errorHandler);
     }
 
     /**
@@ -335,5 +306,25 @@ public class SemanticAnalyzer {
     private void checkMainMain() {
         MainMainVisitor visitor = new MainMainVisitor();
         visitor.hasMain(this.program, this.classMap, this.errorHandler);
+    }
+
+    /**
+     * Checks the program to see if the UnaryExpressions contain
+     * VarExpressions
+     * a main method in it
+     */
+    private void checkUnaryExpressions() {
+        UnaryExprVisitor visitor = new UnaryExprVisitor();
+        visitor.checkUnaryExpr(this.program, this.errorHandler);
+    }
+
+    /**
+     * Checks the program to see if any break statments occur
+     * outside of loops
+     * a main method in it
+     */
+    private void checkBreakStatements() {
+        BreakCheckVisitor visitor = new BreakCheckVisitor();
+        visitor.checkBreakStmts(this.program, this.errorHandler);
     }
 }
