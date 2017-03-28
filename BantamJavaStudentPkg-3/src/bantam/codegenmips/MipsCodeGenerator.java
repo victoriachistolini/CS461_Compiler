@@ -31,6 +31,8 @@ import bantam.util.ClassTreeNode;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.Calendar;
+import java.util.Locale;
 
 /**
  * The <tt>MipsCodeGenerator</tt> class generates mips assembly code
@@ -113,8 +115,24 @@ public class MipsCodeGenerator {
      */
     public void generate() {
         // comment out
+        generateHeader();
         throw new RuntimeException("MIPS code generator unimplemented");
 
         // add code below...
+    }
+
+    //Helper Functions for the generate() method
+
+    public void generateHeader() {
+        assemblySupport.genComment("Authors: Vivek Sah, Alex Rinker, Ed Zhou");
+        Calendar cal = Calendar.getInstance();
+        String month = cal.getDisplayName(
+                Calendar.MONTH, Calendar.LONG, Locale.getDefault()
+        );
+        int year = cal.get(Calendar.YEAR);
+        assemblySupport.genComment("Date: " + month + " " + year);
+        assemblySupport.genComment(
+                "Compiled From Sources: " + this.root.getASTNode().getFilename()
+        );
     }
 }
