@@ -17,7 +17,7 @@ import bantam.ast.*;
 import bantam.util.ErrorHandler;
 
 /**
- * Created by vivek on 3/6/17.
+ * Makes sure that unary expressions have a varexpr as its modifying expression
  */
 public class UnaryExprVisitor extends Visitor {
     private ErrorHandler errHandler;
@@ -51,7 +51,7 @@ public class UnaryExprVisitor extends Visitor {
                 errHandler.SEMANT_ERROR,
                 currClass.getFilename(),
                 unaryDecrExpr.getLineNum(),
-                "UnaryDecrExpr must have VarExpr as expression"
+                "Invalid decrement of expression"
            );
         }
         return null;
@@ -69,7 +69,7 @@ public class UnaryExprVisitor extends Visitor {
                     errHandler.SEMANT_ERROR,
                     currClass.getFilename(),
                     unaryIncrExpr.getLineNum(),
-                    "UnaryIncrExpr must have VarExpr as expression"
+                    "Invalid increment of expression"
             );
         }
         return null;
