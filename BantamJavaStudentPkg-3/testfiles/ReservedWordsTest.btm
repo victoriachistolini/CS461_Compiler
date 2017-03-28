@@ -1,0 +1,23 @@
+/**
+ * This Bantam java file is for use in testing the Semantic Analyzer.
+ * The Lexer and Parser should pass
+ * This file tests the ability of the Semantic analyzer to check reserved
+ * name recognition
+ */
+
+class Main {
+    void int() {
+        boolean boolean = true;
+        return;
+    }
+
+    void main(int x, String y) {
+        int void = 3;
+    }
+}
+
+class null {
+    void this() {
+        int super = 4;
+    }
+}

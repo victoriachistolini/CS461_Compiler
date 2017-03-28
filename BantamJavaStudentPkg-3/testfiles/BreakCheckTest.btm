@@ -1,0 +1,25 @@
+/**
+ * This Bantam java file is for use in testing the Semantic Analyzer.
+ * The Lexer and Parser should pass
+ * This file tests the ability of the Semantic Analyzer to determine
+ * whether or not break statements are declared within loops
+ */
+
+class Main {
+    void main() {
+        boolean thing = true;
+        while (thing) {
+            int i = 3;
+            for(i = 3 ; i > 0; i--) {
+                if (i == 2) {
+                    thing = false;
+                    break;
+                }
+                break;
+            }
+            break;
+        }
+        break;
+        return;
+    }
+}

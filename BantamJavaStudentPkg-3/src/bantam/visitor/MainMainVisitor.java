@@ -1,16 +1,21 @@
 /**
  * File: MainMainVisitor.java
- * @author Victoria Chistolini
+ * This file was written in loving memory of our former
+ * group member Victoria Chistolini who sadly did not
+ * survive project 2.5. R.I.P.
  * @author Edward (osan) Zhou
  * @author Alex Rinker
  * @author Vivek Sah
  * Class: CS461
- * Project: 2.5
- * Date: Feb 25, 2017
+ * Project: 3
+ * Date: March 9 2017
  */
 
 package bantam.visitor;
 import bantam.ast.*;
+import bantam.util.ClassTreeNode;
+import bantam.util.ErrorHandler;
+import java.util.Hashtable;
 
 /**
  * Determine if there is a main class and main method in set of files
@@ -20,18 +25,37 @@ public class MainMainVisitor extends Visitor {
     private boolean hasClass;
     // if we found a main method
     private boolean hasMethod;
+    // class inheritance tree
+    private Hashtable<String, ClassTreeNode> classMap;
+    // searching inheritance tree
+    private boolean searchingSuper;
 
     /**
-     * returns whether a Main class exists and has a main method
-     * within it
+     * checks if there exists a main method in a main class
+     * else register an error
      * @param ast the ASTNode forming the root of the tree
-     * @return whether a Main class exists with a main method
      */
-    public boolean hasMain(Program ast) {
+    public void hasMain(Program ast,
+                        Hashtable<String, ClassTreeNode> classMap,
+                        ErrorHandler errorHandler) {
         this.hasClass = false;
         this.hasMethod = false;
+        this.searchingSuper = false;
+        this.classMap = classMap;
         ast.accept(this);
-        return this.hasClass && this.hasMethod;
+        if (!(this.hasClass && this.hasMethod)) {
+            errorHandler.register(errorHandler.SEMANT_ERROR,
+                    "Missing Main method in a Main Class");
+        }
+    }
+
+    /**
+     * Simple version of hasMain for easier use in main.java
+     */
+    public boolean hasMain(Program ast) {
+        hasMain(ast, new Hashtable<String, ClassTreeNode>(), new ErrorHandler());
+        if (!(this.hasClass && this.hasMethod)) { return false; }
+        return true;
     }
 
     /**
@@ -42,9 +66,22 @@ public class MainMainVisitor extends Visitor {
      */
     @Override
     public Object visit(Class_ classNode) {
+        //if already found main class and searching inheritance for method
+        if(this.searchingSuper) {
+            super.visit(classNode);
+        }
         if(classNode.getName().equals("Main")) {
             this.hasClass = true;
             super.visit(classNode);
+            if(!this.hasMethod) {
+                searchingSuper = true;
+                ClassTreeNode currentClass = classMap.get("Main");
+                while(currentClass.getParent() != null) {
+                    currentClass = currentClass.getParent();
+                    currentClass.getASTNode().accept(this);
+                }
+                searchingSuper = false;
+            }
         }
         return null;
     }

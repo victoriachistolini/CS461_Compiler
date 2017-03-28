@@ -1,0 +1,14 @@
+/**
+ * This Bantam java file is for use in testing the Semantic Analyzer.
+ * The Lexer and Parser should pass
+ * This file tests the ability of the Semantic analyzer to correctly identify
+ * whether or not the Main class has a main method
+ */
+
+class A {
+    void iHaveNoMainMethod() {}
+}
+
+class Main extends A {
+    void iAlsoHaveNoMainMethod() {}
+}

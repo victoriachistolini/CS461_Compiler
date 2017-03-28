@@ -1,0 +1,28 @@
+/**
+ * This Bantam java file is for use in testing the Semantic Analyzer.
+ * The Lexer and Parser should pass
+ * This file tests the ability of the Semantic analyzer to correctly populate
+ * the method symbol table
+ */
+
+class Main {
+    int differentClassSameName() {}
+
+    void sameNameSameClass() {}
+
+    int sameNameSameClass() {} //This should fail
+
+    void this() {} //This should fail
+
+    void main() {}
+}
+
+class A {
+    int differentClassSameName() {} //this should pass
+
+    void overriddenMethod() {}
+}
+
+class B extends A {
+    void overriddenMethod() {} //This should pass
+}

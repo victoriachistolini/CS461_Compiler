@@ -24,10 +24,24 @@
    PARTICULAR PURPOSE. 
 */
 
+/**
+ * File: SemanticAnalyzer.java
+ * This file was written in loving memory of our former
+ * group member Victoria Chistolini who sadly did not
+ * survive project 2.5. R.I.P.
+ * @author Edward (osan) Zhou
+ * @author Alex Rinker
+ * @author Vivek Sah
+ * Class: CS461
+ * Project: 3
+ * Date: March 9 2017
+ */
+
 package bantam.semant;
 
 import bantam.ast.*;
 import bantam.util.*;
+import bantam.visitor.*;
 
 import java.util.*;
 
@@ -82,16 +96,36 @@ public class SemanticAnalyzer {
       * See the lab manual for more details on each of these steps.
       * */
     public ClassTreeNode analyze() {
-	// 1 - add built in classes to class tree
-	updateBuiltins();
+	    // 1 - add built in classes to class tree
+	    updateBuiltins();
 
-	// comment out
-	throw new RuntimeException("Semantic analyzer unimplemented");
+        //Build the ClassMap
+        buildClassHierarchy();
 
-	// add code below...
+        //Build the Method Symbol Tables (and check method name validity)
+        populateMethodTables();
 
-	// uncomment out
-	// return root;
+        //Build the Variable Symbol Tables a(and check variable name validity)
+        populateVarTables();
+
+        //Check whether or not a Main Class with Main Method exists
+        checkMainMain();
+
+        //Check UnaryExpr Statements to assure they contain VarExpr
+        checkUnaryExpressions();
+
+        //Check Break Statements to assure they are called within loops
+        checkBreakStatements();
+
+		//Check if types are valid
+		checkTypes();
+
+        // comment out
+        //throw new RuntimeException("Semantic analyzer unimplemented");
+
+        // uncomment out
+        this.errorHandler.checkErrors();
+        return this.root;
     }
 
     /**
@@ -247,5 +281,63 @@ public class SemanticAnalyzer {
 		       );
 	// create class tree node for Sys, add it to the mapping
 	classMap.put("Sys", new ClassTreeNode(astNode, /*built-in?*/true, /*extendable?*/false, classMap));
+    }
+
+	/**
+	 * Builds the class hierarchy
+	 */
+	private void buildClassHierarchy() {
+		ClassVisitor classVisitor = new ClassVisitor();
+		classVisitor.buildClassHierarchy(this.program, this.classMap, this.errorHandler);
+	}
+
+	private void checkTypes() {
+		TypeCheckVisitor typeVisitor= new TypeCheckVisitor();
+		typeVisitor.analyzeTypes(this.program, this.classMap, this.errorHandler);
+	}
+
+    /**
+     * This method populates the method symbol table with the desired information
+     */
+    private void populateMethodTables() {
+        MethodSymbolTableVisitor methodVisitor = new MethodSymbolTableVisitor();
+        methodVisitor.populateSymbolTable(this.program, this.classMap, this.errorHandler);
+    }
+
+    /**
+     * populates the var symbol table with the desired information
+     */
+    private void populateVarTables() {
+        VarSymbolTableVisitor varVisitor = new VarSymbolTableVisitor();
+        varVisitor.populateSymbolTable(this.program, this.classMap, this.errorHandler);
+    }
+
+    /**
+     * Checks the program to see if it has a Main class with
+     * a main method in it
+     */
+    private void checkMainMain() {
+        MainMainVisitor visitor = new MainMainVisitor();
+        visitor.hasMain(this.program, this.classMap, this.errorHandler);
+    }
+
+    /**
+     * Checks the program to see if the UnaryExpressions contain
+     * VarExpressions
+     * a main method in it
+     */
+    private void checkUnaryExpressions() {
+        UnaryExprVisitor visitor = new UnaryExprVisitor();
+        visitor.checkUnaryExpr(this.program, this.errorHandler);
+    }
+
+    /**
+     * Checks the program to see if any break statments occur
+     * outside of loops
+     * a main method in it
+     */
+    private void checkBreakStatements() {
+        BreakCheckVisitor visitor = new BreakCheckVisitor();
+        visitor.checkBreakStmts(this.program, this.errorHandler);
     }
 }

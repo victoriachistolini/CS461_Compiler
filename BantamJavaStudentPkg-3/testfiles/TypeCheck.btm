@@ -1,0 +1,25 @@
+class Main {
+    int x = "hi";
+    String y = new A();
+    A z = new A();
+    B b = new B();
+    C m = new C();
+    void main() {
+        3 > 3;
+        z.bello();
+        z = (A)(m);
+        q = 3;
+        if(3 > 4) {
+        }
+    }
+}
+
+class A {
+    int hello() {
+        return 3;
+    }
+}
+
+class C extends A{
+
+}
