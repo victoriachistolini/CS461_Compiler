@@ -28,10 +28,10 @@ public class VarSymbolTableVisitor extends Visitor {
     private Hashtable<String,ClassTreeNode> classMap;
 
     /**
-     * returns whether a Main class exists and has a main method
-     * within it
-     * @param ast the ASTNode forming the root of the tree
-     * @return whether a Main class exists with a main method
+     * Populates variable symbol tables of classes
+     * @param ast the root node
+     * @param classMap the class map
+     * @param errHandler the error handler to report any errors
      */
     public void populateSymbolTable(Program ast,
                                     Hashtable<String, ClassTreeNode> classMap,
