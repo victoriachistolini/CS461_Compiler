@@ -115,7 +115,19 @@ public class MipsCodeGenerator {
      */
     public void generate() {
         // comment out
+
+        //Generate the File Header
         generateHeader();
+
+        //1 - Start the data section
+        assemblySupport.genDataStart();
+
+        //2 - Generate data for the garbage collector
+        generateGCData();
+
+//        root.getChildrenList().forEachRemaining( x ->
+//            System.out.println(x.getName())
+//        );
         throw new RuntimeException("MIPS code generator unimplemented");
 
         // add code below...
@@ -123,7 +135,11 @@ public class MipsCodeGenerator {
 
     //Helper Functions for the generate() method
 
-    public void generateHeader() {
+    /**
+     * This function generates a file header for the MIPS assembly file
+     * containing information about the authors, date, and compiled .btm file
+     */
+    private void generateHeader() {
         assemblySupport.genComment("Authors: Vivek Sah, Alex Rinker, Ed Zhou");
         Calendar cal = Calendar.getInstance();
         String month = cal.getDisplayName(
@@ -134,5 +150,15 @@ public class MipsCodeGenerator {
         assemblySupport.genComment(
                 "Compiled From Sources: " + this.root.getASTNode().getFilename()
         );
+    }
+
+    /**
+     * This function generates data for the Garbage collector to use in the
+     * MIPS assembly file.
+     * Currently this method only sets the gc_flag to 0
+     */
+    private void generateGCData() {
+        assemblySupport.genLabel("gc_flag");
+        assemblySupport.genWord("0");
     }
 }
