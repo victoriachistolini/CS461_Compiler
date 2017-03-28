@@ -228,9 +228,12 @@ public class SemanticAnalyzerTest
             analyzer.getErrorHandler().getErrorList().forEach( error ->
                     errors.add(error.getMessage() + " " + error.getLineNum())
             );
-            assertTrue(errors.remove("UnaryDecrExpr must have VarExpr as expression 12"));
-            assertTrue(errors.remove("UnaryIncrExpr must have VarExpr as expression 10"));
-            assertTrue(errors.remove("UnaryIncrExpr must have VarExpr as expression 11"));
+            assertTrue(errors.remove("Unary operator -- incompatible with type boolean 12"));
+            assertTrue(errors.remove("Unary operator ++ incompatible with type boolean 10"));
+            assertTrue(errors.remove("Invalid increment of expression 11"));
+            assertTrue(errors.remove("Invalid increment of expression 10"));
+            assertTrue(errors.remove("Invalid decrement of expression 12"));
+
         }
         assertTrue(thrown);
     }

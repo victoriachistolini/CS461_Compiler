@@ -785,14 +785,5 @@ public class TypeCheckVisitor extends Visitor {
                     "Unary operator " + node.getOpName() + " incompatible with type "
                             + node.getExpr().getExprType());
         }
-        if (node.getOpName().equals("++") || node.getOpName().equals("--")) {
-            if (!(node.getExpr() instanceof VarExpr) &&
-                    !(node.getExpr() instanceof ArrayExpr)) {
-                errorHandler.register(errorHandler.SEMANT_ERROR,
-                        this.currentClass,
-                        node.getLineNum(),
-                        "Var expression required for unary operation");
-            }
-        }
     }
 }
