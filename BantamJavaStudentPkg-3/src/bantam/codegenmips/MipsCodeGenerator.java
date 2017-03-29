@@ -26,11 +26,14 @@
 
 package bantam.codegenmips;
 
+import bantam.ast.ASTNode;
 import bantam.util.ClassTreeNode;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
 
@@ -125,6 +128,12 @@ public class MipsCodeGenerator {
         //2 - Generate data for the garbage collector
         generateGCData();
 
+        //3.5 - Generate Strings for Class Names
+        ArrayList<String> classNames = generateClassStrings();
+
+        //4 - Generate the class name table
+        generateClassNameTable(classNames);
+
 //        root.getChildrenList().forEachRemaining( x ->
 //            System.out.println(x.getName())
 //        );
@@ -160,5 +169,30 @@ public class MipsCodeGenerator {
     private void generateGCData() {
         assemblySupport.genLabel("gc_flag");
         assemblySupport.genWord("0");
+    }
+
+    /**
+     * This function generates the class_name_table based on
+     * all of the classes in the program as well as the five
+     * base class templates.
+     */
+    private void generateClassNameTable(ArrayList<String> classNames) {
+        for (String className : classNames) {
+            assemblySupport.genWord(className);
+        }
+    }
+
+    private ArrayList<String> generateClassStrings() {
+        ArrayList<String> classNames = new ArrayList<>();
+        generateClassStrings(root, classNames);
+        return classNames;
+    }
+
+    private void generateClassStrings(ClassTreeNode parent, ArrayList<String> names) {
+        //use vivek's thing on parent
+        names.add("class_name_" + names.size());
+        parent.getChildrenList().forEachRemaining( child -> {
+            generateClassStrings(child, names);
+        });
     }
 }
