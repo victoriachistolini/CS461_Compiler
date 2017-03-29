@@ -1,3 +1,16 @@
+/**
+ * File: VarSymbolTableVisitor.java
+ * This file was written in loving memory of our former
+ * group member Victoria Chistolini who sadly did not
+ * survive project 2.5. R.I.P.
+ * @author Edward (osan) Zhou
+ * @author Alex Rinker
+ * @author Vivek Sah
+ * Class: CS461
+ * Project: 3
+ * Date: March 9 2017
+ */
+
 package bantam.visitor;
 
 import bantam.ast.*;
@@ -6,7 +19,6 @@ import bantam.util.ErrorHandler;
 import bantam.util.SemanticTools;
 import bantam.util.SymbolTable;
 
-import java.util.HashMap;
 import java.util.Hashtable;
 
 public class VarSymbolTableVisitor extends Visitor {
@@ -16,10 +28,10 @@ public class VarSymbolTableVisitor extends Visitor {
     private Hashtable<String,ClassTreeNode> classMap;
 
     /**
-     * returns whether a Main class exists and has a main method
-     * within it
-     * @param ast the ASTNode forming the root of the tree
-     * @return whether a Main class exists with a main method
+     * Populates variable symbol tables of classes
+     * @param ast the root node
+     * @param classMap the class map
+     * @param errHandler the error handler to report any errors
      */
     public void populateSymbolTable(Program ast,
                                     Hashtable<String, ClassTreeNode> classMap,
@@ -120,6 +132,7 @@ public class VarSymbolTableVisitor extends Visitor {
      */
     @Override
     public Object visit(Formal formal){
+        //Reserved Keyword Check
         if (SemanticTools.isReservedWord(formal.getName())) {
             this.errHandler.register(
                     this.errHandler.SEMANT_ERROR,
@@ -128,6 +141,7 @@ public class VarSymbolTableVisitor extends Visitor {
                     "Variable Name is a Reserved Keyword: " + formal.getName());
         }
 
+        //Already declared variable
         if (this.varSymbolTable.peek(formal.getName()) != null){
             errHandler.register(
                     errHandler.SEMANT_ERROR,

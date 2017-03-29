@@ -1,3 +1,16 @@
+/**
+ * File: SemanticAnalyzerTest.java
+ * This file was written in loving memory of our former
+ * group member Victoria Chistolini who sadly did not
+ * survive project 2.5. R.I.P.
+ * @author Edward (osan) Zhou
+ * @author Alex Rinker
+ * @author Vivek Sah
+ * Class: CS461
+ * Project: 3
+ * Date: March 9 2017
+ */
+
 package bantam.semant;
 
 import bantam.ast.Program;
@@ -12,10 +25,11 @@ import java.util.Set;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-/*
+/**
  * File: SemanticAnalyzerTest.java
  * Author: djskrien
  * Date: 2/13/17
+ * This class runs tests for
  */
 public class SemanticAnalyzerTest
 {
@@ -191,6 +205,8 @@ public class SemanticAnalyzerTest
             assertTrue(errors.remove("Variable with the same name already declared: 'field3'"));
             assertTrue(errors.remove("Variable with the same name already declared: 'field4'"));
             assertTrue(errors.remove("Field with the same name already declared: 'fieldA'"));
+            assertTrue(errors.remove("Incompatible types boolean and int"));
+            assertTrue(errors.isEmpty());
         }
         assertTrue(thrown);
     }
@@ -212,9 +228,12 @@ public class SemanticAnalyzerTest
             analyzer.getErrorHandler().getErrorList().forEach( error ->
                     errors.add(error.getMessage() + " " + error.getLineNum())
             );
-            assertTrue(errors.remove("UnaryDecrExpr must have VarExpr as expression 12"));
-            assertTrue(errors.remove("UnaryIncrExpr must have VarExpr as expression 10"));
-            assertTrue(errors.remove("UnaryIncrExpr must have VarExpr as expression 11"));
+            assertTrue(errors.remove("Unary operator -- incompatible with type boolean 12"));
+            assertTrue(errors.remove("Unary operator ++ incompatible with type boolean 10"));
+            assertTrue(errors.remove("Invalid increment of expression 11"));
+            assertTrue(errors.remove("Invalid increment of expression 10"));
+            assertTrue(errors.remove("Invalid decrement of expression 12"));
+
         }
         assertTrue(thrown);
     }

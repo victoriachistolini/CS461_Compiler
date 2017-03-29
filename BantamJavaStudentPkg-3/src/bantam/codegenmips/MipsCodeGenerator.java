@@ -34,6 +34,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Map;
+import java.util.Calendar;
+import java.util.Locale;
 
 /**
  * The <tt>MipsCodeGenerator</tt> class generates mips assembly code
@@ -118,6 +120,19 @@ public class MipsCodeGenerator {
         // comment out
 //        throw new RuntimeException("MIPS code generator unimplemented");
 
+        //Generate the File Header
+        generateHeader();
+
+        //1 - Start the data section
+        assemblySupport.genDataStart();
+
+        //2 - Generate data for the garbage collector
+        generateGCData();
+
+//        root.getChildrenList().forEachRemaining( x ->
+//            System.out.println(x.getName())
+//        );
+
         // add code below...
         StringConstWriter(root);
         System.out.println("generating");
@@ -133,5 +148,34 @@ public class MipsCodeGenerator {
 
         }
         assemblySupport.genStringConst(strContainer);
+    }
+
+    //Helper Functions for the generate() method
+
+    /**
+     * This function generates a file header for the MIPS assembly file
+     * containing information about the authors, date, and compiled .btm file
+     */
+    private void generateHeader() {
+        assemblySupport.genComment("Authors: Vivek Sah, Alex Rinker, Ed Zhou");
+        Calendar cal = Calendar.getInstance();
+        String month = cal.getDisplayName(
+                Calendar.MONTH, Calendar.LONG, Locale.getDefault()
+        );
+        int year = cal.get(Calendar.YEAR);
+        assemblySupport.genComment("Date: " + month + " " + year);
+        assemblySupport.genComment(
+                "Compiled From Sources: " + this.root.getASTNode().getFilename()
+        );
+    }
+
+    /**
+     * This function generates data for the Garbage collector to use in the
+     * MIPS assembly file.
+     * Currently this method only sets the gc_flag to 0
+     */
+    private void generateGCData() {
+        assemblySupport.genLabel("gc_flag");
+        assemblySupport.genWord("0");
     }
 }

@@ -1,3 +1,16 @@
+/**
+ * File: MethodSymbolTableVisitor.java
+ * This file was written in loving memory of our former
+ * group member Victoria Chistolini who sadly did not
+ * survive project 2.5. R.I.P.
+ * @author Edward (osan) Zhou
+ * @author Alex Rinker
+ * @author Vivek Sah
+ * Class: CS461
+ * Project: 3
+ * Date: March 9 2017
+ */
+
 package bantam.visitor;
 
 import bantam.ast.Class_;

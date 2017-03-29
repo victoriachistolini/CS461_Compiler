@@ -1,10 +1,23 @@
+/**
+ * File: UnaryExprVisitor.java
+ * This file was written in loving memory of our former
+ * group member Victoria Chistolini who sadly did not
+ * survive project 2.5. R.I.P.
+ * @author Edward (osan) Zhou
+ * @author Alex Rinker
+ * @author Vivek Sah
+ * Class: CS461
+ * Project: 3
+ * Date: March 9 2017
+ */
+
 package bantam.visitor;
 
 import bantam.ast.*;
 import bantam.util.ErrorHandler;
 
 /**
- * Created by vivek on 3/6/17.
+ * Makes sure that unary expressions have a varexpr as its modifying expression
  */
 public class UnaryExprVisitor extends Visitor {
     private ErrorHandler errHandler;
@@ -38,7 +51,7 @@ public class UnaryExprVisitor extends Visitor {
                 errHandler.SEMANT_ERROR,
                 currClass.getFilename(),
                 unaryDecrExpr.getLineNum(),
-                "UnaryDecrExpr must have VarExpr as expression"
+                "Invalid decrement of expression"
            );
         }
         return null;
@@ -56,7 +69,7 @@ public class UnaryExprVisitor extends Visitor {
                     errHandler.SEMANT_ERROR,
                     currClass.getFilename(),
                     unaryIncrExpr.getLineNum(),
-                    "UnaryIncrExpr must have VarExpr as expression"
+                    "Invalid increment of expression"
             );
         }
         return null;
@@ -71,5 +84,7 @@ public class UnaryExprVisitor extends Visitor {
 
     @Override
     public Object visit(VarExpr varNode) { return null; }
+
+    //End terminate traversal
 }
 

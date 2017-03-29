@@ -1,3 +1,16 @@
+/**
+ * File: SemanticAnalyzerTest.java
+ * This file was written in loving memory of our former
+ * group member Victoria Chistolini who sadly did not
+ * survive project 2.5. R.I.P.
+ * @author Edward (osan) Zhou
+ * @author Alex Rinker
+ * @author Vivek Sah
+ * Class: CS461
+ * Project: 3
+ * Date: March 9 2017
+ */
+
 package bantam.visitor;
 
 import bantam.ast.*;
@@ -12,6 +25,7 @@ import java.util.Hashtable;
  * Checks type semantics of the program
  */
 public class TypeCheckVisitor extends Visitor {
+    /** Keyword constants for assinment and expressions*/
     private final String BOOLEAN = "boolean";
     private final String STRING = "String";
     private final String INT = "int";
@@ -27,7 +41,6 @@ public class TypeCheckVisitor extends Visitor {
 
 
     private SymbolTable currentVarSymbolTable;
-    private SymbolTable currentMethodSymbolTable;
     private Method currentMethod;
     private String currentClass;
     /**
@@ -45,14 +58,15 @@ public class TypeCheckVisitor extends Visitor {
         program.accept(this);
     }
 
+    /** update current class fields*/
     @Override
     public Object visit(Class_ node) {
         this.currentVarSymbolTable = classMap.get(node.getName()).getVarSymbolTable();
-        this.currentMethodSymbolTable = classMap.get(node.getName()).getMethodSymbolTable();
         this.currentClass = node.getName();
         return super.visit(node);
     }
 
+    /** Make sure types for fields are compatible*/
     @Override
     public Object visit(Field node) {
         super.visit(node);
@@ -62,6 +76,9 @@ public class TypeCheckVisitor extends Visitor {
         return null;
     }
 
+    /**
+     * enter a new scope
+     */
     @Override
     public Object visit(Method node) {
         this.currentVarSymbolTable.enterScope();
@@ -77,6 +94,11 @@ public class TypeCheckVisitor extends Visitor {
         return super.visit(node);
     }
 
+    /**
+     * make sure types of declaration and expr are compatible
+     * @param node the declaration statement node
+     * @return
+     */
     @Override
     public Object visit(DeclStmt node) {
         super.visit(node);
@@ -84,14 +106,9 @@ public class TypeCheckVisitor extends Visitor {
         if(node.getInit() != null) {
             checkType(node.getType(), node.getInit().getExprType(), node, true);
         }
-        if(this.currentVarSymbolTable.lookup(node.getName()) != null) {
-            errorHandler.register(errorHandler.SEMANT_ERROR,
-                    this.currentClass,
-                    node.getLineNum(),
-                    "Variable " + node.getName() + " already declared");
-        } else {
-            this.currentVarSymbolTable.add(node.getName(), node.getType());
-        }
+        //duplicates should already be checked
+        this.currentVarSymbolTable.add(node.getName(), node.getType());
+
         return null;
     }
 
@@ -205,6 +222,11 @@ public class TypeCheckVisitor extends Visitor {
         return null;
     }
 
+    /**
+     * check reference types and existence!
+     * @param node the dispatch expression node
+     * @return
+     */
     @Override
     public Object visit(DispatchExpr node) {
         // Evaluate type of reference
@@ -538,6 +560,11 @@ public class TypeCheckVisitor extends Visitor {
         return false;
     }
 
+    /**
+     * check legality of ref and expr type
+     * @param node the variable expression node
+     * @return
+     */
     @Override
     public Object visit(VarExpr node) {
         String varType = null;
@@ -760,16 +787,6 @@ public class TypeCheckVisitor extends Visitor {
                     node.getLineNum(),
                     "Unary operator " + node.getOpName() + " incompatible with type "
                             + node.getExpr().getExprType());
-        }
-        if (node.getOpName().equals("++") || node.getOpName().equals("--")) {
-            if (!(node.getExpr() instanceof VarExpr) &&
-                    !(node.getExpr() instanceof ArrayExpr)) {
-                errorHandler.register(errorHandler.SEMANT_ERROR,
-                        this.currentClass,
-                        node.getLineNum(),
-                        "Var expression required for unary operation");
-            }
-
         }
     }
 }
