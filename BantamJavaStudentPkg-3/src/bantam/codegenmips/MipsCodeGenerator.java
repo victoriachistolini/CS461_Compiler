@@ -26,11 +26,14 @@
 
 package bantam.codegenmips;
 
+import bantam.ast.Program;
 import bantam.util.ClassTreeNode;
+import bantam.visitor.StringConstantsVisitor;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.Map;
 
 /**
  * The <tt>MipsCodeGenerator</tt> class generates mips assembly code
@@ -113,8 +116,22 @@ public class MipsCodeGenerator {
      */
     public void generate() {
         // comment out
-        throw new RuntimeException("MIPS code generator unimplemented");
+//        throw new RuntimeException("MIPS code generator unimplemented");
 
         // add code below...
+        StringConstWriter(root);
+        System.out.println("generating");
+    }
+
+    public void StringConstWriter(ClassTreeNode root){
+        StringConstantsVisitor strVisitor = new StringConstantsVisitor();
+
+        Map<String, String> strContainer = strVisitor.getStringConstants(root);
+        for (String k: strContainer.keySet()
+             ) {
+            System.out.println(k);
+
+        }
+        assemblySupport.genStringConst(strContainer);
     }
 }
