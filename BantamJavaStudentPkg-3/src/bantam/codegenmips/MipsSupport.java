@@ -1013,12 +1013,17 @@ public class MipsSupport {
 
     public void genStringConstTemplate(String key, String data){
         genLabel(data);
+        key = key.replace("\"","");
+        int byteSize = key.length();
+        double totalSize = byteSize+16+2;
+        totalSize = 4*(Math.ceil(Math.abs(totalSize/4)));
         genWord("1");
-        genWord("12");
+        genWord(""+(int)totalSize);
         genWord("String_dispatch_table");
+        genWord(""+(int)byteSize);
         genAscii(key);
-        genByte("0");
-        genAlign();
+//        genByte("0");
+//        genAlign();
 
     }
 }

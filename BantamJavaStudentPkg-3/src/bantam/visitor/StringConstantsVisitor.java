@@ -69,7 +69,7 @@ public class StringConstantsVisitor extends Visitor {
     @Override
     public Object visit(ConstStringExpr node) {
 
-        System.out.println("string found");
+//        System.out.println("string found");
         this.nameNum++;
         stringConstantContainer.put(node.getConstant(), "StringConst_" +
                                     Integer.toString(this.nameNum));

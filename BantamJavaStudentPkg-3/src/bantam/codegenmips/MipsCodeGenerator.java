@@ -135,18 +135,12 @@ public class MipsCodeGenerator {
 
         // add code below...
         StringConstWriter(root);
-        System.out.println("generating");
     }
 
     public void StringConstWriter(ClassTreeNode root){
         StringConstantsVisitor strVisitor = new StringConstantsVisitor();
 
         Map<String, String> strContainer = strVisitor.getStringConstants(root);
-        for (String k: strContainer.keySet()
-             ) {
-            System.out.println(k);
-
-        }
         assemblySupport.genStringConst(strContainer);
     }
 
