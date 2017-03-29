@@ -11,8 +11,11 @@
 
 package bantam.visitor;
 
+import bantam.ast.ASTNode;
+import bantam.ast.Class_;
 import bantam.ast.ConstStringExpr;
 import bantam.ast.Program;
+import bantam.util.ClassTreeNode;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,16 +34,32 @@ public class StringConstantsVisitor extends Visitor {
     private int nameNum=-1;
 
 
+//    public void scanForString(ASTNode ast){
+//
+//
+//    }
     /**
      * gets string constant and value mappings
-     * @param ast
+     * @param root
      * @return
      */
-    public Map<String,String> getStringConstants(Program ast){
-        ast.accept(this);
+    public Map<String,String> getStringConstants(ClassTreeNode root){
+        root.getChildrenList().forEachRemaining(child -> {
+            super.visit(child.getASTNode());
+        });
         return stringConstantContainer;
 
     }
+
+    /**
+     * visits the class node and updates the current class value
+//     * @param classNode
+     * @return
+     */
+//    @Override
+//    public Object visit(Class_ classNode) {
+//        return super.visit(classNode);
+//    }
 
     /**
      * add new entry when visiting a string constant node
@@ -50,6 +69,7 @@ public class StringConstantsVisitor extends Visitor {
     @Override
     public Object visit(ConstStringExpr node) {
 
+//        System.out.println("string found");
         this.nameNum++;
         stringConstantContainer.put(node.getConstant(), "StringConst_" +
                                     Integer.toString(this.nameNum));

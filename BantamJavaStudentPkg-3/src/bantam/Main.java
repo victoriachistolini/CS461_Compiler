@@ -392,7 +392,7 @@ public class Main {
             }
             if (findStringConstants) {
                 StringConstantsVisitor stringConstants = new StringConstantsVisitor();
-                System.out.println(stringConstants.getStringConstants((Program) result.value));
+//                System.out.println(stringConstants.getStringConstants((Program) result.value));
                 System.exit(0);
             }
             if (findLogicalVariables) {

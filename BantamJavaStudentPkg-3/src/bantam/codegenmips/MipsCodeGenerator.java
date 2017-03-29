@@ -26,15 +26,16 @@
 
 package bantam.codegenmips;
 
-import bantam.ast.ASTNode;
 import bantam.util.ClassTreeNode;
+
+import java.util.Calendar;
+import bantam.visitor.StringConstantsVisitor;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.Map;
 import java.util.Locale;
 
 /**
@@ -118,6 +119,7 @@ public class MipsCodeGenerator {
      */
     public void generate() {
         // comment out
+//        throw new RuntimeException("MIPS code generator unimplemented");
 
         //Generate the File Header
         generateHeader();
@@ -137,9 +139,16 @@ public class MipsCodeGenerator {
 //        root.getChildrenList().forEachRemaining( x ->
 //            System.out.println(x.getName())
 //        );
-        throw new RuntimeException("MIPS code generator unimplemented");
 
         // add code below...
+        StringConstWriter(root);
+    }
+
+    public void StringConstWriter(ClassTreeNode root){
+        StringConstantsVisitor strVisitor = new StringConstantsVisitor();
+
+        Map<String, String> strContainer = strVisitor.getStringConstants(root);
+        assemblySupport.genStringConst(strContainer);
     }
 
     //Helper Functions for the generate() method

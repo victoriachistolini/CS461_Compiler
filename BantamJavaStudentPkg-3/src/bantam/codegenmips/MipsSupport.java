@@ -27,6 +27,7 @@
 package bantam.codegenmips;
 
 import java.io.PrintStream;
+import java.util.Map;
 
 /**
  * Mips assembly support
@@ -991,7 +992,7 @@ public class MipsSupport {
         else if (syscallId == SYSCALL_FILE_WRITE) {
             out.println("\tli $v0 15");
         }
-        else if (syscallId == SYSCALL_GET_TIME) {
+        else if  (syscallId == SYSCALL_GET_TIME) {
             out.println("\tli $v0 18");
         }
         else if (syscallId == SYSCALL_SBRK) {
@@ -1001,5 +1002,28 @@ public class MipsSupport {
             throw new RuntimeException("bad syscall identifier");
         }
         out.println("\tsyscall");
+    }
+
+    public void genStringConst(Map<String,String> strConstCOntainer){
+        for (String key : strConstCOntainer.keySet()){
+            genStringConstTemplate(key, strConstCOntainer.get(key));
+        }
+
+    }
+
+    public void genStringConstTemplate(String key, String data){
+        genLabel(data);
+        key = key.replace("\"","");
+        int byteSize = key.length();
+        double totalSize = byteSize+16+2;
+        totalSize = 4*(Math.ceil(Math.abs(totalSize/4)));
+        genWord("1");
+        genWord(""+(int)totalSize);
+        genWord("String_dispatch_table");
+        genWord(""+(int)byteSize);
+        genAscii(key);
+//        genByte("0");
+//        genAlign();
+
     }
 }
