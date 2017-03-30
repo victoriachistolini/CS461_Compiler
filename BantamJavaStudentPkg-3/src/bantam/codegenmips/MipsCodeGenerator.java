@@ -154,6 +154,12 @@ public class MipsCodeGenerator {
         //4 - Generate the class name table
         generateClassNameTable(classNames);
 
+        //6 - generate dispatch tables
+        generateClassDispatchTables();
+//        root.getChildrenList().forEachRemaining( x ->
+//            System.out.println(x.getName())
+//        );
+
         // add code below...
     }
 
@@ -234,5 +240,13 @@ public class MipsCodeGenerator {
         parent.getChildrenList().forEachRemaining( child ->
             generateClassStrings(child, names)
         );
+    }
+
+    /**
+     * Generates the dispatch tables for classes
+     */
+    private void generateClassDispatchTables() {
+        ClassDispatchVisitor CDV = new ClassDispatchVisitor(root, assemblySupport);
+        CDV.generateDispatchTables();
     }
 }
