@@ -19,7 +19,8 @@ import java.util.Hashtable;
 import java.util.Map;
 
 /**
- * Populates the class map hierarchy with class treenodes
+ * This visitor determines the name of the file containing
+ * the main class
  */
 public class FilenameVisitor extends bantam.visitor.Visitor{
 

@@ -25,7 +25,7 @@
 */
 
 /**
- * File: FilenameVisitor.java
+ * File: MipsCodeGenerator.java
  * @author Edward (osan) Zhou
  * @author Alex Rinker
  * @author Vivek Sah
@@ -46,6 +46,8 @@ import bantam.visitor.StringConstantsVisitor;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+
+import static com.sun.tools.doclets.internal.toolkit.util.DocPath.parent;
 
 /**
  * The <tt>MipsCodeGenerator</tt> class generates mips assembly code
@@ -154,6 +156,9 @@ public class MipsCodeGenerator {
         //4 - Generate the class name table
         generateClassNameTable(classNames);
 
+        //5 - Generate the object templates
+        generateObjectTemplates();
+
         //6 - generate dispatch tables
         generateClassDispatchTables();
 //        root.getChildrenList().forEachRemaining( x ->
@@ -204,17 +209,6 @@ public class MipsCodeGenerator {
     }
 
     /**
-     * This function generates the class_name_table based on
-     * all of the classes in the program as well as the five
-     * base class templates.
-     */
-    private void generateClassNameTable(ArrayList<String> classNames) {
-        for (String className : classNames) {
-            assemblySupport.genWord(className);
-        }
-    }
-
-    /**
      * This method returns a list of class name labels used in the MIPS file
      * based on the number of classes in the program
      * @return classNames an arraylist of classname labels
@@ -233,13 +227,62 @@ public class MipsCodeGenerator {
      * @param names the list of all current MIPS class labels referencing these classes
      */
     private void generateClassStrings(ClassTreeNode parent, ArrayList<String> names) {
-        String label = "class_name_" + names.size();
-        assemblySupport.genStringConstTemplate(parent.getName(), label);
-        names.add(label);
-        this.classNames.put(parent.getName(), label);
+
+        //Generate the Label ID based on the number of classes
+        // However 0 and 1 are reserved for Object and String
+        int labelId;
+        String parentName = parent.getName();
+        if (parentName == "Object") {
+            labelId = 0;
+        } else if (parentName == "String") {
+            labelId = 1;
+        } else {
+            labelId = 1 + names.size();
+        }
+
+        this.classNames.put(parentName, String.valueOf(labelId));
+        String label = "class_name_" + labelId;
+        assemblySupport.genStringConstTemplate(parentName, label);
+
+        //Make sure that "String" is in the 2nd position
+        if(parent.getName() == "String") {
+            names.add(1, label);
+        } else {
+            names.add(label);
+        }
+
         parent.getChildrenList().forEachRemaining( child ->
             generateClassStrings(child, names)
         );
+    }
+
+    /**
+     * This function generates the class_name_table based on
+     * all of the classes in the program as well as the five
+     * base class templates.
+     */
+    private void generateClassNameTable(ArrayList<String> classNames) {
+        assemblySupport.genLabel("class_name_table");
+
+        //Generate the words linking classes to their strings
+        for (String className : classNames) {
+            assemblySupport.genWord(className);
+        }
+
+        //Generate the references to templates for each class
+        for (String className : this.classNames.keySet()) {
+            assemblySupport.genGlobal( className + "_template");
+        }
+    }
+
+    /**
+     * This method generates the object templates in MIPS based on the
+     * built in and user defined classes provided in the program.
+     */
+    private void generateObjectTemplates() {
+        //Generate the templates for each class
+        TemplateGenerator generator = new TemplateGenerator();
+        generator.generateClassTemplates(this.root, this.assemblySupport, this.classNames);
     }
 
     /**
