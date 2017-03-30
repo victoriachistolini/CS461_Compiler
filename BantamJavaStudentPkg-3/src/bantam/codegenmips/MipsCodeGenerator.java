@@ -38,6 +38,8 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.Locale;
 
+import static jdk.nashorn.internal.objects.NativeError.getFileName;
+
 /**
  * The <tt>MipsCodeGenerator</tt> class generates mips assembly code
  * targeted for the SPIM emulator.  Note: this code will only run
@@ -130,6 +132,9 @@ public class MipsCodeGenerator {
         //2 - Generate data for the garbage collector
         generateGCData();
 
+        //3 - Generate String Constants for all used Strings
+        StringConstWriter(root);
+
         //3.5 - Generate Strings for Class Names
         ArrayList<String> classNames = generateClassStrings();
 
@@ -141,7 +146,6 @@ public class MipsCodeGenerator {
 //        );
 
         // add code below...
-        StringConstWriter(root);
     }
 
     public void StringConstWriter(ClassTreeNode root){
@@ -166,7 +170,7 @@ public class MipsCodeGenerator {
         int year = cal.get(Calendar.YEAR);
         assemblySupport.genComment("Date: " + month + " " + year);
         assemblySupport.genComment(
-                "Compiled From Sources: " + this.root.getASTNode().getFilename()
+                "Compiled From Sources: " + //FileName
         );
     }
 
@@ -191,17 +195,30 @@ public class MipsCodeGenerator {
         }
     }
 
+    /**
+     * This method returns a list of class name labels used in the MIPS file
+     * based on the number of classes in the program
+     * @return classNames an arraylist of classname labels
+     */
     private ArrayList<String> generateClassStrings() {
         ArrayList<String> classNames = new ArrayList<>();
         generateClassStrings(root, classNames);
         return classNames;
     }
 
+    /**
+     * this is the recursive helper method for generateClassStrings which
+     * loops through each parent class' children and generates their MIPS String
+     * value as well as updates the list of names for use in the parent function.
+     * @param parent the classTreeNode who's String is to be generated
+     * @param names the list of all current MIPS class labels referencing these classes
+     */
     private void generateClassStrings(ClassTreeNode parent, ArrayList<String> names) {
-        //use vivek's thing on parent
-        names.add("class_name_" + names.size());
-        parent.getChildrenList().forEachRemaining( child -> {
-            generateClassStrings(child, names);
-        });
+        String label = "class_name_" + names.size();
+        assemblySupport.genStringConstTemplate(parent.getName(), label);
+        names.add(label);
+        parent.getChildrenList().forEachRemaining( child ->
+            generateClassStrings(child, names)
+        );
     }
 }

@@ -1004,26 +1004,33 @@ public class MipsSupport {
         out.println("\tsyscall");
     }
 
-    public void genStringConst(Map<String,String> strConstCOntainer){
-        for (String key : strConstCOntainer.keySet()){
-            genStringConstTemplate(key, strConstCOntainer.get(key));
+    /**
+     * Takes in a map of Labels and String values and generates
+     * a MIPS String block for each of them.
+     * @param strConstContainer
+     */
+    public void genStringConst(Map<String,String> strConstContainer){
+        for (String key : strConstContainer.keySet()){
+            genStringConstTemplate( key,strConstContainer.get(key));
         }
-
     }
 
-    public void genStringConstTemplate(String key, String data){
-        genLabel(data);
-        key = key.replace("\"","");
-        int byteSize = key.length();
+    /**
+     * Generates a String constant block in MIPS Assembly language
+     * based on the input label and the String value
+     * @param value the label name for the String
+     * @param label the actual String value
+     */
+    public void genStringConstTemplate(String value, String label){
+        genLabel(label);
+        value = value.replace("\"","");
+        int byteSize = value.length();
         double totalSize = byteSize+16+2;
         totalSize = 4*(Math.ceil(Math.abs(totalSize/4)));
         genWord("1");
         genWord(""+(int)totalSize);
         genWord("String_dispatch_table");
-        genWord(""+(int)byteSize);
-        genAscii(key);
-//        genByte("0");
-//        genAlign();
-
+        genWord(""+byteSize);
+        genAscii(value);
     }
 }
