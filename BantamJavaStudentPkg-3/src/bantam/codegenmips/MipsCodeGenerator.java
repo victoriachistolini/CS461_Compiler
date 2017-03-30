@@ -24,16 +24,27 @@
    PARTICULAR PURPOSE. 
 */
 
+/**
+ * File: FilenameVisitor.java
+ * @author Edward (osan) Zhou
+ * @author Alex Rinker
+ * @author Vivek Sah
+ * Class: CS461
+ * Project: 4A
+ * Date: March 30 2017
+ */
+
 package bantam.codegenmips;
 
 import bantam.util.ClassTreeNode;
+
+import java.io.PrintStream;
 
 import java.util.Calendar;
 import bantam.visitor.StringConstantsVisitor;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Locale;
@@ -138,6 +149,8 @@ public class MipsCodeGenerator {
 
         //4 - Generate the class name table
         generateClassNameTable(classNames);
+
+        //6 - generate dispatch tables
         generateClassDispatchTables();
 //        root.getChildrenList().forEachRemaining( x ->
 //            System.out.println(x.getName())
@@ -167,9 +180,13 @@ public class MipsCodeGenerator {
         );
         int year = cal.get(Calendar.YEAR);
         assemblySupport.genComment("Date: " + month + " " + year);
+
+        FilenameVisitor fVisitor = new FilenameVisitor();
+
         assemblySupport.genComment(
-                "Compiled From Sources: "  //FileName
+                "Compiled From Sources: " + fVisitor.getMainFilename(root)
         );
+        out.println();
     }
 
     /**
@@ -220,6 +237,9 @@ public class MipsCodeGenerator {
         );
     }
 
+    /**
+     * Generates the dispatch tables for classes
+     */
     private void generateClassDispatchTables() {
         ClassDispatchVisitor CDV = new ClassDispatchVisitor(root, assemblySupport);
         CDV.generateDispatchTables();
