@@ -40,14 +40,12 @@ import bantam.util.ClassTreeNode;
 
 import java.io.PrintStream;
 
-import java.util.Calendar;
+import java.util.*;
+
 import bantam.visitor.StringConstantsVisitor;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.Locale;
 
 /**
  * The <tt>MipsCodeGenerator</tt> class generates mips assembly code
@@ -71,6 +69,11 @@ public class MipsCodeGenerator {
      * Assembly support object (using Mips assembly support)
      */
     private MipsSupport assemblySupport;
+
+    /**
+     * Map containing
+     */
+    private Map<String, String> classNames;
 
     /**
      * Boolean indicating whether garbage collection is enabled
@@ -129,8 +132,9 @@ public class MipsCodeGenerator {
      * See the lab manual for the details of each of these steps.
      */
     public void generate() {
+        this.classNames = new HashMap<>();
         // comment out
-//        throw new RuntimeException("MIPS code generator unimplemented");
+        //throw new RuntimeException("MIPS code generator unimplemented");
 
         //Generate the File Header
         generateHeader();
@@ -226,6 +230,7 @@ public class MipsCodeGenerator {
         String label = "class_name_" + names.size();
         assemblySupport.genStringConstTemplate(parent.getName(), label);
         names.add(label);
+        this.classNames.put(parent.getName(), label);
         parent.getChildrenList().forEachRemaining( child ->
             generateClassStrings(child, names)
         );
