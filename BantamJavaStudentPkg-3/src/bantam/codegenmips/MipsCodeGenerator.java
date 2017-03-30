@@ -38,8 +38,6 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.Locale;
 
-import static jdk.nashorn.internal.objects.NativeError.getFileName;
-
 /**
  * The <tt>MipsCodeGenerator</tt> class generates mips assembly code
  * targeted for the SPIM emulator.  Note: this code will only run
@@ -140,7 +138,7 @@ public class MipsCodeGenerator {
 
         //4 - Generate the class name table
         generateClassNameTable(classNames);
-
+        generateClassDispatchTables();
 //        root.getChildrenList().forEachRemaining( x ->
 //            System.out.println(x.getName())
 //        );
@@ -170,7 +168,7 @@ public class MipsCodeGenerator {
         int year = cal.get(Calendar.YEAR);
         assemblySupport.genComment("Date: " + month + " " + year);
         assemblySupport.genComment(
-                "Compiled From Sources: " + //FileName
+                "Compiled From Sources: "  //FileName
         );
     }
 
@@ -220,5 +218,10 @@ public class MipsCodeGenerator {
         parent.getChildrenList().forEachRemaining( child ->
             generateClassStrings(child, names)
         );
+    }
+
+    private void generateClassDispatchTables() {
+        ClassDispatchVisitor CDV = new ClassDispatchVisitor(root, assemblySupport);
+        CDV.generateDispatchTables();
     }
 }
