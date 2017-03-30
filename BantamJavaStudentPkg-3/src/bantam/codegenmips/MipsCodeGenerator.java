@@ -42,12 +42,8 @@ import java.io.PrintStream;
 
 import java.util.*;
 
-import bantam.visitor.StringConstantsVisitor;
-
 import java.io.FileOutputStream;
 import java.io.IOException;
-
-import static com.sun.tools.doclets.internal.toolkit.util.DocPath.parent;
 
 /**
  * The <tt>MipsCodeGenerator</tt> class generates mips assembly code
