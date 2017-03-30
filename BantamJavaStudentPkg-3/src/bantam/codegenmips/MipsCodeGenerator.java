@@ -169,9 +169,9 @@ public class MipsCodeGenerator {
     }
 
     public void StringConstWriter(ClassTreeNode root){
-        StringConstantsVisitor strVisitor = new StringConstantsVisitor();
+        StringConstantsVisitor strVisitor = new StringConstantsVisitor(root, assemblySupport);
 
-        Map<String, String> strContainer = strVisitor.getStringConstants(root);
+        Map<String, String> strContainer = strVisitor.getStringConstants();
         assemblySupport.genStringConst(strContainer);
     }
 

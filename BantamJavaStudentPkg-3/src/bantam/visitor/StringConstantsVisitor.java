@@ -1,24 +1,22 @@
 /**
  * File: StringConstantsVisitor.java
- * @author Victoria Chistolini
  * @author Edward (osan) Zhou
  * @author Alex Rinker
  * @author Vivek Sah
  * Class: CS461
- * Project: 2.5
- * Date: Feb 25, 2017
+ * Project: 4
+ * Date: March 30, 2017
  */
 
 package bantam.visitor;
 
-import bantam.ast.ASTNode;
 import bantam.ast.Class_;
 import bantam.ast.ConstStringExpr;
-import bantam.ast.Program;
+
+import bantam.codegenmips.MipsSupport;
 import bantam.util.ClassTreeNode;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Creates a Map whose keys are the String constants from the program and
@@ -29,37 +27,59 @@ import java.util.Map;
 
 public class StringConstantsVisitor extends Visitor {
 
+    private ClassTreeNode root;
+    private MipsSupport mipsSupport;
+    private Set<String> filenames;
 
-    private Map<String,String> stringConstantContainer = new HashMap<>();
-    private int nameNum=-1;
+    private Map<String,String> stringConstantContainer;
+    private int nameNum;
 
 
-//    public void scanForString(ASTNode ast){
-//
-//
-//    }
+    public StringConstantsVisitor(){
+        stringConstantContainer = new HashMap<>();
+        nameNum = -1;
+        filenames = new HashSet<>();
+    }
+    /**
+     * Constructor
+     * @param root Object tree node
+     */
+    public StringConstantsVisitor(ClassTreeNode root, MipsSupport mipsSupport) {
+        stringConstantContainer = new HashMap<>();
+        nameNum = -1;
+        this.root = root;
+        this.mipsSupport = mipsSupport;
+        filenames = new HashSet<>();
+    }
+
+
     /**
      * gets string constant and value mappings
-     * @param root
      * @return
      */
-    public Map<String,String> getStringConstants(ClassTreeNode root){
-        root.getChildrenList().forEachRemaining(child -> {
-            super.visit(child.getASTNode());
-        });
+    public Map<String,String> getStringConstants(){
+        populateStringConstantContainer(root);
+        filenames.forEach(name ->
+                mipsSupport.genStringConstTemplate(name, mipsSupport.getLabel()));
         return stringConstantContainer;
+    }
 
+    private void populateStringConstantContainer(ClassTreeNode parent) {
+        parent.getASTNode().accept(this);
+        parent.getChildrenList().forEachRemaining(child -> {
+            populateStringConstantContainer(child);
+        });
     }
 
     /**
-     * visits the class node and updates the current class value
-//     * @param classNode
-     * @return
+     * Checks for unique files and creates labels for them
+     * @return null
      */
-//    @Override
-//    public Object visit(Class_ classNode) {
-//        return super.visit(classNode);
-//    }
+    @Override
+    public Object visit(Class_ classNode) {
+        filenames.add(classNode.getFilename());
+        return super.visit(classNode);
+    }
 
     /**
      * add new entry when visiting a string constant node
@@ -68,8 +88,6 @@ public class StringConstantsVisitor extends Visitor {
      */
     @Override
     public Object visit(ConstStringExpr node) {
-
-//        System.out.println("string found");
         this.nameNum++;
         stringConstantContainer.put(node.getConstant(), "StringConst_" +
                                     Integer.toString(this.nameNum));
@@ -88,5 +106,4 @@ public class StringConstantsVisitor extends Visitor {
    public static void main(String[] args) {
        return;
    }
-
 }
