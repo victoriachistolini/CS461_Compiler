@@ -24,7 +24,7 @@ import java.util.Map;
  */
 public class FilenameVisitor extends bantam.visitor.Visitor{
 
-    /** The class map hashtable */
+    /** The String representing the filename associated the the program */
     private String filename;
 
     /**

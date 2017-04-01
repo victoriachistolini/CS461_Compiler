@@ -157,9 +157,6 @@ public class MipsCodeGenerator {
 
         //6 - generate dispatch tables
         generateClassDispatchTables();
-//        root.getChildrenList().forEachRemaining( x ->
-//            System.out.println(x.getName())
-//        );
 
         // add code below...
     }
@@ -171,7 +168,7 @@ public class MipsCodeGenerator {
         assemblySupport.genStringConst(strContainer);
     }
 
-    //Helper Functions for the generate() method
+    //Below are the Helper Functions for the generate() method
 
     /**
      * This function generates a file header for the MIPS assembly file
@@ -236,6 +233,7 @@ public class MipsCodeGenerator {
             labelId = 1 + names.size();
         }
 
+        //This is where we create the label for the class
         this.classNames.put(parentName, String.valueOf(labelId));
         String label = "class_name_" + labelId;
         assemblySupport.genStringConstTemplate(parentName, label);
@@ -247,6 +245,7 @@ public class MipsCodeGenerator {
             names.add(label);
         }
 
+        //We then need to repeat this process for each child class
         parent.getChildrenList().forEachRemaining( child ->
             generateClassStrings(child, names)
         );

@@ -24,6 +24,17 @@
    PARTICULAR PURPOSE. 
 */
 
+/**
+ * File: MipsSupport.java
+ * Edited by the following authors
+ * @author Edward (osan) Zhou
+ * @author Alex Rinker
+ * @author Vivek Sah
+ * Class: CS461
+ * Project: 4A
+ * Date: April 1 2017
+ */
+
 package bantam.codegenmips;
 
 import java.io.PrintStream;
