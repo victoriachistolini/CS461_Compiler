@@ -45,6 +45,8 @@ import java.util.*;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import static sun.swing.MenuItemLayoutHelper.max;
+
 /**
  * The <tt>MipsCodeGenerator</tt> class generates mips assembly code
  * targeted for the SPIM emulator.  Note: this code will only run
@@ -69,9 +71,14 @@ public class MipsCodeGenerator {
     private MipsSupport assemblySupport;
 
     /**
-     * Map containing
+     * Map containing the labels associated with each class
      */
     private Map<String, String> classNames;
+
+    /**
+     * Map containing the method associated with each class
+     */
+    private Map<String, Set<String>> classMethods;
 
     /**
      * Boolean indicating whether garbage collection is enabled
@@ -158,7 +165,12 @@ public class MipsCodeGenerator {
         //6 - generate dispatch tables
         generateClassDispatchTables();
 
-        // add code below...
+        //7 - Start the Text section
+        //Currently (project 4A) this only implements the bare minimum to run on MARS
+        assemblySupport.genTextStart();
+        generateClassInits();
+        generateClassMethods();
+        assemblySupport.genRetn();
     }
 
     public void StringConstWriter(ClassTreeNode root){
@@ -230,7 +242,7 @@ public class MipsCodeGenerator {
         } else if (parentName == "String") {
             labelId = 1;
         } else {
-            labelId = 1 + names.size();
+            labelId = 2 + max(0, names.size()-2);
         }
 
         //This is where we create the label for the class
@@ -284,7 +296,32 @@ public class MipsCodeGenerator {
      * Generates the dispatch tables for classes
      */
     private void generateClassDispatchTables() {
-        ClassDispatchVisitor CDV = new ClassDispatchVisitor(root, assemblySupport);
+        ClassDispatchVisitor CDV = new ClassDispatchVisitor(root, this.assemblySupport);
         CDV.generateDispatchTables();
+        this.classMethods = CDV.getClassMethods();
+    }
+
+    /**
+     * This method generates init labels for each class in the program
+     */
+    //TODO  Update this function to actually do something useful
+    private void generateClassInits() {
+        for(String class_ : this.classNames.keySet()) {
+            this.assemblySupport.genLabel(class_ + "_init");
+        }
+    }
+
+    /**
+     * This method generates labels for each of the methods in each of
+     * the classes of the program
+     */
+    //TODO  Update this function to actually do something useful
+    private void generateClassMethods() {
+        for(String class_ : this.classMethods.keySet()) {
+            for(String method : this.classMethods.get(class_)) {
+                String label = class_ + "." + method;
+                this.assemblySupport.genLabel(label);
+            }
+        }
     }
 }

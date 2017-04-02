@@ -14,13 +14,19 @@ import bantam.ast.*;
 import bantam.util.ClassTreeNode;
 import bantam.visitor.Visitor;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * generates mips class templates in the .data section
  */
 public class ClassDispatchVisitor extends Visitor {
+
+    public static final String[] BUILT_IN_NAMES = new String[] {
+            "Object", "String", "Sys", "TextIO"
+    };
+    public static final Set<String> BUILT_IN_CLASSES = new HashSet<String>(
+            Arrays.asList(BUILT_IN_NAMES)
+    );
 
     /** Object class tree node */
     private ClassTreeNode root;
@@ -31,8 +37,14 @@ public class ClassDispatchVisitor extends Visitor {
     /** Current class */
     private String currClass;
 
+    /** boolean representing whether the class is built in or not */
+    private boolean builtin;
+
     /** List of current methods */
     private ArrayList<String> currMethods;
+
+    /** A map keeping track of the methods associated with each class */
+    private Map<String, Set<String>> classMethods;
 
     /**
      * Constructor for the class, sets up the root and mipSupport fields
@@ -42,6 +54,8 @@ public class ClassDispatchVisitor extends Visitor {
     ClassDispatchVisitor(ClassTreeNode root, MipsSupport mipsSupport) {
         this.root = root;
         this.mipsSupport = mipsSupport;
+        this.classMethods = new HashMap<>();
+        this.builtin = false;
         currMethods = new ArrayList<>();
     }
 
@@ -50,6 +64,15 @@ public class ClassDispatchVisitor extends Visitor {
      */
     public void generateDispatchTables() {
         generateDispatchTables(root, new ArrayList<>());
+    }
+
+    /**
+     * returns a Map which contains the methods associated with
+     * each of the classes in the program
+     * @return classMethods, the Map storing the desired information
+     */
+    public Map<String, Set<String>> getClassMethods() {
+        return this.classMethods;
     }
 
     /**
@@ -90,6 +113,12 @@ public class ClassDispatchVisitor extends Visitor {
     @Override
     public Object visit(Class_ node) {
         this.currClass = node.getName();
+
+        //Create an entry to hold the methods for this class only if it isn't a built in
+        if (!BUILT_IN_CLASSES.contains(node.getName())) {
+            this.classMethods.put(node.getName(), new HashSet<>());
+        }
+
         mipsSupport.genLabel(this.currClass + "_dispatch_table");
         return super.visit(node);
     }
@@ -113,6 +142,10 @@ public class ClassDispatchVisitor extends Visitor {
     @Override
     public Object visit(Method node) {
         currMethods.add(node.getName());
+
+        if (!BUILT_IN_CLASSES.contains(this.currClass)) {
+            this.classMethods.get(this.currClass).add(node.getName());
+        }
         return null;
     }
 }
