@@ -24,9 +24,21 @@
    PARTICULAR PURPOSE. 
 */
 
+/**
+ * File: MipsSupport.java
+ * Edited by the following authors
+ * @author Edward (osan) Zhou
+ * @author Alex Rinker
+ * @author Vivek Sah
+ * Class: CS461
+ * Project: 4A
+ * Date: April 1 2017
+ */
+
 package bantam.codegenmips;
 
 import java.io.PrintStream;
+import java.util.Map;
 
 /**
  * Mips assembly support
@@ -310,7 +322,7 @@ public class MipsSupport {
         out.println("\t.text");
         genGlobal("main");
         genGlobal("Main_init");
-        genGlobal("bantam.Main.main");
+        genGlobal("Main.main");
         // main (below) defined only because SPIM requires it -- not used
         genLabel("main");
         // if this gets called for some reason then just call __start
@@ -991,7 +1003,7 @@ public class MipsSupport {
         else if (syscallId == SYSCALL_FILE_WRITE) {
             out.println("\tli $v0 15");
         }
-        else if (syscallId == SYSCALL_GET_TIME) {
+        else if  (syscallId == SYSCALL_GET_TIME) {
             out.println("\tli $v0 18");
         }
         else if (syscallId == SYSCALL_SBRK) {
@@ -1001,5 +1013,35 @@ public class MipsSupport {
             throw new RuntimeException("bad syscall identifier");
         }
         out.println("\tsyscall");
+    }
+
+    /**
+     * Takes in a map of Labels and String values and generates
+     * a MIPS String block for each of them.
+     * @param strConstContainer
+     */
+    public void genStringConst(Map<String,String> strConstContainer){
+        for (String key : strConstContainer.keySet()){
+            genStringConstTemplate( key,strConstContainer.get(key));
+        }
+    }
+
+    /**
+     * Generates a String constant block in MIPS Assembly language
+     * based on the input label and the String value
+     * @param value the label name for the String
+     * @param label the actual String value
+     */
+    public void genStringConstTemplate(String value, String label){
+        genLabel(label);
+        value = value.replace("\"","");
+        int byteSize = value.length();
+        double totalSize = byteSize+16+2;
+        totalSize = 4*(Math.ceil(Math.abs(totalSize/4)));
+        genWord("1");
+        genWord(""+(int)totalSize);
+        genWord("String_dispatch_table");
+        genWord(""+byteSize);
+        genAscii(value);
     }
 }
