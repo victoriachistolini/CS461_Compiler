@@ -55,7 +55,7 @@ public class StringConstantsVisitor extends Visitor {
     public Map<String,String> getStringConstants(){
         populateStringConstantContainer(root);
         filenames.forEach(name ->
-                mipsSupport.genStringConstTemplate(name, mipsSupport.getLabel()));
+                mipsSupport.genStringConstTemplate(name, this.mipsSupport.getLabel()));
         return stringConstantContainer;
     }
 

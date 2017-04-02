@@ -45,6 +45,7 @@ import java.util.*;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import static com.sun.tools.doclets.internal.toolkit.util.DocPath.parent;
 import static sun.swing.MenuItemLayoutHelper.max;
 
 /**
@@ -167,17 +168,12 @@ public class MipsCodeGenerator {
 
         //7 - Start the Text section
         //Currently (project 4A) this only implements the bare minimum to run on MARS
+        out.println();
         assemblySupport.genTextStart();
         generateClassInits();
         generateClassMethods();
         assemblySupport.genRetn();
-    }
-
-    public void StringConstWriter(ClassTreeNode root){
-        StringConstantsVisitor strVisitor = new StringConstantsVisitor(root, assemblySupport);
-
-        Map<String, String> strContainer = strVisitor.getStringConstants();
-        assemblySupport.genStringConst(strContainer);
+        //End temporary .text section. Change the above lines for project 4B
     }
 
     //Below are the Helper Functions for the generate() method
@@ -204,6 +200,18 @@ public class MipsCodeGenerator {
     }
 
     /**
+     * Generates the String Constants for the program associated with the
+     * input root
+     * @param root
+     */
+    public void StringConstWriter(ClassTreeNode root){
+        StringConstantsVisitor strVisitor = new StringConstantsVisitor(root, assemblySupport);
+
+        Map<String, String> strContainer = strVisitor.getStringConstants();
+        assemblySupport.genStringConst(strContainer);
+    }
+
+    /**
      * This function generates data for the Garbage collector to use in the
      * MIPS assembly file.
      * Currently this method only sets the gc_flag to 0
@@ -220,6 +228,9 @@ public class MipsCodeGenerator {
      */
     private ArrayList<String> generateClassStrings() {
         ArrayList<String> classNames = new ArrayList<>();
+
+        // The following code will be run on Object first (root) thus
+        // Guaranteeing that Object has a labelId of 0
         generateClassStrings(root, classNames);
         return classNames;
     }
@@ -231,36 +242,41 @@ public class MipsCodeGenerator {
      * @param parent the classTreeNode who's String is to be generated
      * @param names the list of all current MIPS class labels referencing these classes
      */
-    private void generateClassStrings(ClassTreeNode parent, ArrayList<String> names) {
+    private void generateClassStrings(
+            ClassTreeNode parent,
+            ArrayList<String> names) {
 
-        //Generate the Label ID based on the number of classes
-        // However 0 and 1 are reserved for Object and String
-        int labelId;
+        // Generate the Label ID based on the number of classes
+        // Get the name of the class
+        int labelId = names.size();
         String parentName = parent.getName();
-        if (parentName == "Object") {
-            labelId = 0;
-        } else if (parentName == "String") {
-            labelId = 1;
-        } else {
-            labelId = 2 + max(0, names.size()-2);
-        }
 
         //This is where we create the label for the class
         this.classNames.put(parentName, String.valueOf(labelId));
         String label = "class_name_" + labelId;
         assemblySupport.genStringConstTemplate(parentName, label);
 
-        //Make sure that "String" is in the 2nd position
-        if(parent.getName() == "String") {
-            names.add(1, label);
-        } else {
-            names.add(label);
-        }
+        // Add the new label to the list
+        names.add(label);
+
+        HashSet<ClassTreeNode> children = new HashSet<>();
 
         //We then need to repeat this process for each child class
-        parent.getChildrenList().forEachRemaining( child ->
-            generateClassStrings(child, names)
-        );
+        //But we must make sure that string is first
+        //Because Object is the first to be generated, String is
+        //Guaranteed to be given index 1
+        parent.getChildrenList().forEachRemaining( child -> {
+            if(child.getName() == "String") {
+                generateClassStrings(child, names);
+            } else {
+                children.add(child);
+            }
+        });
+
+        // Generate the class strings for the children
+        for(ClassTreeNode child : children ) {
+            generateClassStrings(child, names);
+        }
     }
 
     /**
@@ -299,6 +315,11 @@ public class MipsCodeGenerator {
         ClassDispatchVisitor CDV = new ClassDispatchVisitor(root, this.assemblySupport);
         CDV.generateDispatchTables();
         this.classMethods = CDV.getClassMethods();
+
+        //Make the globals to allow us to reference these dispatch tables
+        for(String class_ : this.classNames.keySet()) {
+            this.assemblySupport.genGlobal(class_ + "_dispatch_table");
+        }
     }
 
     /**
