@@ -102,7 +102,6 @@ public class TypeCheckVisitor extends Visitor {
     @Override
     public Object visit(DeclStmt node) {
         super.visit(node);
-
         if(node.getInit() != null) {
             checkType(node.getType(), node.getInit().getExprType(), node, true);
         }
@@ -200,8 +199,8 @@ public class TypeCheckVisitor extends Visitor {
 
     @Override
     public Object visit(ReturnStmt node) {
-        super.visit(node);
         String returnType = this.currentMethod.getReturnType();
+        super.visit(node);
         if(returnType.equals(VOID)) {
             if(node.getExpr() != null) {
                 errorHandler.register(errorHandler.SEMANT_ERROR,
@@ -232,14 +231,14 @@ public class TypeCheckVisitor extends Visitor {
         // Evaluate type of reference
         String referenceType;
         if (node.getRefExpr() != null) {
-            node.getRefExpr().accept(this);
-            referenceType = node.getRefExpr().getExprType();
-        } else {
             if(((VarExpr) node.getRefExpr()).getName().equals(THIS)) {
                 referenceType = this.currentClass;
             } else {
-            referenceType = ((VarExpr) node.getRefExpr()).getName();
+                node.getRefExpr().accept(this);
+                referenceType = node.getRefExpr().getExprType();
             }
+        } else {
+            referenceType = this.currentClass;
         }
 
         node.getActualList().accept(this);
@@ -312,11 +311,24 @@ public class TypeCheckVisitor extends Visitor {
         super.visit(node);
 
         if (SemanticTools.isPrimitive(node.getExpr().getExprType()) ||
-                SemanticTools.isPrimitive(node.getExpr().getExprType())) {
+                SemanticTools.isPrimitive(node.getType())) {
             errorHandler.register(errorHandler.SEMANT_ERROR,
                     this.currentClass,
                     node.getLineNum(),
                     "Primitives cannot be checked for instance");
+        } else {
+            if (!classMap.containsKey(node.getExpr().getExprType())) {
+                errorHandler.register(errorHandler.SEMANT_ERROR,
+                        this.currentClass,
+                        node.getLineNum(),
+                        "Invalid type " + node.getExpr().getExprType());
+            }
+            if (!classMap.containsKey(classMap.get(currentClass).getVarSymbolTable().lookup(node.getType()))) {
+                errorHandler.register(errorHandler.SEMANT_ERROR,
+                        this.currentClass,
+                        node.getLineNum(),
+                        "Invalid type " + node.getType());
+            }
         }
         node.setUpCheck(true); // this is always true
         node.setExprType(BOOLEAN);
@@ -666,20 +678,18 @@ public class TypeCheckVisitor extends Visitor {
     private boolean checkType(String type, String subtype, ASTNode ast, boolean debug) {
         if(type.equals(subtype)) {
             if(!(SemanticTools.isPrimitive(subtype) && SemanticTools.isPrimitive(type))) {
-                if(!(classMap.containsKey(type) && classMap.containsKey(subtype))) {
-                    if(debug) {
-                        if (!classMap.containsKey(type)) {
-                            errorHandler.register(errorHandler.SEMANT_ERROR,
-                                    this.currentClass,
-                                    ast.getLineNum(),
-                                    "Invalid type " + type);
-                        }
-                        if (!classMap.containsKey(subtype)) {
-                            errorHandler.register(errorHandler.SEMANT_ERROR,
-                                    this.currentClass,
-                                    ast.getLineNum(),
-                                    "Invalid type " + subtype);
-                        }
+                if(debug) {
+                    if (!classMap.containsKey(type)) {
+                        errorHandler.register(errorHandler.SEMANT_ERROR,
+                                this.currentClass,
+                                ast.getLineNum(),
+                                "Invalid type " + type);
+                    }
+                    if (!classMap.containsKey(subtype)) {
+                        errorHandler.register(errorHandler.SEMANT_ERROR,
+                                this.currentClass,
+                                ast.getLineNum(),
+                                "Invalid type " + subtype);
                     }
                 }
             }
@@ -754,13 +764,15 @@ public class TypeCheckVisitor extends Visitor {
                 node.setExprType(node.getOpType());
             }
         } else {
-            // if operandtype isnt defined for some crazy reason
+            // if operandtype isnt defined for != and ==
             if(SemanticTools.isPrimitive(leftType) || SemanticTools.isPrimitive(rightType)) {
                 if(!leftType.equals(rightType)) {
                     errorHandler.register(errorHandler.SEMANT_ERROR,
                             this.currentClass,
                             node.getLineNum(),
                             "Operands " + leftType + " and "+ rightType + " are incompatible");
+                } else {
+                    node.setExprType(BOOLEAN);
                 }
             } else {
                 // types
@@ -769,6 +781,8 @@ public class TypeCheckVisitor extends Visitor {
                             this.currentClass,
                             node.getLineNum(),
                             "Operands " + leftType + " and "+ rightType + " are incompatible");
+                } else {
+                    node.setExprType(BOOLEAN);
                 }
             }
         }
