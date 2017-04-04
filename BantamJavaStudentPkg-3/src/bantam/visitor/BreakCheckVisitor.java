@@ -59,20 +59,6 @@ public class BreakCheckVisitor extends Visitor {
     }
 
     /**
-     * Visits the if statement and updates the loop
-     * depth accordingly
-     * @param ifNode
-     * @return null
-     */
-    @Override
-    public Object visit(IfStmt ifNode) {
-        this.loopDepth++;
-        super.visit(ifNode);
-        this.loopDepth--;
-        return null;
-    }
-
-    /**
      * Visits the for statement and updates the loop
      * depth accordingly
      * @param forNode
