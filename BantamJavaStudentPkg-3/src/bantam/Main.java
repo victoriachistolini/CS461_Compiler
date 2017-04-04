@@ -46,7 +46,6 @@ import bantam.codegenx86.X86CodeGenerator;
 import bantam.interp.Interpreter;
 import bantam.visitor.MainMainVisitor;
 import bantam.visitor.NumLocalVarsVisitor;
-import bantam.visitor.StringConstantsVisitor;
 import java_cup.runtime.Symbol;
 import bantam.lexer.Lexer;
 import bantam.opt.Optimizer;
@@ -84,7 +83,7 @@ public class Main {
      * Boolean flags that indicate whether or not some visitors should be
      * utilized at a particular time
      */
-    private static boolean findMain, findStringConstants, findLogicalVariables;
+    private static boolean findMain, findLogicalVariables;
     /**
      * Debugging flags for each phase of the compiler
      */
@@ -225,9 +224,6 @@ public class Main {
             // if -mm then run the MainMain visitor to figure out if the class has a main items
             else if (args[i].equals("-mm")) {
                 findMain = true;
-            }
-            else if (args[i].equals("-sc")) {
-                findStringConstants = true;
             }
             else if (args[i].equals("-lv")) {
                 findLogicalVariables = true;
@@ -388,11 +384,6 @@ public class Main {
             if (findMain) {
                 MainMainVisitor visitor = new MainMainVisitor();
                 System.out.println(visitor.hasMain((Program) result.value));
-                System.exit(0);
-            }
-            if (findStringConstants) {
-                StringConstantsVisitor stringConstants = new StringConstantsVisitor();
-//                System.out.println(stringConstants.getStringConstants((Program) result.value));
                 System.exit(0);
             }
             if (findLogicalVariables) {

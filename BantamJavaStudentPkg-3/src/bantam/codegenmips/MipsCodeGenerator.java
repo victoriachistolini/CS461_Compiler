@@ -45,9 +45,6 @@ import java.util.*;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import static com.sun.tools.doclets.internal.toolkit.util.DocPath.parent;
-import static sun.swing.MenuItemLayoutHelper.max;
-
 /**
  * The <tt>MipsCodeGenerator</tt> class generates mips assembly code
  * targeted for the SPIM emulator.  Note: this code will only run
