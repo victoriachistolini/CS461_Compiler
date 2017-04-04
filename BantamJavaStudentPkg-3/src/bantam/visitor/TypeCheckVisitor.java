@@ -42,7 +42,8 @@ public class TypeCheckVisitor extends Visitor {
 
     private SymbolTable currentVarSymbolTable;
     private Method currentMethod;
-    private String currentClass;
+    private Class_ currentClass;
+
     /**
      * check type semantics of the program and annotates expr types
      * undeclared variables report errors
@@ -62,7 +63,7 @@ public class TypeCheckVisitor extends Visitor {
     @Override
     public Object visit(Class_ node) {
         this.currentVarSymbolTable = classMap.get(node.getName()).getVarSymbolTable();
-        this.currentClass = node.getName();
+        this.currentClass = node;
         return super.visit(node);
     }
 
@@ -123,7 +124,7 @@ public class TypeCheckVisitor extends Visitor {
     public Object visit(ExprStmt node) {
         if(!(boolean)node.getExpr().accept(this)) {
             errorHandler.register(errorHandler.SEMANT_ERROR,
-                    this.currentClass,
+                    this.currentClass.getFilename(),
                     node.getLineNum(),
                     "Invalid expression for expression statement");
         }
@@ -135,7 +136,7 @@ public class TypeCheckVisitor extends Visitor {
         node.getPredExpr().accept(this);
         if(!node.getPredExpr().getExprType().equals(BOOLEAN)) {
             errorHandler.register(errorHandler.SEMANT_ERROR,
-                    this.currentClass,
+                    this.currentClass.getFilename(),
                     node.getLineNum(),
                     "Predicate does not evaluate to boolean");
         }
@@ -156,7 +157,7 @@ public class TypeCheckVisitor extends Visitor {
 
         if(!node.getPredExpr().getExprType().equals(BOOLEAN)) {
             errorHandler.register(errorHandler.SEMANT_ERROR,
-                    this.currentClass,
+                    this.currentClass.getFilename(),
                     node.getLineNum(),
                     "Predicate does not evaluate to boolean");
         }
@@ -176,7 +177,7 @@ public class TypeCheckVisitor extends Visitor {
             node.getPredExpr().accept(this);
             if(!node.getPredExpr().getExprType().equals(BOOLEAN)) {
                 errorHandler.register(errorHandler.SEMANT_ERROR,
-                        this.currentClass,
+                        this.currentClass.getFilename(),
                         node.getLineNum(),
                         "Predicate does not evaluate to boolean");
             }
@@ -204,7 +205,7 @@ public class TypeCheckVisitor extends Visitor {
         if(returnType.equals(VOID)) {
             if(node.getExpr() != null) {
                 errorHandler.register(errorHandler.SEMANT_ERROR,
-                        this.currentClass,
+                        this.currentClass.getFilename(),
                         node.getLineNum(),
                         "return type invalid for void method");
             }
@@ -213,7 +214,7 @@ public class TypeCheckVisitor extends Visitor {
                 checkType(returnType, node.getExpr().getExprType(), node, true);
             } else {
                 errorHandler.register(errorHandler.SEMANT_ERROR,
-                        this.currentClass,
+                        this.currentClass.getFilename(),
                         node.getLineNum(),
                         "Missing return value");
             }
@@ -232,13 +233,13 @@ public class TypeCheckVisitor extends Visitor {
         String referenceType;
         if (node.getRefExpr() != null) {
             if(((VarExpr) node.getRefExpr()).getName().equals(THIS)) {
-                referenceType = this.currentClass;
+                referenceType = this.currentClass.getName();
             } else {
                 node.getRefExpr().accept(this);
                 referenceType = node.getRefExpr().getExprType();
             }
         } else {
-            referenceType = this.currentClass;
+            referenceType = this.currentClass.getName();
         }
 
         node.getActualList().accept(this);
@@ -250,12 +251,12 @@ public class TypeCheckVisitor extends Visitor {
                     .lookup(node.getMethodName());
             if(method == null) {
                 errorHandler.register(errorHandler.SEMANT_ERROR,
-                        this.currentClass,
+                        this.currentClass.getFilename(),
                         node.getLineNum(),
                         "Undeclared method " + node.getMethodName());
             } else if(method.getFormalList().getSize() != node.getActualList().getSize()) {
                 errorHandler.register(errorHandler.SEMANT_ERROR,
-                        this.currentClass,
+                        this.currentClass.getFilename(),
                         node.getLineNum(),
                         "Mismatched number of expected parameters");
             } else {
@@ -274,7 +275,7 @@ public class TypeCheckVisitor extends Visitor {
             }
         } else {
             errorHandler.register(errorHandler.SEMANT_ERROR,
-                    this.currentClass,
+                    this.currentClass.getFilename(),
                     node.getLineNum(),
                     "Invalid reference in dispatch");
         }
@@ -298,7 +299,7 @@ public class TypeCheckVisitor extends Visitor {
         node.setExprType(node.getType());
         if(node.getSize().getExprType() != INT) {
             errorHandler.register(errorHandler.SEMANT_ERROR,
-                    this.currentClass,
+                    this.currentClass.getFilename(),
                     node.getLineNum(),
                     "Expression does not evaluate to int");
         }
@@ -313,19 +314,19 @@ public class TypeCheckVisitor extends Visitor {
         if (SemanticTools.isPrimitive(node.getExpr().getExprType()) ||
                 SemanticTools.isPrimitive(node.getType())) {
             errorHandler.register(errorHandler.SEMANT_ERROR,
-                    this.currentClass,
+                    this.currentClass.getFilename(),
                     node.getLineNum(),
                     "Primitives cannot be checked for instance");
         } else {
             if (!classMap.containsKey(node.getExpr().getExprType())) {
                 errorHandler.register(errorHandler.SEMANT_ERROR,
-                        this.currentClass,
+                        this.currentClass.getFilename(),
                         node.getLineNum(),
                         "Invalid type " + node.getExpr().getExprType());
             }
             if (!classMap.containsKey(classMap.get(currentClass).getVarSymbolTable().lookup(node.getType()))) {
                 errorHandler.register(errorHandler.SEMANT_ERROR,
-                        this.currentClass,
+                        this.currentClass.getFilename(),
                         node.getLineNum(),
                         "Invalid type " + node.getType());
             }
@@ -342,7 +343,7 @@ public class TypeCheckVisitor extends Visitor {
         if (SemanticTools.isPrimitive(node.getType()) ||
                 SemanticTools.isPrimitive(node.getExpr().getExprType())) {
             errorHandler.register(errorHandler.SEMANT_ERROR,
-                    this.currentClass,
+                    this.currentClass.getFilename(),
                     node.getLineNum(),
                     "Primitives cannot be casted");
         } else {
@@ -352,7 +353,7 @@ public class TypeCheckVisitor extends Visitor {
             downcast = checkType(node.getExpr().getExprType(), node.getType(), node, false);
             if (!(upcast || downcast)) {
                 errorHandler.register(errorHandler.SEMANT_ERROR,
-                        this.currentClass,
+                        this.currentClass.getFilename(),
                         node.getLineNum(),
                         "Invalid types for casting");
             } else {
@@ -381,13 +382,13 @@ public class TypeCheckVisitor extends Visitor {
                     }
                 } else {
                     errorHandler.register(errorHandler.SEMANT_ERROR,
-                            this.currentClass,
+                            this.currentClass.getFilename(),
                             node.getLineNum(),
                             "Undeclared field " + node.getName() + " in " + node.getRefName());
                 }
             } else {
                 errorHandler.register(errorHandler.SEMANT_ERROR,
-                        this.currentClass,
+                        this.currentClass.getFilename(),
                         node.getLineNum(),
                         "Undeclared class " + node.getRefName());
             }
@@ -401,7 +402,7 @@ public class TypeCheckVisitor extends Visitor {
                 }
             } else {
                 errorHandler.register(errorHandler.SEMANT_ERROR,
-                        this.currentClass,
+                        this.currentClass.getFilename(),
                         node.getLineNum(),
                         "Undeclared variable " + node.getName());
             }
@@ -425,13 +426,13 @@ public class TypeCheckVisitor extends Visitor {
                     }
                 } else {
                     errorHandler.register(errorHandler.SEMANT_ERROR,
-                            this.currentClass,
+                            this.currentClass.getFilename(),
                             node.getLineNum(),
                             "Undeclared field " + node.getName() + " in " + node.getRefName());
                 }
             } else {
                 errorHandler.register(errorHandler.SEMANT_ERROR,
-                        this.currentClass,
+                        this.currentClass.getFilename(),
                         node.getLineNum(),
                         "Undeclared class " + node.getRefName());
             }
@@ -445,7 +446,7 @@ public class TypeCheckVisitor extends Visitor {
                 }
             } else {
                 errorHandler.register(errorHandler.SEMANT_ERROR,
-                        this.currentClass,
+                        this.currentClass.getFilename(),
                         node.getLineNum(),
                         "Undeclared variable " + node.getName());
             }
@@ -585,7 +586,7 @@ public class TypeCheckVisitor extends Visitor {
             if(((VarExpr) node.getRef()).getName().equals(THIS)) {
                 varType =(String) this.currentVarSymbolTable.lookup(node.getName());
             } else if(((VarExpr) node.getRef()).getName().equals(SUPER)) {
-                ClassTreeNode currClass = classMap.get(currentClass);
+                ClassTreeNode currClass = classMap.get(currentClass.getName());
                 while (currClass.getParent() != null) {
                     currClass = currClass.getParent();
                     if (currClass.getVarSymbolTable().lookup(node.getName())!=null) {
@@ -594,7 +595,7 @@ public class TypeCheckVisitor extends Visitor {
                 }
             } else {
                 errorHandler.register(errorHandler.SEMANT_ERROR,
-                        this.currentClass,
+                        this.currentClass.getFilename(),
                         node.getLineNum(),
                         "Only super or this are allowed for variable references");
             }
@@ -605,7 +606,7 @@ public class TypeCheckVisitor extends Visitor {
             node.setExprType(varType);
         } else {
             errorHandler.register(errorHandler.SEMANT_ERROR,
-                    this.currentClass,
+                    this.currentClass.getFilename(),
                     node.getLineNum(),
                     "Undeclared variable " + node.getName());
         }
@@ -621,7 +622,7 @@ public class TypeCheckVisitor extends Visitor {
             if(((VarExpr) node.getRef()).getName().equals(THIS)) {
                 varType =(String) this.currentVarSymbolTable.lookup(node.getName());
             } else if(((VarExpr) node.getRef()).getName().equals(SUPER)) {
-                ClassTreeNode currClass = classMap.get(currentClass);
+                ClassTreeNode currClass = classMap.get(currentClass.getName());
                 while (currClass.getParent() != null) {
                     currClass = currClass.getParent();
                     if (currClass.getVarSymbolTable().lookup(node.getName())!=null) {
@@ -630,7 +631,7 @@ public class TypeCheckVisitor extends Visitor {
                 }
             } else {
                 errorHandler.register(errorHandler.SEMANT_ERROR,
-                        this.currentClass,
+                        this.currentClass.getFilename(),
                         node.getLineNum(),
                         "Only super or this are allowed for variable references");
             }
@@ -641,7 +642,7 @@ public class TypeCheckVisitor extends Visitor {
             node.setExprType(varType);
         } else {
             errorHandler.register(errorHandler.SEMANT_ERROR,
-                    this.currentClass,
+                    this.currentClass.getFilename(),
                     node.getLineNum(),
                     "Undeclared variable " + node.getName());
         }
@@ -681,13 +682,13 @@ public class TypeCheckVisitor extends Visitor {
                 if(debug) {
                     if (!classMap.containsKey(type)) {
                         errorHandler.register(errorHandler.SEMANT_ERROR,
-                                this.currentClass,
+                                this.currentClass.getFilename(),
                                 ast.getLineNum(),
                                 "Invalid type " + type);
                     }
                     if (!classMap.containsKey(subtype)) {
                         errorHandler.register(errorHandler.SEMANT_ERROR,
-                                this.currentClass,
+                                this.currentClass.getFilename(),
                                 ast.getLineNum(),
                                 "Invalid type " + subtype);
                     }
@@ -711,7 +712,7 @@ public class TypeCheckVisitor extends Visitor {
                 }
                 if(debug) {
                     errorHandler.register(errorHandler.SEMANT_ERROR,
-                            this.currentClass,
+                            this.currentClass.getFilename(),
                             ast.getLineNum(),
                             "Invalid subtype " + subtype + " of type " + type);
                 }
@@ -719,13 +720,13 @@ public class TypeCheckVisitor extends Visitor {
                 if(debug) {
                     if (!classMap.containsKey(type)) {
                         errorHandler.register(errorHandler.SEMANT_ERROR,
-                                this.currentClass,
+                                this.currentClass.getFilename(),
                                 ast.getLineNum(),
                                 "Invalid type " + type);
                     }
                     if (!classMap.containsKey(subtype)) {
                         errorHandler.register(errorHandler.SEMANT_ERROR,
-                                this.currentClass,
+                                this.currentClass.getFilename(),
                                 ast.getLineNum(),
                                 "Invalid type " + subtype);
                     }
@@ -734,7 +735,7 @@ public class TypeCheckVisitor extends Visitor {
         } else {
             if(debug) {
                 errorHandler.register(errorHandler.SEMANT_ERROR,
-                        this.currentClass,
+                        this.currentClass.getFilename(),
                         ast.getLineNum(),
                         "Incompatible types " + type + " and " + subtype);
             }
@@ -756,7 +757,7 @@ public class TypeCheckVisitor extends Visitor {
         if(operandType != null) {
             if(!(operandType.equals(leftType) && operandType.equals(rightType))) {
                 errorHandler.register(errorHandler.SEMANT_ERROR,
-                        this.currentClass,
+                        this.currentClass.getFilename(),
                         node.getLineNum(),
                         "Operands " + leftType + " and "+ rightType
                                 + " must be of both type " + operandType );
@@ -768,7 +769,7 @@ public class TypeCheckVisitor extends Visitor {
             if(SemanticTools.isPrimitive(leftType) || SemanticTools.isPrimitive(rightType)) {
                 if(!leftType.equals(rightType)) {
                     errorHandler.register(errorHandler.SEMANT_ERROR,
-                            this.currentClass,
+                            this.currentClass.getFilename(),
                             node.getLineNum(),
                             "Operands " + leftType + " and "+ rightType + " are incompatible");
                 } else {
@@ -778,7 +779,7 @@ public class TypeCheckVisitor extends Visitor {
                 // types
                 if(!(checkType(leftType, rightType, node, false) && checkType(rightType, leftType, node, false))) {
                     errorHandler.register(errorHandler.SEMANT_ERROR,
-                            this.currentClass,
+                            this.currentClass.getFilename(),
                             node.getLineNum(),
                             "Operands " + leftType + " and "+ rightType + " are incompatible");
                 } else {
@@ -797,7 +798,7 @@ public class TypeCheckVisitor extends Visitor {
         node.setExprType(node.getOperandType());
         if (!node.getOperandType().equals(node.getExpr().getExprType())) {
             errorHandler.register(errorHandler.SEMANT_ERROR,
-                    this.currentClass,
+                    this.currentClass.getFilename(),
                     node.getLineNum(),
                     "Unary operator " + node.getOpName() + " incompatible with type "
                             + node.getExpr().getExprType());
