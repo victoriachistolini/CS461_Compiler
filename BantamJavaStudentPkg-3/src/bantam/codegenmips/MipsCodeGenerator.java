@@ -79,6 +79,11 @@ public class MipsCodeGenerator {
     private Map<String, Set<String>> classMethods;
 
     /**
+     * Map which connects String constants to their labels
+     */
+    private Map<String, String> stringLabels;
+
+    /**
      * Boolean indicating whether garbage collection is enabled
      */
     private boolean gc = false;
@@ -204,8 +209,8 @@ public class MipsCodeGenerator {
     public void StringConstWriter(ClassTreeNode root){
         StringConstantsVisitor strVisitor = new StringConstantsVisitor(root, assemblySupport);
 
-        Map<String, String> strContainer = strVisitor.getStringConstants();
-        assemblySupport.genStringConst(strContainer);
+        this.stringLabels = strVisitor.getStringConstants();
+        assemblySupport.genStringConst(this.stringLabels);
     }
 
     /**
