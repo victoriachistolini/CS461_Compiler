@@ -360,7 +360,7 @@ import java_cup.runtime.Symbol;
 <YYINITIAL>[:\'@?#$^~`\\/\.\|]+ { return new Symbol(TokenIds.LEX_ERROR,
                                   new Token("ILLEGAL_CHAR", yytext(), yyline)); }
 
-<YYINITIAL>\".*\"       {
+<YYINITIAL>\"[^\"\n]*\"       {
     if(yytext().length() > 5000) {
         return new Symbol(
             TokenIds.LEX_ERROR,

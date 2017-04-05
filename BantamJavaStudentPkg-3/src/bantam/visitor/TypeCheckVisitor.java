@@ -33,6 +33,7 @@ public class TypeCheckVisitor extends Visitor {
     private final String VOID = "void";
     private final String THIS = "this";
     private final String SUPER = "super";
+    private final String NULL = "null";
 
     /** Error Handler to register semantic errors in class declarations */
     private ErrorHandler errorHandler;
@@ -677,6 +678,10 @@ public class TypeCheckVisitor extends Visitor {
      * @param debug true if one wishes to report errors to the errorhandler
      */
     private boolean checkType(String type, String subtype, ASTNode ast, boolean debug) {
+        if(type == null || subtype == null) {
+            return true;
+        }
+
         if(type.equals(subtype)) {
             if(!(SemanticTools.isPrimitive(subtype) && SemanticTools.isPrimitive(type))) {
                 if(debug) {
