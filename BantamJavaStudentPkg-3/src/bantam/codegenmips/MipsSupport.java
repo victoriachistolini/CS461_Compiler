@@ -24,17 +24,6 @@
    PARTICULAR PURPOSE. 
 */
 
-/**
- * File: MipsSupport.java
- * Edited by the following authors
- * @author Edward (osan) Zhou
- * @author Alex Rinker
- * @author Vivek Sah
- * Class: CS461
- * Project: 4A
- * Date: April 1 2017
- */
-
 package bantam.codegenmips;
 
 import java.io.PrintStream;
@@ -397,7 +386,8 @@ public class MipsSupport {
 //                out.print(ascii.charAt(i));
 //            }
 //        }
-        /* DJS: the code above was replaced by the code below to work with MARS 4.4 */
+        /* DJS: the code above was replaced by the code below to work with MARS 4.4
+         *      last modified:  April 2017 */
         for (int i = 0; i < ascii.length(); i++) {
             if (ascii.charAt(i) == '\\' & i < ascii.length()-1) {
                 out.println("\"");
@@ -413,13 +403,12 @@ public class MipsSupport {
                 else if (ascii.charAt(i+1) == '"') {
                     out.println("\t.byte\t0x22");
                 }
+                else if (ascii.charAt(i+1) == '\\') {
+                    out.println("\t.byte\t0x5c");
+                }
+                // backslash is not allowed in front of any other char
                 out.print("\t.ascii\t\"");
                 i++;
-            }
-            else if (ascii.charAt(i) == '\\') {
-                out.println("\"");
-                out.println("\t.byte\t0x5c");
-                out.print("\t.ascii\t\"");
             }
             else {
                 out.print(ascii.charAt(i));
@@ -571,7 +560,7 @@ public class MipsSupport {
      * @param operand2 string containing the second operand (either a register or an immediate)
      */
     public void genBinaryOp(String op, String destReg, String srcReg,
-                             String operand2) {
+                            String operand2) {
         checkReg(destReg);
         checkReg(srcReg);
         out.println("\t" + op + " " + destReg + " " + srcReg + " " + operand2);
@@ -1003,7 +992,7 @@ public class MipsSupport {
         else if (syscallId == SYSCALL_FILE_WRITE) {
             out.println("\tli $v0 15");
         }
-        else if  (syscallId == SYSCALL_GET_TIME) {
+        else if (syscallId == SYSCALL_GET_TIME) {
             out.println("\tli $v0 18");
         }
         else if (syscallId == SYSCALL_SBRK) {
