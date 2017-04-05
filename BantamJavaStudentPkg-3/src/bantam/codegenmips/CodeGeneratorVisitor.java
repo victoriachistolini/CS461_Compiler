@@ -14,6 +14,9 @@ import bantam.ast.*;
 import bantam.util.ClassTreeNode;
 import bantam.visitor.Visitor;
 
+import java.util.Map;
+import java.util.Set;
+
 /**
  * Visitor for creating the .text code of mips
  */
@@ -24,9 +27,29 @@ public class CodeGeneratorVisitor extends Visitor{
     /** root of the class tree */
     private ClassTreeNode root;
 
-    CodeGeneratorVisitor(ClassTreeNode root, MipsSupport mipsSupport) {
+    /** the current class being traversed */
+    private Class_ currClass;
+
+    /** Map containing the labels associated with each class */
+    private Map<String, String> classNames;
+
+    /** Map which connects String constants to their label */
+    private Map<String, String> stringLabels;
+
+    /**
+     * The constructor method.
+     * @param root
+     * @param mipsSupport
+     */
+    CodeGeneratorVisitor(
+            ClassTreeNode root,
+            MipsSupport mipsSupport,
+            Map<String, String> classNames,
+            Map<String, String> stringLabels) {
         this.mipsSupport = mipsSupport;
         this.root = root;
+        this.classNames = classNames;
+        this.stringLabels = stringLabels;
     }
 
     @Override

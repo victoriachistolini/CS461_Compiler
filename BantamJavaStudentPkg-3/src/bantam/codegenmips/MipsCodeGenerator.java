@@ -53,34 +53,23 @@ import java.io.IOException;
  * This class is incomplete and will need to be implemented by the student.
  */
 public class MipsCodeGenerator {
-    /**
-     * Root of the class hierarchy tree
-     */
+
+    /** Root of the class hierarchy tree */
     private ClassTreeNode root;
 
-    /**
-     * Print stream for output assembly file
-     */
+    /** Print stream for output assembly file */
     private PrintStream out;
 
-    /**
-     * Assembly support object (using Mips assembly support)
-     */
+    /** Assembly support object (using Mips assembly support) */
     private MipsSupport assemblySupport;
 
-    /**
-     * Map containing the labels associated with each class
-     */
+    /** Map containing the labels associated with each class */
     private Map<String, String> classNames;
 
-    /**
-     * Map containing the method associated with each class
-     */
+    /** Map containing the method associated with each class */
     private Map<String, Set<String>> classMethods;
 
-    /**
-     * Map which connects String constants to their labels
-     */
+    /** Map which connects String constants to their label */
     private Map<String, String> stringLabels;
 
     /**
