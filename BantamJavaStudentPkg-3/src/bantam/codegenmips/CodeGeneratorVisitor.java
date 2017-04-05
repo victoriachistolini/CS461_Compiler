@@ -138,11 +138,6 @@ public class CodeGeneratorVisitor extends Visitor{
     }
 
     @Override
-    public Object visit(NewArrayExpr node) {
-        return super.visit(node);
-    }
-
-    @Override
     public Object visit(InstanceofExpr node) {
         return super.visit(node);
     }
@@ -154,11 +149,6 @@ public class CodeGeneratorVisitor extends Visitor{
 
     @Override
     public Object visit(AssignExpr node) {
-        return super.visit(node);
-    }
-
-    @Override
-    public Object visit(ArrayAssignExpr node) {
         return super.visit(node);
     }
 
@@ -234,47 +224,59 @@ public class CodeGeneratorVisitor extends Visitor{
 
     @Override
     public Object visit(UnaryNotExpr node) {
-        return super.visit(node);
+        super.visit(node);
+        mipsSupport.genComment("Bitwise not: " + mipsSupport.getResultReg());
+        mipsSupport.genNot(mipsSupport.getResultReg(), mipsSupport.getResultReg());
+        return null;
     }
 
     @Override
     public Object visit(UnaryIncrExpr node) {
-        return super.visit(node);
+        super.visit(node);
+        mipsSupport.genComment("Increment by 1: " + mipsSupport.getResultReg());
+        mipsSupport.genAdd(mipsSupport.getResultReg(), mipsSupport.getResultReg(), 1);
+        return null;
     }
 
     @Override
     public Object visit(UnaryDecrExpr node) {
-        return super.visit(node);
+        super.visit(node);
+        mipsSupport.genComment("Decrement by 1: " + mipsSupport.getResultReg());
+        mipsSupport.genAdd(mipsSupport.getResultReg(), mipsSupport.getResultReg(), -1);
+        return null;
     }
 
     @Override
     public Object visit(VarExpr node) {
         return super.visit(node);
-    }
-
-    @Override
-    public Object visit(ArrayExpr node) {
-        return super.visit(node);
+        /// TODO: 4/5/2017 ANYTHING
     }
 
     @Override
     public Object visit(ConstIntExpr node) {
+        mipsSupport.genComment("Load int to: " + mipsSupport.getResultReg());
         mipsSupport.genLoadImm(mipsSupport.getResultReg(), node.getIntConstant());
         return null;
     }
 
     @Override
     public Object visit(ConstBooleanExpr node) {
+        mipsSupport.genComment("Load " + node.getConstant() + " to: "
+                                + mipsSupport.getResultReg());
         if(node.getConstant().equals("true")) {
             mipsSupport.genLoadImm(mipsSupport.getResultReg(), 1);
         } else {
             mipsSupport.genLoadImm(mipsSupport.getResultReg(), 0);
         }
-        return super.visit(node);
+        return null;
     }
 
     @Override
     public Object visit(ConstStringExpr node) {
-        return super.visit(node);
+        mipsSupport.genComment("Load address of " + node.getConstant() + " to: "
+                                + mipsSupport.getResultReg());
+        mipsSupport.genLoadAddr(mipsSupport.getResultReg(),
+                                this.stringLabels.get(node.getConstant()));
+        return null;
     }
 }
