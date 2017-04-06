@@ -15,7 +15,6 @@ import bantam.util.ClassTreeNode;
 import bantam.visitor.Visitor;
 
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Visitor for creating the .text code of mips
@@ -179,47 +178,108 @@ public class CodeGeneratorVisitor extends Visitor{
 
     @Override
     public Object visit(BinaryCompGeqExpr node) {
-        return super.visit(node);
+        mipsSupport.genComment("-Begin GEQ-");
+        generateBinaryExpr(node);
+
+        mipsSupport.genComment("-End GEQ-");
+        return null;
     }
 
     @Override
     public Object visit(BinaryArithPlusExpr node) {
-        return super.visit(node);
+        mipsSupport.genComment("-Begin PLUS-");
+        generateBinaryExpr(node);
+        mipsSupport.genComment(mipsSupport.getResultReg() + " " + node.getOpName() +" $v1 -> " + mipsSupport.getResultReg());
+        mipsSupport.genAdd(mipsSupport.getResultReg(), mipsSupport.getResultReg(), "$v1");
+        mipsSupport.genComment("-End PLUS-");
+        return null;
     }
 
     @Override
     public Object visit(BinaryArithMinusExpr node) {
-        return super.visit(node);
+        mipsSupport.genComment("-Begin MINUS-");
+        generateBinaryExpr(node);
+        mipsSupport.genComment(mipsSupport.getResultReg() + " " + node.getOpName() +" $v1 -> " + mipsSupport.getResultReg());
+        mipsSupport.genSub(mipsSupport.getResultReg(), mipsSupport.getResultReg(), "$v1");
+        mipsSupport.genComment("-End MINUS-");
+        return null;
     }
 
     @Override
     public Object visit(BinaryArithTimesExpr node) {
-        return super.visit(node);
+        mipsSupport.genComment("-Begin MULTIPLY-");
+        generateBinaryExpr(node);
+        mipsSupport.genComment(mipsSupport.getResultReg() + " " + node.getOpName() +" $v1 -> " + mipsSupport.getResultReg());
+        mipsSupport.genMul(mipsSupport.getResultReg(), mipsSupport.getResultReg(), "$v1");
+        mipsSupport.genComment("-End MULTIPLY-");
+        return null;
     }
 
     @Override
     public Object visit(BinaryArithDivideExpr node) {
-        return super.visit(node);
+        mipsSupport.genComment("-Begin DIVIDE-");
+        generateBinaryExpr(node);
+        mipsSupport.genComment(mipsSupport.getResultReg() + " " + node.getOpName() +" $v1 -> " + mipsSupport.getResultReg());
+        mipsSupport.genDiv(mipsSupport.getResultReg(), mipsSupport.getResultReg(), "$v1");
+        mipsSupport.genComment("-End DIVIDE-");
+        return null;
     }
 
     @Override
     public Object visit(BinaryArithModulusExpr node) {
-        return super.visit(node);
+        mipsSupport.genComment("-Begin MODULUS-");
+        generateBinaryExpr(node);
+        mipsSupport.genComment(mipsSupport.getResultReg() + " " + node.getOpName() +" $v1 -> " + mipsSupport.getResultReg());
+        mipsSupport.genMod(mipsSupport.getResultReg(), mipsSupport.getResultReg(), "$v1");
+        mipsSupport.genComment("-End MODULUS-");
+        return null;
+    }
+
+    /** Generate boiler plate code for binary arithmetic expressions*/
+    private void generateBinaryExpr(BinaryExpr node) {
+        node.getLeftExpr().accept(this);
+        mipsSupport.genComment("Push $v0 to the stack");
+        mipsSupport.genSub(mipsSupport.getSPReg(), mipsSupport.getSPReg(), mipsSupport.getWordSize());
+        mipsSupport.genStoreWord(mipsSupport.getResultReg(), 0, mipsSupport.getSPReg());
+        node.getRightExpr().accept(this);
+        mipsSupport.genComment("Move $v0 to $v1");
+        mipsSupport.genMove(mipsSupport.getResultReg(), "$v1");
+        mipsSupport.genComment("Pop the stack to $v0");
+        mipsSupport.genLoadWord(mipsSupport.getResultReg(), 0, mipsSupport.getSPReg());
+        mipsSupport.genAdd(mipsSupport.getSPReg(), mipsSupport.getSPReg(), mipsSupport.getWordSize());
     }
 
     @Override
     public Object visit(BinaryLogicAndExpr node) {
-        return super.visit(node);
+        String uniqueLabel = mipsSupport.getLabel();
+        mipsSupport.genComment("-Begin AND-");
+        node.getLeftExpr().accept(this);
+        mipsSupport.genComment("Short circuit jump to " + uniqueLabel + " for AND");
+        mipsSupport.genCondBeq(mipsSupport.getResultReg(), mipsSupport.getZeroReg(), uniqueLabel);
+        node.getRightExpr().accept(this);
+        mipsSupport.genComment("-End AND-");
+        mipsSupport.genLabel(uniqueLabel);
+        return null;
     }
 
     @Override
     public Object visit(BinaryLogicOrExpr node) {
-        return super.visit(node);
+        String uniqueLabel = mipsSupport.getLabel();
+        mipsSupport.genComment("-Begin OR-");
+        node.getLeftExpr().accept(this);
+        mipsSupport.genComment("Short circuit jump to " + uniqueLabel + " for OR");
+        mipsSupport.genCondBne(mipsSupport.getResultReg(), mipsSupport.getZeroReg(), uniqueLabel);
+        node.getRightExpr().accept(this);
+        mipsSupport.genComment("-End OR-");
+        mipsSupport.genLabel(uniqueLabel);
+        return null;
     }
 
     @Override
     public Object visit(UnaryNegExpr node) {
-        return super.visit(node);
+        mipsSupport.genComment("Negate: " + mipsSupport.getResultReg());
+        mipsSupport.genNeg(mipsSupport.getResultReg(), mipsSupport.getResultReg());
+        return null;
     }
 
     @Override
