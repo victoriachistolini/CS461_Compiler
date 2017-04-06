@@ -40,11 +40,13 @@ public class CodeGeneratorVisitor extends Visitor{
     private Map<String, String> stringLabels;
 
     /**
-     * The constructor method.
-     * @param root
-     * @param mipsSupport
+     * constructor method
+     * @param root the root node of the program
+     * @param mipsSupport the mipsSupport helper class
+     * @param classNames a map of classnames and labels
+     * @param stringLabels
      */
-    CodeGeneratorVisitor(
+    public CodeGeneratorVisitor(
             ClassTreeNode root,
             MipsSupport mipsSupport,
             PrintStream out,
