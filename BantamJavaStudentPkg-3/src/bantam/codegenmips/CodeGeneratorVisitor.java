@@ -14,6 +14,7 @@ import bantam.ast.*;
 import bantam.util.ClassTreeNode;
 import bantam.visitor.Visitor;
 
+import java.io.PrintStream;
 import java.util.Map;
 
 /**
@@ -22,6 +23,9 @@ import java.util.Map;
 public class CodeGeneratorVisitor extends Visitor{
     /** support class for generating code in mips */
     private MipsSupport mipsSupport;
+
+    /** Print stream for printing to a file */
+    private PrintStream out;
 
     /** root of the class tree */
     private ClassTreeNode root;
@@ -43,9 +47,11 @@ public class CodeGeneratorVisitor extends Visitor{
     CodeGeneratorVisitor(
             ClassTreeNode root,
             MipsSupport mipsSupport,
+            PrintStream out,
             Map<String, String> classNames,
             Map<String, String> stringLabels) {
         this.mipsSupport = mipsSupport;
+        this.out = out;
         this.root = root;
         this.classNames = classNames;
         this.stringLabels = stringLabels;
@@ -153,42 +159,79 @@ public class CodeGeneratorVisitor extends Visitor{
 
     @Override
     public Object visit(BinaryCompEqExpr node) {
-        return super.visit(node);
+        mipsSupport.genComment("-Begin " + node.getOpName() + "-");
+        visitLRExpressions(node);
+        mipsSupport.genComment(mipsSupport.getResultReg() + " " + node.getOpName() +" $v1 -> " + mipsSupport.getResultReg());
+        mipsSupport.genSub(mipsSupport.getResultReg(), mipsSupport.getResultReg(), "$v1");
+        out.println("\tseq " + mipsSupport.getResultReg() + " " + mipsSupport.getResultReg() + " $zero");
+        mipsSupport.genComment("-End " + node.getOpName() + "-");
+        return null;
     }
 
     @Override
     public Object visit(BinaryCompNeExpr node) {
-        return super.visit(node);
+        mipsSupport.genComment("-Begin " + node.getOpName() + "-");
+        visitLRExpressions(node);
+        mipsSupport.genComment(mipsSupport.getResultReg() + " " + node.getOpName() +" $v1 -> " + mipsSupport.getResultReg());
+        mipsSupport.genSub(mipsSupport.getResultReg(), mipsSupport.getResultReg(), "$v1");
+        mipsSupport.genComment("-End " + node.getOpName() + "-");
+        return null;
     }
 
     @Override
     public Object visit(BinaryCompLtExpr node) {
-        return super.visit(node);
+        visitBinaryCompExpr(node);
+        return null;
     }
 
     @Override
     public Object visit(BinaryCompLeqExpr node) {
-        return super.visit(node);
+        visitBinaryCompExpr(node);
+        return null;
     }
 
     @Override
     public Object visit(BinaryCompGtExpr node) {
-        return super.visit(node);
+        visitBinaryCompExpr(node);
+        return null;
     }
 
     @Override
     public Object visit(BinaryCompGeqExpr node) {
-        mipsSupport.genComment("-Begin GEQ-");
-        generateBinaryExpr(node);
-
-        mipsSupport.genComment("-End GEQ-");
+        visitBinaryCompExpr(node);
         return null;
+    }
+
+    /** boiler plate code generator for binary comp expressions */
+    private void visitBinaryCompExpr(BinaryCompExpr node) {
+        String t = mipsSupport.getLabel(); //true
+        String end = mipsSupport.getLabel();
+        mipsSupport.genComment("-Begin " + node.getOpName() + "-");
+        visitLRExpressions(node);
+        mipsSupport.genComment("Compare $v0 and $v1");
+        if (node.getOpName().equals(">=")) {
+            mipsSupport.genCondBgeq(mipsSupport.getResultReg(), "$v1", t);
+        } else if (node.getOpName().equals(">")) {
+            mipsSupport.genCondBgt(mipsSupport.getResultReg(), "$v1", t);
+        } else if (node.getOpName().equals("<=")) {
+            mipsSupport.genCondBleq(mipsSupport.getResultReg(), "$v1", t);
+        } else if (node.getOpName().equals("<")) {
+            mipsSupport.genCondBlt(mipsSupport.getResultReg(), "$v1", t);
+        }
+        mipsSupport.genComment("If not " + node.getOpName() + " set $v0 to 0");
+        mipsSupport.genLoadImm(mipsSupport.getResultReg(), 0);
+        mipsSupport.genUncondBr(end);
+        mipsSupport.genComment("If "+ node.getOpName() +" set $v0 to 1");
+        mipsSupport.genLabel(t);
+        mipsSupport.genLoadImm(mipsSupport.getResultReg(), 1);
+        mipsSupport.genLabel(end);
+        mipsSupport.genComment("-End " + node.getOpName() + "-");
     }
 
     @Override
     public Object visit(BinaryArithPlusExpr node) {
         mipsSupport.genComment("-Begin PLUS-");
-        generateBinaryExpr(node);
+        visitLRExpressions(node);
         mipsSupport.genComment(mipsSupport.getResultReg() + " " + node.getOpName() +" $v1 -> " + mipsSupport.getResultReg());
         mipsSupport.genAdd(mipsSupport.getResultReg(), mipsSupport.getResultReg(), "$v1");
         mipsSupport.genComment("-End PLUS-");
@@ -198,7 +241,7 @@ public class CodeGeneratorVisitor extends Visitor{
     @Override
     public Object visit(BinaryArithMinusExpr node) {
         mipsSupport.genComment("-Begin MINUS-");
-        generateBinaryExpr(node);
+        visitLRExpressions(node);
         mipsSupport.genComment(mipsSupport.getResultReg() + " " + node.getOpName() +" $v1 -> " + mipsSupport.getResultReg());
         mipsSupport.genSub(mipsSupport.getResultReg(), mipsSupport.getResultReg(), "$v1");
         mipsSupport.genComment("-End MINUS-");
@@ -208,7 +251,7 @@ public class CodeGeneratorVisitor extends Visitor{
     @Override
     public Object visit(BinaryArithTimesExpr node) {
         mipsSupport.genComment("-Begin MULTIPLY-");
-        generateBinaryExpr(node);
+        visitLRExpressions(node);
         mipsSupport.genComment(mipsSupport.getResultReg() + " " + node.getOpName() +" $v1 -> " + mipsSupport.getResultReg());
         mipsSupport.genMul(mipsSupport.getResultReg(), mipsSupport.getResultReg(), "$v1");
         mipsSupport.genComment("-End MULTIPLY-");
@@ -218,7 +261,7 @@ public class CodeGeneratorVisitor extends Visitor{
     @Override
     public Object visit(BinaryArithDivideExpr node) {
         mipsSupport.genComment("-Begin DIVIDE-");
-        generateBinaryExpr(node);
+        visitLRExpressions(node);
         mipsSupport.genComment(mipsSupport.getResultReg() + " " + node.getOpName() +" $v1 -> " + mipsSupport.getResultReg());
         mipsSupport.genDiv(mipsSupport.getResultReg(), mipsSupport.getResultReg(), "$v1");
         mipsSupport.genComment("-End DIVIDE-");
@@ -228,15 +271,15 @@ public class CodeGeneratorVisitor extends Visitor{
     @Override
     public Object visit(BinaryArithModulusExpr node) {
         mipsSupport.genComment("-Begin MODULUS-");
-        generateBinaryExpr(node);
+        visitLRExpressions(node);
         mipsSupport.genComment(mipsSupport.getResultReg() + " " + node.getOpName() +" $v1 -> " + mipsSupport.getResultReg());
         mipsSupport.genMod(mipsSupport.getResultReg(), mipsSupport.getResultReg(), "$v1");
         mipsSupport.genComment("-End MODULUS-");
         return null;
     }
 
-    /** Generate boiler plate code for binary arithmetic expressions*/
-    private void generateBinaryExpr(BinaryExpr node) {
+    /** Generate boiler plate code for visiting a left (= v0) and right (= v1) expression */
+    private void visitLRExpressions(BinaryExpr node) {
         node.getLeftExpr().accept(this);
         mipsSupport.genComment("Push $v0 to the stack");
         mipsSupport.genSub(mipsSupport.getSPReg(), mipsSupport.getSPReg(), mipsSupport.getWordSize());
@@ -285,8 +328,8 @@ public class CodeGeneratorVisitor extends Visitor{
     @Override
     public Object visit(UnaryNotExpr node) {
         super.visit(node);
-        mipsSupport.genComment("Bitwise not: " + mipsSupport.getResultReg());
-        mipsSupport.genNot(mipsSupport.getResultReg(), mipsSupport.getResultReg());
+        mipsSupport.genComment("Not: " + mipsSupport.getResultReg());
+        out.println("\tseq $v0 $v0 $zero");
         return null;
     }
 
