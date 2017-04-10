@@ -16,6 +16,7 @@ import bantam.util.ClassTreeNode;
 import bantam.util.Location;
 import bantam.util.SymbolTable;
 
+import java.io.PrintStream;
 import java.util.Map;
 
 /**
@@ -23,17 +24,20 @@ import java.util.Map;
  */
 public class CodeGeneratorInitVisitor extends CodeGeneratorVisitor {
 
-    /** A hashmap linking classes to their respective symbol tables */
-    private Map<String, SymbolTable> symbolTables;
-
     /** support class for generating code in mips */
     private MipsSupport mipsSupport;
 
     /** root of the class tree */
     private ClassTreeNode root;
 
+    /** Print stream for printing to a file */
+    private PrintStream out;
+
     /** the name of the current class being traversed */
     private String currClassName;
+
+    /** the current varSymbolTable being used */
+    private SymbolTable currClassVarTable;
 
     /** the current offset being used for the fields */
     private int currOffset;
@@ -54,11 +58,13 @@ public class CodeGeneratorInitVisitor extends CodeGeneratorVisitor {
     public CodeGeneratorInitVisitor(
             ClassTreeNode root,
             MipsSupport mipsSupport,
+            PrintStream out,
             Map<String, String> classNames,
             Map<String, String> stringLabels) {
-        super(root, mipsSupport, classNames, stringLabels);
+        super(root, mipsSupport, out, classNames, stringLabels);
         this.mipsSupport = mipsSupport;
         this.root = root;
+        this.out = out;
         this.classNames = classNames;
         this.stringLabels = stringLabels;
         this.currOffset = 12;
@@ -68,9 +74,24 @@ public class CodeGeneratorInitVisitor extends CodeGeneratorVisitor {
      * Generates init methods for each class in the program
      * @return
      */
-    public Map<String, SymbolTable> generateInits() {
-        root.getASTNode().accept(this);
-        return this.symbolTables;
+    public void generateInits() {
+        generateInits(this.root);
+    }
+
+    /**
+     * Helper method for generateInits. Generates the init methods for
+     * the parent class and all of its immediate children
+     * @param parent
+     */
+    private void generateInits(ClassTreeNode parent) {
+        //Update the symbol table and symbol table for future use
+        this.currClassVarTable = parent.getVarSymbolTable();
+        parent.getASTNode().accept(this);
+
+        //Generate inits for each of the child classes
+        parent.getChildrenList().forEachRemaining( child ->
+            generateInits(child)
+        );
     }
 
     /**
@@ -127,7 +148,8 @@ public class CodeGeneratorInitVisitor extends CodeGeneratorVisitor {
                     this.mipsSupport.getArg0Reg()
             );
         }
-        this.symbolTables.get(this.currClassName).add(node.getName(), location);
+        //Add the field and location to the symbol table
+        this.currClassVarTable.add(node.getName(), location);
         //update memory for the next
         this.currOffset += 4;
         return null;
@@ -144,7 +166,7 @@ public class CodeGeneratorInitVisitor extends CodeGeneratorVisitor {
      */
     private void initializeSymbolTable() {
         //Set up the class' symbol table
-        this.symbolTables.put(this.currClassName, new SymbolTable());
-        this.symbolTables.get(this.currClassName).enterScope();
+        this.currClassVarTable = new SymbolTable();
+        this.currClassVarTable.enterScope();
     }
 }
