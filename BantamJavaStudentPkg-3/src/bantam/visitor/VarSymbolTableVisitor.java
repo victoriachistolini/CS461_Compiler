@@ -26,6 +26,7 @@ public class VarSymbolTableVisitor extends Visitor {
     private Class_ currClass;
     private SymbolTable varSymbolTable;
     private Hashtable<String,ClassTreeNode> classMap;
+    private int fieldLevel;
 
     /**
      * Populates variable symbol tables of classes
@@ -50,9 +51,12 @@ public class VarSymbolTableVisitor extends Visitor {
     @Override
     public Object visit(Class_ classNode) {
         this.currClass = classNode;
+//        System.out.println("class level");
         this.varSymbolTable = (
                 this.classMap.get(this.currClass.getName()).getVarSymbolTable()
         );
+//        System.out.println("class "+classNode.getName()+""+this.varSymbolTable.getCurrScopeLevel());
+        this.fieldLevel = this.varSymbolTable.getCurrScopeLevel();
         super.visit(classNode);
         return null;
     }
@@ -63,6 +67,7 @@ public class VarSymbolTableVisitor extends Visitor {
      */
     @Override
     public Object visit(Field fieldNode) {
+
         if (SemanticTools.isReservedWord(fieldNode.getName())) {
             this.errHandler.register(
                     this.errHandler.SEMANT_ERROR,
@@ -70,7 +75,7 @@ public class VarSymbolTableVisitor extends Visitor {
                     fieldNode.getLineNum(),
                     "Field Name is a Reserved Keyword: " + fieldNode.getName());
         }
-        if (this.varSymbolTable.lookup(fieldNode.getName()) != null){
+        if (this.varSymbolTable.peek(fieldNode.getName()) != null){
             errHandler.register(
                     errHandler.SEMANT_ERROR,
                     currClass.getFilename(),
@@ -110,7 +115,11 @@ public class VarSymbolTableVisitor extends Visitor {
                     declStmt.getLineNum(),
                     "Variable name is a reserved keyword: " + declStmt.getName());
         }
-        if (this.varSymbolTable.lookup(declStmt.getName()) != null){
+
+        if (this.varSymbolTable.getScopeLevel(declStmt.getName()) > this.fieldLevel){
+//            System.out.println(declStmt.getName());
+//            System.out.println("level"+this.varSymbolTable.getScopeLevel(declStmt.getName()));
+//            System.out.println("level now"+this.varSymbolTable.getCurrScopeLevel());
             errHandler.register(
                     errHandler.SEMANT_ERROR,
                     currClass.getFilename(),
