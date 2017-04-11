@@ -194,17 +194,18 @@ public class SemanticAnalyzerTest
             Set<String> errors = new HashSet<>();
             analyzer.getErrorHandler().getErrorList().forEach( error ->
 
-                    errors.add(error.getMessage())
+            errors.add(error.getMessage())
             );
+
             assertTrue(errors.remove("Field with the same name already declared: 'field1'"));
-            assertTrue(errors.remove("Variable with the same name already declared: 'field1'"));
-            assertTrue(errors.remove("Variable with the same name already declared: 'field2'"));
+//            assertTrue(errors.remove("Variable with the same name already declared: 'field1'"));
+//            assertTrue(errors.remove("Variable with the same name already declared: 'field2'"));
             assertTrue(errors.remove("Parameter with the same name already declared: 'parameter1'"));
             assertTrue(errors.remove("Variable with the same name already declared: 'parameter1'"));
             assertTrue(errors.remove("Variable with the same name already declared: 'newVar1'"));
-            assertTrue(errors.remove("Variable with the same name already declared: 'field3'"));
-            assertTrue(errors.remove("Variable with the same name already declared: 'field4'"));
-            assertTrue(errors.remove("Field with the same name already declared: 'fieldA'"));
+//            assertTrue(errors.remove("Variable with the same name already declared: 'field3'"));
+//            assertTrue(errors.remove("Variable with the same name already declared: 'field4'"));
+//            assertTrue(errors.remove("Field with the same name already declared: 'fieldA'"));
             assertTrue(errors.remove("Incompatible types boolean and int"));
             assertTrue(errors.isEmpty());
         }
