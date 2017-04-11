@@ -20,8 +20,6 @@ import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.sun.javafx.fxml.expression.Expression.add;
-
 /**
  * Visitor for creating the .text code of mips
  */
@@ -146,6 +144,7 @@ public class CodeGeneratorVisitor extends Visitor{
             //Terminate at the method node as this means all fields are generated
             return null;
         } else {
+            this.currOffset = 4;
             NumLocalVarsVisitor varCounter = new NumLocalVarsVisitor();
             this.mipsSupport.genLabel(this.currClass.getName() + "." + node.getName());
             this.mipsSupport.genComment("Preamble to the method call");
@@ -183,7 +182,9 @@ public class CodeGeneratorVisitor extends Visitor{
             );
 
             this.mipsSupport.genComment("Start of the method body");
+            this.classSymbolTables.get(currClass.getName()).enterScope();
             super.visit(node);
+            this.classSymbolTables.get(currClass.getName()).exitScope();
             this.mipsSupport.genComment("End of the method body");
 
             //TODO epilogue
@@ -208,7 +209,11 @@ public class CodeGeneratorVisitor extends Visitor{
 
     @Override
     public Object visit(DeclStmt node) {
-        return super.visit(node);
+        super.visit(node);
+        mipsSupport.genStoreWord(mipsSupport.getResultReg(), currOffset, mipsSupport.getFPReg());
+        this.classSymbolTables.get(this.currClass.getName()).add(node.getName(), new Location(mipsSupport.getFPReg(), currOffset));
+        currOffset += 4;
+        return null;
     }
 
     @Override
@@ -466,12 +471,6 @@ public class CodeGeneratorVisitor extends Visitor{
         mipsSupport.genComment("Decrement by 1: " + mipsSupport.getResultReg());
         mipsSupport.genAdd(mipsSupport.getResultReg(), mipsSupport.getResultReg(), -1);
         return null;
-    }
-
-    @Override
-    public Object visit(VarExpr node) {
-        return super.visit(node);
-        /// TODO: 4/5/2017 ANYTHING
     }
 
     @Override
