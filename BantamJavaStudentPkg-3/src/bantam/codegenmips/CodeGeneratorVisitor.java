@@ -17,7 +17,10 @@ import bantam.util.SymbolTable;
 import bantam.visitor.Visitor;
 
 import java.io.PrintStream;
+import java.util.HashMap;
 import java.util.Map;
+
+import static com.sun.javafx.fxml.expression.Expression.add;
 
 /**
  * Visitor for creating the .text code of mips
@@ -41,14 +44,14 @@ public class CodeGeneratorVisitor extends Visitor{
     /** Map which connects String constants to their label */
     private Map<String, String> stringLabels;
 
-    /** the current varSymbolTable being used */
-    private SymbolTable currClassVarTable;
-
     /** the current offset being used for the fields */
     private int currOffset;
 
     /** a flag representing whether or not we are generating inits this runthrough */
     private boolean generatingInits;
+
+    /** a map associating each class to a Symbol Table */
+    private Map<String, SymbolTable> classSymbolTables;
 
     /**
      * constructor method
@@ -69,6 +72,7 @@ public class CodeGeneratorVisitor extends Visitor{
         this.classNames = classNames;
         this.stringLabels = stringLabels;
         this.currOffset = 12;
+        this.classSymbolTables = new HashMap<>();
     }
 
     /**
@@ -82,9 +86,6 @@ public class CodeGeneratorVisitor extends Visitor{
     @Override
     public Object visit(Class_ node) {
         if(generatingInits) {
-            //Update the current class name
-            this.initializeSymbolTable();
-
             //Generate the init label
             this.mipsSupport.genLabel(this.currClass.getName() + "_init");
 
@@ -130,7 +131,7 @@ public class CodeGeneratorVisitor extends Visitor{
                 );
             }
             //Add the field and location to the symbol table
-            this.currClassVarTable.add(node.getName(), location);
+            this.classSymbolTables.get(currClass.getName()).add(node.getName(), location);
             //update memory for the next
             this.currOffset += 4;
             return null;
@@ -469,7 +470,7 @@ public class CodeGeneratorVisitor extends Visitor{
     public void generateText() {
         //The first pass will generate the init methods
         this.generatingInits = true;
-        generateText(this.root);
+        generateInit(this.root);
 
         //The second pass will generate the code
         this.generatingInits = false;
@@ -479,26 +480,32 @@ public class CodeGeneratorVisitor extends Visitor{
     /**
      * Visits the parent node and proceeds to visit each of it's children
      * thus traversing the parent node's tree as well as its children's
+     * generating the init methods for each
+     * @param parent
+     */
+    private void generateInit(ClassTreeNode parent) {
+        //Update the symbol table and symbol table for future use
+        this.classSymbolTables.put(parent.getName(), new SymbolTable());
+        this.classSymbolTables.get(parent.getName()).enterScope();
+        parent.getASTNode().accept(this);
+
+        //Generate inits for each of the child classes
+        parent.getChildrenList().forEachRemaining( child ->
+                generateInit(child)
+        );
+    }
+
+    /**
+     * Visits the parent node and proceeds to visit each of it's children
+     * generating the appropriate .text code for each
      * @param parent
      */
     private void generateText(ClassTreeNode parent) {
-        //Update the symbol table and symbol table for future use
-        this.currClassVarTable = parent.getVarSymbolTable();
         parent.getASTNode().accept(this);
 
         //Generate inits for each of the child classes
         parent.getChildrenList().forEachRemaining( child ->
                 generateText(child)
         );
-    }
-
-    //Helper methods
-    /**
-     * Sets up a symbol table for the current class node
-     */
-    private void initializeSymbolTable() {
-        //Set up the class' symbol table
-        this.currClassVarTable = new SymbolTable();
-        this.currClassVarTable.enterScope();
     }
 }
