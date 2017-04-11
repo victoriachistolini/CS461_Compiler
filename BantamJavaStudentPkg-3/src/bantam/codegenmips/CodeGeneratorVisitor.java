@@ -187,6 +187,29 @@ public class CodeGeneratorVisitor extends Visitor{
             this.mipsSupport.genComment("End of the method body");
 
             //TODO epilogue
+            this.mipsSupport.genComment("Now starts the epilog of the method"+node.getName());
+            this.mipsSupport.genComment("pop space for "+numLocalVariables+ " local vars");
+            this.mipsSupport.genAdd(this.mipsSupport.getSPReg(), this.mipsSupport.getFPReg(), 4*numLocalVariables);
+            this.mipsSupport.genComment("pop the saved $s registers and $ra and $fp");
+            this.mipsSupport.genLoadWord(
+                    this.mipsSupport.getFPReg(),
+                    0,
+                    this.mipsSupport.getSPReg());
+
+            this.mipsSupport.genAdd(
+                    this.mipsSupport.getSPReg(),
+                    this.mipsSupport.getSPReg(),
+                    4
+            );
+            this.mipsSupport.genComment("pop actual parameters");
+
+            this.mipsSupport.genAdd(
+                    this.mipsSupport.getSPReg(),
+                    this.mipsSupport.getSPReg(),
+                    0
+            );
+            this.mipsSupport.genComment("Now return from_method " + node.getName() );
+            this.mipsSupport.genRetn();
             return null;
         }
     }
