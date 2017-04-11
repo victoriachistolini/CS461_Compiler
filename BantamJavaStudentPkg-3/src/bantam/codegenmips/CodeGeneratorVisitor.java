@@ -146,7 +146,48 @@ public class CodeGeneratorVisitor extends Visitor{
             //Terminate at the method node as this means all fields are generated
             return null;
         } else {
-            return super.visit(node);
+            NumLocalVarsVisitor varCounter = new NumLocalVarsVisitor();
+            this.mipsSupport.genLabel(this.currClass.getName() + "." + node.getName());
+            this.mipsSupport.genComment("Preamble to the method call");
+            this.mipsSupport.genAdd(
+                    this.mipsSupport.getSPReg(),
+                    this.mipsSupport.getSPReg(),
+                    -4
+            );
+            this.mipsSupport.genStoreWord(
+                    this.mipsSupport.getRAReg(),
+                    0,
+                    this.mipsSupport.getSPReg()
+            );
+            this.mipsSupport.genAdd(
+                    this.mipsSupport.getSPReg(),
+                    this.mipsSupport.getSPReg(),
+                    -4
+            );
+            this.mipsSupport.genStoreWord(
+                    this.mipsSupport.getFPReg(),
+                    0,
+                    this.mipsSupport.getSPReg()
+            );
+
+            int numLocalVariables = varCounter.getNumLocalVars(node);
+            this.mipsSupport.genComment("Add space for local variables");
+            this.mipsSupport.genAdd(
+                    this.mipsSupport.getFPReg(),
+                    this.mipsSupport.getSPReg(),
+                    -4 * numLocalVariables
+            );
+            this.mipsSupport.genMove(
+                    this.mipsSupport.getSPReg(),
+                    this.mipsSupport.getFPReg()
+            );
+
+            this.mipsSupport.genComment("Start of the method body");
+            super.visit(node);
+            this.mipsSupport.genComment("End of the method body");
+
+            //TODO epilogue
+            return null;
         }
     }
 

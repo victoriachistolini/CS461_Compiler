@@ -10,9 +10,10 @@
  * Project: 3
  * Date: March 9 2017
  */
-package bantam.visitor;
+package bantam.codegenmips;
 
 import bantam.ast.*;
+import bantam.visitor.Visitor;
 import com.sun.org.apache.bcel.internal.generic.INSTANCEOF;
 import com.sun.org.apache.bcel.internal.generic.NEW;
 
@@ -23,44 +24,12 @@ import java.util.Map;
  * Created by Alex on 2/25/17.
  */
 public class NumLocalVarsVisitor extends Visitor {
-    private Map localVars;
-    private String currClass;
-    private String currMethod;
+    private int numLocalVars;
 
-    /**
-     * returns whether a Main class exists and has a main method
-     * within it
-     * @param ast the ASTNode forming the root of the tree
-     * @return whether a Main class exists with a main method
-     */
-    public Map<String, Integer> getNumLocalVars(Program ast) {
-        localVars = new HashMap<String, Integer>();
-        ast.accept(this);
-        return localVars;
-    }
-
-    /**
-     * Handles traversing the class node
-     * @param classNode the class AST node
-     * @return nothing
-     */
-    @Override
-    public Object visit(Class_ classNode) {
-        currClass = classNode.getName();
-        super.visit(classNode);
-        return null;
-    }
-
-    /**
-     * Handles traversing a method node
-     * @param methodNode the method AST node
-     * @return nothing
-     */
-    @Override
-    public Object visit(Method methodNode) {
-        currMethod = methodNode.getName();
-        super.visit(methodNode);
-        return null;
+    public int getNumLocalVars(Method node) {
+        this.numLocalVars = 0;
+        super.visit(node);
+        return this.numLocalVars;
     }
 
     /**
@@ -70,7 +39,7 @@ public class NumLocalVarsVisitor extends Visitor {
      */
     @Override
     public Object visit(Formal formalNode) {
-        addVar();
+        this.numLocalVars++;
         return null;
     }
 
@@ -81,7 +50,7 @@ public class NumLocalVarsVisitor extends Visitor {
      */
     @Override
     public Object visit(DeclStmt declNode) {
-        addVar();
+        this.numLocalVars++;
         return null;
     }
 
@@ -122,19 +91,5 @@ public class NumLocalVarsVisitor extends Visitor {
     public Object visit(ReturnStmt returnNode) { return null; }
 
     //End Handling traversal termination
-
-    /**
-     * This helper method adds to variable count based on the
-     * current class and method
-     */
-    private void addVar() {
-        String key = this.currClass + "." + this.currMethod;
-        if(localVars.containsKey(key)) {
-            localVars.put(key, (int) localVars.get(key) +1);
-        }
-        else {
-            localVars.put(currClass + "." + currMethod, 1);
-        }
-    }
 }
 
