@@ -286,7 +286,10 @@ public class CodeGeneratorVisitor extends Visitor{
 
     @Override
     public Object visit(NewExpr node) {
-        return super.visit(node);
+        mipsSupport.genLoadAddr(mipsSupport.getT0Reg(), node.getType() + "_template");
+        // TODO: 4/11/2017 clone object here
+        mipsSupport.genDirCall(node.getType() + "_init");
+        return null;
     }
 
     @Override
@@ -301,7 +304,10 @@ public class CodeGeneratorVisitor extends Visitor{
 
     @Override
     public Object visit(AssignExpr node) {
-        return super.visit(node);
+        super.visit(node);
+        Location loc = (Location) this.classSymbolTables.get(currClass.getName()).lookup(node.getName());
+        mipsSupport.genStoreWord(mipsSupport.getResultReg(), loc.getOffset(), loc.getBaseReg());
+        return null;
     }
 
     @Override
