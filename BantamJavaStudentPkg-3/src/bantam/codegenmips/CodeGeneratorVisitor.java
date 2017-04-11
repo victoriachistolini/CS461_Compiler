@@ -460,28 +460,35 @@ public class CodeGeneratorVisitor extends Visitor{
         return null;
     }
 
-    //Recursive Initialize Methods
+    //Text generation methods
     /**
-     * Generates init methods for each class in the program
+     * This method starts up the visitor which generates the
+     * entire text section of the MIPS file
      * @return
      */
-    public void generateInits() {
-        generateInits(this.root);
+    public void generateText() {
+        //The first pass will generate the init methods
+        this.generatingInits = true;
+        generateText(this.root);
+
+        //The second pass will generate the code
+        this.generatingInits = false;
+        generateText(this.root);
     }
 
     /**
-     * Helper method for generateInits. Generates the init methods for
-     * the parent class and all of its immediate children
+     * Visits the parent node and proceeds to visit each of it's children
+     * thus traversing the parent node's tree as well as its children's
      * @param parent
      */
-    private void generateInits(ClassTreeNode parent) {
+    private void generateText(ClassTreeNode parent) {
         //Update the symbol table and symbol table for future use
         this.currClassVarTable = parent.getVarSymbolTable();
         parent.getASTNode().accept(this);
 
         //Generate inits for each of the child classes
         parent.getChildrenList().forEachRemaining( child ->
-                generateInits(child)
+                generateText(child)
         );
     }
 

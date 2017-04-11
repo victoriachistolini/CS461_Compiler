@@ -158,13 +158,9 @@ public class MipsCodeGenerator {
         generateClassDispatchTables();
 
         //7 - Start the Text section
-        //Currently (project 4A) this only implements the bare minimum to run on MARS
         out.println();
         assemblySupport.genTextStart();
-        generateClassInits();
-        generateClassMethods();
-        assemblySupport.genRetn();
-        //End temporary .text section. Change the above lines for project 4B
+        generateText();
     }
 
     //Below are the Helper Functions for the generate() method
@@ -311,6 +307,17 @@ public class MipsCodeGenerator {
         for(String class_ : this.classNames.keySet()) {
             this.assemblySupport.genGlobal(class_ + "_dispatch_table");
         }
+    }
+
+    private void generateText() {
+        CodeGeneratorVisitor textGenerator = new CodeGeneratorVisitor(
+                this.root,
+                this.assemblySupport,
+                this.out,
+                this.classNames,
+                this.stringLabels
+        );
+        textGenerator.generateText();
     }
 
     /**
