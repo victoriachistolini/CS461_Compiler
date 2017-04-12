@@ -51,6 +51,9 @@ public class CodeGeneratorVisitor extends Visitor{
     /** a map associating each class to a Symbol Table */
     private Map<String, SymbolTable> classSymbolTables;
 
+    /** a String representing the exit label for the current loop being traversed */
+    private String loopExit;
+
     /** a counter representing the number of parameters currently denoted */
     private int numParams;
 
@@ -204,13 +207,26 @@ public class CodeGeneratorVisitor extends Visitor{
             this.mipsSupport.genLoadWord(
                     this.mipsSupport.getFPReg(),
                     0,
-                    this.mipsSupport.getSPReg());
+                    this.mipsSupport.getSPReg()
+            );
 
             this.mipsSupport.genAdd(
                     this.mipsSupport.getSPReg(),
                     this.mipsSupport.getSPReg(),
                     4
             );
+
+            this.mipsSupport.genLoadWord(
+                    this.mipsSupport.getRAReg(),
+                    0,
+                    this.mipsSupport.getSPReg()
+            );
+            this.mipsSupport.genAdd(
+                    this.mipsSupport.getSPReg(),
+                    this.mipsSupport.getSPReg(),
+                    4
+            );
+
             this.mipsSupport.genComment("pop actual parameters");
 
             this.mipsSupport.genAdd(
@@ -235,40 +251,24 @@ public class CodeGeneratorVisitor extends Visitor{
         //Visit the parameter
         super.visit(node);
 
-        this.mipsSupport.genComment("Storing Parameter in Registers");
+        this.mipsSupport.genComment("Assigning params to registers");
         if (this.numParams == 1) {
-            this.mipsSupport.genStoreWord(
-                    this.mipsSupport.getResultReg(),
-                    0,
-                    this.mipsSupport.getArg1Reg()
-            );
             this.classSymbolTables.get(this.currClass.getName()).add(
                     node.getName(),
                     new Location(mipsSupport.getArg1Reg())
             );
         } else if (this.numParams == 2) {
-            this.mipsSupport.genStoreWord(
-                    this.mipsSupport.getResultReg(),
-                    0,
-                    this.mipsSupport.getArg2Reg()
-            );
             this.classSymbolTables.get(this.currClass.getName()).add(
                     node.getName(),
                     new Location(mipsSupport.getArg2Reg())
             );
         } else if (this.numParams ==3) {
-            this.mipsSupport.genStoreWord(
-                    this.mipsSupport.getResultReg(),
-                    0,
-                    "$a3"
-            );
             this.classSymbolTables.get(this.currClass.getName()).add(
                     node.getName(),
                     new Location("$a3")
             );
         } else {
-            //Store the rest of the params on the stack
-            mipsSupport.genStoreWord(mipsSupport.getResultReg(), currOffset, mipsSupport.getFPReg());
+            //Store the location of the rest of the params
             this.classSymbolTables.get(this.currClass.getName()).add(
                     node.getName(),
                     new Location(mipsSupport.getFPReg(), currOffset)
@@ -333,6 +333,7 @@ public class CodeGeneratorVisitor extends Visitor{
         String start = this.mipsSupport.getLabel();
         this.mipsSupport.genLabel(start);
         String end = this.mipsSupport.getLabel();
+        this.loopExit = end;
         node.getPredExpr().accept(this);
 
         this.mipsSupport.genComment("Branch to End if False");
@@ -364,6 +365,7 @@ public class CodeGeneratorVisitor extends Visitor{
         String start = this.mipsSupport.getLabel();
         this.mipsSupport.genLabel(start);
         String end = this.mipsSupport.getLabel();
+        this.loopExit = end;
         this.mipsSupport.genLabel(start);
 
         if (node.getPredExpr() != null) {
@@ -391,7 +393,8 @@ public class CodeGeneratorVisitor extends Visitor{
 
     @Override
     public Object visit(BreakStmt node) {
-        return super.visit(node);
+        this.mipsSupport.genUncondBr(this.loopExit);
+        return null;
     }
 
     @Override
@@ -401,7 +404,11 @@ public class CodeGeneratorVisitor extends Visitor{
 
     @Override
     public Object visit(ReturnStmt node) {
-        return super.visit(node);
+        if (node.getExpr() != null) {
+            node.getExpr().accept(this);
+        }
+        mipsSupport.genRetn();
+        return null;
     }
 
     @Override
@@ -411,13 +418,146 @@ public class CodeGeneratorVisitor extends Visitor{
 
     @Override
     public Object visit(DispatchExpr node) {
-        return super.visit(node);
+        this.mipsSupport.genComment("Store all variables on the stack");
+        pushAVT();
+
+        this.mipsSupport.genComment("Calculate Reference Expression");
+        //Make room on the stack for the Reference
+        this.mipsSupport.genAdd(
+                this.mipsSupport.getSPReg(),
+                this.mipsSupport.getSPReg(),
+                -4
+        );
+        if(node.getRefExpr() != null) {
+            node.getRefExpr().accept(this);
+            this.mipsSupport.genStoreWord(
+                    this.mipsSupport.getResultReg(),
+                    0,
+                    this.mipsSupport.getSPReg()
+            );
+        } else { //If there isn't a reference, use the 'this' pointer
+            this.mipsSupport.genStoreWord(
+                    this.mipsSupport.getArg0Reg(),
+                    0,
+                    this.mipsSupport.getSPReg()
+            );
+        }
+
+        this.mipsSupport.genComment("Calculate Parameters and Store");
+        int numberOfParams = 1;
+        for(ASTNode param : node.getActualList()) {
+            param.accept(this);
+            if (numberOfParams == 1) {
+                this.mipsSupport.genStoreWord(
+                        this.mipsSupport.getResultReg(),
+                        0,
+                        this.mipsSupport.getArg1Reg()
+                );
+            } else if (numberOfParams == 2) {
+                this.mipsSupport.genStoreWord(
+                        this.mipsSupport.getResultReg(),
+                        0,
+                        this.mipsSupport.getArg2Reg()
+                );
+            } else if (numberOfParams == 3) {
+                this.mipsSupport.genStoreWord(
+                        this.mipsSupport.getResultReg(),
+                        0,
+                        "$a3"
+                );
+            } else {
+                //Store the rest of the params on the stack
+                mipsSupport.genStoreWord(
+                        mipsSupport.getResultReg(),
+                        currOffset,
+                        mipsSupport.getFPReg()
+                );
+                currOffset += 4;
+            }
+            numberOfParams++;
+        }
+
+        this.mipsSupport.genComment("Load Object Ref into a0");
+        this.mipsSupport.genLoadWord(
+            this.mipsSupport.getArg0Reg(), 0, this.mipsSupport.getSPReg()
+        );
+
+        this.mipsSupport.genComment("Compute the location of the method call");
+        this.mipsSupport.genComment("and place it in $t0");
+
+        this.mipsSupport.genLoadAddr(
+                this.mipsSupport.getT0Reg(),
+                ((VarExpr) node.getRefExpr()).getName() + "." + node.getMethodName()
+        );
+
+        this.mipsSupport.genComment("Execute the dispatch code");
+        this.mipsSupport.genInDirCall(this.mipsSupport.getT0Reg());
+
+        this.mipsSupport.genComment("Remove the reference Expression");
+        //Pop the reference variable off the stack and get rid of it
+        this.mipsSupport.genAdd(
+                this.mipsSupport.getSPReg(),
+                this.mipsSupport.getSPReg(),
+                -4
+        );
+
+        this.mipsSupport.genComment("Restore the variables stored on the stack");
+        popAVT();
+        return null;
+    }
+
+    /**
+     * Pushes all $a $v and $t registers to the stack in
+     * an overwhelmingly unnecessary waste of memory.
+     */
+    private void pushAVT() {
+        String[] registers =
+                {"$v0", "$v1", "$a0", "$a1", "$a2", "$a3",
+                        "$t0", "$t1", "$t2", "$t3", "$t4",
+                        "$t5", "$t6", "$t7", "$t8", "$t9",
+                };
+        for(int i=0; i < registers.length; i++) {
+            this.mipsSupport.genAdd(
+                    this.mipsSupport.getSPReg(),
+                    this.mipsSupport.getSPReg(),
+                    -4
+            );
+            this.mipsSupport.genStoreWord(
+                    registers[i],
+                    0,
+                    this.mipsSupport.getSPReg()
+            );
+        }
+    }
+
+    /**
+     * Pushes all $a $v and $t registers to the stack in
+     * an overwhelmingly unnecessary waste of memory.
+     */
+    private void popAVT() {
+        String[] registers =
+                {"$v0", "$v1", "$a0", "$a1", "$a2", "$a3",
+                        "$t0", "$t1", "$t2", "$t3", "$t4",
+                        "$t5", "$t6", "$t7", "$t8", "$t9",
+                };
+        for(int i=registers.length-1; i > -1; i--) {
+            this.mipsSupport.genLoadWord(
+                    registers[i],
+                    0,
+                    this.mipsSupport.getSPReg()
+            );
+            this.mipsSupport.genAdd(
+                    this.mipsSupport.getSPReg(),
+                    this.mipsSupport.getSPReg(),
+                    4
+            );
+        }
     }
 
     @Override
     public Object visit(NewExpr node) {
         mipsSupport.genLoadAddr(mipsSupport.getT0Reg(), node.getType() + "_template");
-        // TODO: 4/11/2017 clone object here
+        mipsSupport.genDirCall("Object.clone");
         mipsSupport.genDirCall(node.getType() + "_init");
         return null;
     }
