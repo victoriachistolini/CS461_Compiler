@@ -300,17 +300,93 @@ public class CodeGeneratorVisitor extends Visitor{
 
     @Override
     public Object visit(IfStmt node) {
+        this.mipsSupport.genComment("Start If Statement");
+        String elseLabel = mipsSupport.getLabel();
+        String endLabel = mipsSupport.getLabel();
+        node.getPredExpr().accept(this);
+        this.mipsSupport.genComment("Branch if false");
+        this.mipsSupport.genCondBeq(
+                this.mipsSupport.getResultReg(),
+                this.mipsSupport.getZeroReg(),
+                elseLabel
+        );
+
+        this.mipsSupport.genComment("If true, execute the following:");
+        node.getThenStmt().accept(this);
+        this.mipsSupport.genComment("Branch to End");
+        this.mipsSupport.genUncondBr(endLabel);
+
+        this.mipsSupport.genLabel(elseLabel);
+        if (node.getElseStmt() != null) {
+            node.getElseStmt().accept(this);
+        }
+
+        this.mipsSupport.genComment("End of If Statements");
+        this.mipsSupport.genLabel(endLabel);
+
         return super.visit(node);
     }
 
     @Override
     public Object visit(WhileStmt node) {
-        return super.visit(node);
+        this.mipsSupport.genComment("Start While Statement");
+        String start = this.mipsSupport.getLabel();
+        this.mipsSupport.genLabel(start);
+        String end = this.mipsSupport.getLabel();
+        node.getPredExpr().accept(this);
+
+        this.mipsSupport.genComment("Branch to End if False");
+        this.mipsSupport.genCondBeq(
+                this.mipsSupport.getResultReg(),
+                this.mipsSupport.getZeroReg(),
+                end
+        );
+
+        this.mipsSupport.genComment("Execute While Loop body");
+        node.getBodyStmt().accept(this);
+
+        this.mipsSupport.genComment("Branch to start of while loop");
+        this.mipsSupport.genUncondBr(start);
+
+        this.mipsSupport.genComment("End While Statement");
+        this.mipsSupport.genLabel(end);
+        return null;
     }
 
     @Override
     public Object visit(ForStmt node) {
-        return super.visit(node);
+        this.mipsSupport.genComment("Start For Statement");
+        if (node.getInitExpr() != null) {
+            this.mipsSupport.genComment("Init Expression");
+            node.getInitExpr().accept(this);
+        }
+
+        String start = this.mipsSupport.getLabel();
+        this.mipsSupport.genLabel(start);
+        String end = this.mipsSupport.getLabel();
+        this.mipsSupport.genLabel(start);
+
+        if (node.getPredExpr() != null) {
+            node.getPredExpr().accept(this);
+            this.mipsSupport.genComment("Branch if loop condition is false");
+            this.mipsSupport.genCondBeq(
+                    this.mipsSupport.getResultReg(),
+                    this.mipsSupport.getZeroReg(),
+                    end
+            );
+        }
+
+        if (node.getUpdateExpr() != null) {
+            this.mipsSupport.genComment("Update the looping variable");
+            node.getUpdateExpr().accept(this);
+        }
+        this.mipsSupport.genComment("Execute the body of the for loop");
+        node.getBodyStmt().accept(this);
+
+
+        this.mipsSupport.genComment("End For Statement");
+        this.mipsSupport.genLabel(end);
+        return null;
     }
 
     @Override
@@ -581,6 +657,26 @@ public class CodeGeneratorVisitor extends Visitor{
                                 + mipsSupport.getResultReg());
         mipsSupport.genLoadAddr(mipsSupport.getResultReg(),
                                 this.stringLabels.get(node.getConstant()));
+        return null;
+    }
+
+    @Override
+    public Object visit(VarExpr node) {
+        //Visit ref if not null
+        if (node.getRef() != null) {
+            node.getRef().accept(this);
+        }
+
+        //Get the location of the VarExpr
+        Location loc = (Location) this.classSymbolTables.get(
+                this.currClass.getName()).lookup(node.getName()
+        );
+        this.mipsSupport.genComment("Load Variable");
+        this.mipsSupport.genLoadWord(
+                this.mipsSupport.getResultReg(),
+                loc.getOffset(),
+                loc.getBaseReg()
+        );
         return null;
     }
 
