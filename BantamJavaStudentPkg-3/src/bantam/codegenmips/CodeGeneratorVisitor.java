@@ -51,6 +51,9 @@ public class CodeGeneratorVisitor extends Visitor{
     /** a map associating each class to a Symbol Table */
     private Map<String, SymbolTable> classSymbolTables;
 
+    /** a counter representing the number of parameters currently denoted */
+    private int numParams;
+
     /**
      * constructor method
      * @param root the root node of the program
@@ -182,15 +185,21 @@ public class CodeGeneratorVisitor extends Visitor{
             );
 
             this.mipsSupport.genComment("Start of the method body");
+
+            //Enter the scope for local variables for this method
             this.classSymbolTables.get(currClass.getName()).enterScope();
             super.visit(node);
+            //Exit the local variable scope
             this.classSymbolTables.get(currClass.getName()).exitScope();
             this.mipsSupport.genComment("End of the method body");
 
-            //TODO epilogue
-            this.mipsSupport.genComment("Now starts the epilog of the method"+node.getName());
+            this.mipsSupport.genComment("Now starts the epilogue of the method"+node.getName());
             this.mipsSupport.genComment("pop space for "+numLocalVariables+ " local vars");
-            this.mipsSupport.genAdd(this.mipsSupport.getSPReg(), this.mipsSupport.getFPReg(), 4*numLocalVariables);
+            this.mipsSupport.genAdd(
+                    this.mipsSupport.getSPReg(),
+                    this.mipsSupport.getFPReg(),
+                    4*numLocalVariables
+            );
             this.mipsSupport.genComment("pop the saved $s registers and $ra and $fp");
             this.mipsSupport.genLoadWord(
                     this.mipsSupport.getFPReg(),
@@ -217,12 +226,57 @@ public class CodeGeneratorVisitor extends Visitor{
 
     @Override
     public Object visit(FormalList node) {
+        this.numParams = 1;
         return super.visit(node);
     }
 
     @Override
     public Object visit(Formal node) {
-        return super.visit(node);
+        //Visit the parameter
+        super.visit(node);
+
+        this.mipsSupport.genComment("Storing Parameter in Registers");
+        if (this.numParams == 1) {
+            this.mipsSupport.genStoreWord(
+                    this.mipsSupport.getResultReg(),
+                    0,
+                    this.mipsSupport.getArg1Reg()
+            );
+            this.classSymbolTables.get(this.currClass.getName()).add(
+                    node.getName(),
+                    new Location(mipsSupport.getArg1Reg())
+            );
+        } else if (this.numParams == 2) {
+            this.mipsSupport.genStoreWord(
+                    this.mipsSupport.getResultReg(),
+                    0,
+                    this.mipsSupport.getArg2Reg()
+            );
+            this.classSymbolTables.get(this.currClass.getName()).add(
+                    node.getName(),
+                    new Location(mipsSupport.getArg2Reg())
+            );
+        } else if (this.numParams ==3) {
+            this.mipsSupport.genStoreWord(
+                    this.mipsSupport.getResultReg(),
+                    0,
+                    "$a3"
+            );
+            this.classSymbolTables.get(this.currClass.getName()).add(
+                    node.getName(),
+                    new Location("$a3")
+            );
+        } else {
+            //Store the rest of the params on the stack
+            mipsSupport.genStoreWord(mipsSupport.getResultReg(), currOffset, mipsSupport.getFPReg());
+            this.classSymbolTables.get(this.currClass.getName()).add(
+                    node.getName(),
+                    new Location(mipsSupport.getFPReg(), currOffset)
+            );
+            currOffset += 4;
+        }
+        this.numParams++;
+        return null;
     }
 
     @Override
