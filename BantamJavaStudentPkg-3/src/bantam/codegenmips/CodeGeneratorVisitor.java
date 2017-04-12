@@ -564,7 +564,17 @@ public class CodeGeneratorVisitor extends Visitor{
 
     @Override
     public Object visit(InstanceofExpr node) {
-        return super.visit(node);
+
+        int labelID_expr = Integer.parseInt(this.classNames.get(node.getExprType()));
+        int labelID_identifier = Integer.parseInt(this.classNames.get(node.getType()));
+        int num_children = this.root.getClassMap().get(node.getType()).getNumChildren();
+        int result = 1;
+        if(labelID_expr > labelID_identifier && labelID_expr<labelID_identifier+num_children){
+            result = 0;
+        }
+        mipsSupport.genLoadImm(mipsSupport.getResultReg(), result);
+        return null;
+
     }
 
     @Override
