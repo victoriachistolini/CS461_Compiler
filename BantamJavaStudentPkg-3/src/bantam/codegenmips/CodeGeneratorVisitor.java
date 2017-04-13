@@ -308,6 +308,7 @@ public class CodeGeneratorVisitor extends Visitor{
 
     @Override
     public Object visit(WhileStmt node) {
+        this.classSymbolTables.get(this.currClass.getName()).enterScope();
         this.mipsSupport.genComment("Start While Statement");
         String start = this.mipsSupport.getLabel();
         this.mipsSupport.genLabel(start);
@@ -330,11 +331,13 @@ public class CodeGeneratorVisitor extends Visitor{
 
         this.mipsSupport.genComment("End While Statement");
         this.mipsSupport.genLabel(end);
+        this.classSymbolTables.get(this.currClass.getName()).exitScope();
         return null;
     }
 
     @Override
     public Object visit(ForStmt node) {
+        this.classSymbolTables.get(this.currClass.getName()).enterScope();
         this.mipsSupport.genComment("Start For Statement");
         if (node.getInitExpr() != null) {
             this.mipsSupport.genComment("Init Expression");
@@ -367,6 +370,7 @@ public class CodeGeneratorVisitor extends Visitor{
 
         this.mipsSupport.genComment("End For Statement");
         this.mipsSupport.genLabel(end);
+        this.classSymbolTables.get(this.currClass.getName()).exitScope();
         return null;
     }
 
@@ -378,7 +382,10 @@ public class CodeGeneratorVisitor extends Visitor{
 
     @Override
     public Object visit(BlockStmt node) {
-        return super.visit(node);
+        this.classSymbolTables.get(this.currClass.getName()).enterScope();
+        super.visit(node);
+        this.classSymbolTables.get(this.currClass.getName()).exitScope();
+        return null;
     }
 
     @Override
