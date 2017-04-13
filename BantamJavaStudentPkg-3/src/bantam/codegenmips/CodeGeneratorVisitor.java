@@ -57,6 +57,10 @@ public class CodeGeneratorVisitor extends Visitor{
     /** a counter representing the number of parameters currently denoted */
     private int numParams;
 
+    /** builtin classes */
+    private String[] builtins = {"Object", "String", "TextIO", "Sys"};
+
+
     /**
      * constructor method
      * @param root the root node of the program
@@ -89,6 +93,7 @@ public class CodeGeneratorVisitor extends Visitor{
      */
     @Override
     public Object visit(Class_ node) {
+        this.currClass = node;
         if(generatingInits) {
             //Generate the init label
             this.mipsSupport.genLabel(this.currClass.getName() + "_init");
@@ -110,6 +115,11 @@ public class CodeGeneratorVisitor extends Visitor{
             return null;
         }
         else {
+            for (String cl : builtins) {
+                if (node.getName().equals(cl)) {
+                    return null;
+                }
+            }
             return super.visit(node);
         }
     }
@@ -196,7 +206,7 @@ public class CodeGeneratorVisitor extends Visitor{
             this.classSymbolTables.get(currClass.getName()).exitScope();
             this.mipsSupport.genComment("End of the method body");
 
-            this.mipsSupport.genComment("Now starts the epilogue of the method"+node.getName());
+            this.mipsSupport.genComment("Now starts the epilogue of the method "+node.getName());
             this.mipsSupport.genComment("pop space for "+numLocalVariables+ " local vars");
             this.mipsSupport.genAdd(
                     this.mipsSupport.getSPReg(),
@@ -287,6 +297,7 @@ public class CodeGeneratorVisitor extends Visitor{
     @Override
     public Object visit(DeclStmt node) {
         super.visit(node);
+        mipsSupport.genComment("Store variable " + node.getName() + " in local vars");
         mipsSupport.genStoreWord(mipsSupport.getResultReg(), currOffset, mipsSupport.getFPReg());
         this.classSymbolTables.get(this.currClass.getName()).add(node.getName(), new Location(mipsSupport.getFPReg(), currOffset));
         currOffset += 4;
@@ -428,6 +439,9 @@ public class CodeGeneratorVisitor extends Visitor{
                 this.mipsSupport.getSPReg(),
                 -4
         );
+
+        String refName;
+
         if(node.getRefExpr() != null) {
             node.getRefExpr().accept(this);
             this.mipsSupport.genStoreWord(
@@ -435,12 +449,14 @@ public class CodeGeneratorVisitor extends Visitor{
                     0,
                     this.mipsSupport.getSPReg()
             );
+            refName = ((VarExpr) node.getRefExpr()).getExprType();
         } else { //If there isn't a reference, use the 'this' pointer
             this.mipsSupport.genStoreWord(
                     this.mipsSupport.getArg0Reg(),
                     0,
                     this.mipsSupport.getSPReg()
             );
+            refName = this.currClass.getName();
         }
 
         this.mipsSupport.genComment("Calculate Parameters and Store");
@@ -487,7 +503,7 @@ public class CodeGeneratorVisitor extends Visitor{
 
         this.mipsSupport.genLoadAddr(
                 this.mipsSupport.getT0Reg(),
-                ((VarExpr) node.getRefExpr()).getName() + "." + node.getMethodName()
+                refName + "." + node.getMethodName()
         );
 
         this.mipsSupport.genComment("Execute the dispatch code");

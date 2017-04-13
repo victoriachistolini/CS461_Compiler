@@ -319,28 +319,4 @@ public class MipsCodeGenerator {
         );
         textGenerator.generateText();
     }
-
-    /**
-     * This method generates init labels for each class in the program
-     */
-    //TODO  Update this function to actually do something useful
-    private void generateClassInits() {
-        for(String class_ : this.classNames.keySet()) {
-            this.assemblySupport.genLabel(class_ + "_init");
-        }
-    }
-
-    /**
-     * This method generates labels for each of the methods in each of
-     * the classes of the program
-     */
-    //TODO  Update this function to actually do something useful
-    private void generateClassMethods() {
-        for(String class_ : this.classMethods.keySet()) {
-            for(String method : this.classMethods.get(class_)) {
-                String label = class_ + "." + method;
-                this.assemblySupport.genLabel(label);
-            }
-        }
-    }
 }
