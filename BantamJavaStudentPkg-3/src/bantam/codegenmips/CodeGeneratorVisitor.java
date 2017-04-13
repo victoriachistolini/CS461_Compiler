@@ -531,11 +531,11 @@ public class CodeGeneratorVisitor extends Visitor{
     @Override
     public Object visit(InstanceofExpr node) {
 
-        int labelID_expr = Integer.parseInt(this.classNames.get(node.getExprType()));
-        int labelID_identifier = Integer.parseInt(this.classNames.get(node.getType()));
+        int expr_type = Integer.parseInt(this.classNames.get(node.getExprType()));
+        int dest_type = Integer.parseInt(this.classNames.get(node.getType()));
         int num_children = this.root.getClassMap().get(node.getType()).getNumChildren();
         int result = 1;
-        if(labelID_expr > labelID_identifier && labelID_expr<labelID_identifier+num_children){
+        if(expr_type >= dest_type && expr_type <= dest_type+num_children){
             result = 0;
         }
         mipsSupport.genLoadImm(mipsSupport.getResultReg(), result);
@@ -545,7 +545,25 @@ public class CodeGeneratorVisitor extends Visitor{
 
     @Override
     public Object visit(CastExpr node) {
-        return super.visit(node);
+        //only do something if downcast
+        if (!node.getUpCast()) {
+            int cast_to_type_id = Integer.parseInt(this.classNames.get(node.getType()));
+            int expr_type_ID = Integer.parseInt(this.classNames.get(node.getExprType()));
+            int num_children = this.root.getClassMap().get(node.getType()).getNumChildren();
+            //check of expr type is child of cast_to type
+            if (!(expr_type_ID >= cast_to_type_id && expr_type_ID <= cast_to_type_id + num_children)){
+                this.mipsSupport.genComment("Push RA on the stack");
+                this.pushRegister(this.mipsSupport.getRAReg());
+
+                this.mipsSupport.genComment("Call the _class cast error");
+                this.mipsSupport.genDirCall("_class_cast_error");
+
+                this.mipsSupport.genComment("Pop RA off of the stack");
+                this.popIntoRegister(this.mipsSupport.getRAReg());
+            }
+
+        }
+        return null;
     }
 
     @Override
