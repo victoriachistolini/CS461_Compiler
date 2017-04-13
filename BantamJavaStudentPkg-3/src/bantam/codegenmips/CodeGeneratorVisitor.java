@@ -107,29 +107,13 @@ public class CodeGeneratorVisitor extends Visitor{
                 );
             } else {
                 this.mipsSupport.genComment("Push RA on the stack");
-                this.mipsSupport.genAdd(
-                        this.mipsSupport.getSPReg(),
-                        this.mipsSupport.getSPReg(),
-                        -4
-                );
-                this.mipsSupport.genStoreWord(
-                        this.mipsSupport.getRAReg(),
-                        0,
-                        this.mipsSupport.getSPReg()
-                );
+                this.pushRegister(this.mipsSupport.getRAReg());
+
                 this.mipsSupport.genComment("Call the parent's init method");
                 this.mipsSupport.genDirCall(node.getParent() + "_init");
+
                 this.mipsSupport.genComment("Pop RA off of the stack");
-                this.mipsSupport.genLoadWord(
-                        this.mipsSupport.getRAReg(),
-                        0,
-                        this.mipsSupport.getSPReg()
-                );
-                this.mipsSupport.genAdd(
-                        this.mipsSupport.getSPReg(),
-                        this.mipsSupport.getSPReg(),
-                        4
-                );
+                this.popIntoRegister(this.mipsSupport.getRAReg());
             }
             super.visit(node);
             this.currOffset = 12; //reset the offset
@@ -186,26 +170,8 @@ public class CodeGeneratorVisitor extends Visitor{
             NumLocalVarsVisitor varCounter = new NumLocalVarsVisitor();
             this.mipsSupport.genLabel(this.currClass.getName() + "." + node.getName());
             this.mipsSupport.genComment("Preamble to the method call");
-            this.mipsSupport.genAdd(
-                    this.mipsSupport.getSPReg(),
-                    this.mipsSupport.getSPReg(),
-                    -4
-            );
-            this.mipsSupport.genStoreWord(
-                    this.mipsSupport.getRAReg(),
-                    0,
-                    this.mipsSupport.getSPReg()
-            );
-            this.mipsSupport.genAdd(
-                    this.mipsSupport.getSPReg(),
-                    this.mipsSupport.getSPReg(),
-                    -4
-            );
-            this.mipsSupport.genStoreWord(
-                    this.mipsSupport.getFPReg(),
-                    0,
-                    this.mipsSupport.getSPReg()
-            );
+            this.pushRegister(this.mipsSupport.getRAReg());
+            this.pushRegister(this.mipsSupport.getFPReg());
 
             int numLocalVariables = varCounter.getNumLocalVars(node);
             this.mipsSupport.genComment("Add space for local variables");
@@ -236,28 +202,8 @@ public class CodeGeneratorVisitor extends Visitor{
                     4*numLocalVariables
             );
             this.mipsSupport.genComment("pop the saved $s registers and $ra and $fp");
-            this.mipsSupport.genLoadWord(
-                    this.mipsSupport.getFPReg(),
-                    0,
-                    this.mipsSupport.getSPReg()
-            );
-
-            this.mipsSupport.genAdd(
-                    this.mipsSupport.getSPReg(),
-                    this.mipsSupport.getSPReg(),
-                    4
-            );
-
-            this.mipsSupport.genLoadWord(
-                    this.mipsSupport.getRAReg(),
-                    0,
-                    this.mipsSupport.getSPReg()
-            );
-            this.mipsSupport.genAdd(
-                    this.mipsSupport.getSPReg(),
-                    this.mipsSupport.getSPReg(),
-                    4
-            );
+            this.popIntoRegister(this.mipsSupport.getFPReg());
+            this.popIntoRegister(this.mipsSupport.getRAReg());
 
             this.mipsSupport.genComment("pop actual parameters");
 
@@ -555,16 +501,7 @@ public class CodeGeneratorVisitor extends Visitor{
                         "$t5", "$t6", "$t7", "$t8", "$t9",
                 };
         for(int i=0; i < registers.length; i++) {
-            this.mipsSupport.genAdd(
-                    this.mipsSupport.getSPReg(),
-                    this.mipsSupport.getSPReg(),
-                    -4
-            );
-            this.mipsSupport.genStoreWord(
-                    registers[i],
-                    0,
-                    this.mipsSupport.getSPReg()
-            );
+            this.pushRegister(registers[i]);
         }
     }
 
@@ -579,16 +516,7 @@ public class CodeGeneratorVisitor extends Visitor{
                         "$t5", "$t6", "$t7", "$t8", "$t9",
                 };
         for(int i=registers.length-1; i > -1; i--) {
-            this.mipsSupport.genLoadWord(
-                    registers[i],
-                    0,
-                    this.mipsSupport.getSPReg()
-            );
-            this.mipsSupport.genAdd(
-                    this.mipsSupport.getSPReg(),
-                    this.mipsSupport.getSPReg(),
-                    4
-            );
+            this.popIntoRegister(registers[i]);
         }
     }
 
@@ -913,6 +841,45 @@ public class CodeGeneratorVisitor extends Visitor{
         //Generate inits for each of the child classes
         parent.getChildrenList().forEachRemaining( child ->
                 generateText(child)
+        );
+    }
+
+    /**
+     * pushes the value of the input register onto the
+     * stack
+     * @param register
+     */
+    private void pushRegister(String register) {
+        this.mipsSupport.genComment("Pushing " + register + " onto the stack");
+        this.mipsSupport.genAdd(
+                this.mipsSupport.getSPReg(),
+                this.mipsSupport.getSPReg(),
+                -4
+        );
+        this.mipsSupport.genStoreWord(
+                register,
+                0,
+                this.mipsSupport.getSPReg()
+        );
+    }
+
+    /**
+     * Pops the top value on the stack into the input
+     * register
+     * @param register
+     */
+    private void popIntoRegister(String register) {
+        this.mipsSupport.genComment("Popping from the stack into " + register);
+        this.mipsSupport.genLoadWord(
+                register,
+                0,
+                this.mipsSupport.getSPReg()
+        );
+
+        this.mipsSupport.genAdd(
+                this.mipsSupport.getSPReg(),
+                this.mipsSupport.getSPReg(),
+                4
         );
     }
 }
