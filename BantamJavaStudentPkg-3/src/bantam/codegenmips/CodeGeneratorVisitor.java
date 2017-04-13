@@ -106,8 +106,30 @@ public class CodeGeneratorVisitor extends Visitor{
                         this.mipsSupport.getArg0Reg()
                 );
             } else {
+                this.mipsSupport.genComment("Push RA on the stack");
+                this.mipsSupport.genAdd(
+                        this.mipsSupport.getSPReg(),
+                        this.mipsSupport.getSPReg(),
+                        -4
+                );
+                this.mipsSupport.genStoreWord(
+                        this.mipsSupport.getRAReg(),
+                        0,
+                        this.mipsSupport.getSPReg()
+                );
                 this.mipsSupport.genComment("Call the parent's init method");
                 this.mipsSupport.genDirCall(node.getParent() + "_init");
+                this.mipsSupport.genComment("Pop RA off of the stack");
+                this.mipsSupport.genLoadWord(
+                        this.mipsSupport.getRAReg(),
+                        0,
+                        this.mipsSupport.getSPReg()
+                );
+                this.mipsSupport.genAdd(
+                        this.mipsSupport.getSPReg(),
+                        this.mipsSupport.getSPReg(),
+                        4
+                );
             }
             super.visit(node);
             this.currOffset = 12; //reset the offset
