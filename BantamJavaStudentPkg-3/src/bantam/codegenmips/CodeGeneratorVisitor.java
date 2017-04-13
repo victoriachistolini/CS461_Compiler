@@ -139,8 +139,12 @@ public class CodeGeneratorVisitor extends Visitor{
     @Override
     public Object visit(Field node) {
         if (generatingInits) {
-            super.visit(node); //This will put the expr of the field in $v0
+            //Add the field and location to the symbol table
             Location location = new Location(this.mipsSupport.getArg0Reg(), this.currOffset);
+            this.classSymbolTables.get(currClass.getName()).add(node.getName(), location);
+
+            super.visit(node); //This will put the expr of the field in $v0
+
             if (node.getInit() != null) {
                 //If there is an expression, we have to store the result to memory
                 this.mipsSupport.genComment("Store the initial value of the field in memory");
@@ -150,13 +154,11 @@ public class CodeGeneratorVisitor extends Visitor{
                         this.mipsSupport.getArg0Reg()
                 );
             }
-            //Add the field and location to the symbol table
-            this.classSymbolTables.get(currClass.getName()).add(node.getName(), location);
             //update memory for the next
             this.currOffset += 4;
             return null;
         } else {
-            return super.visit(node);
+            return null;
         }
     }
 
@@ -264,10 +266,10 @@ public class CodeGeneratorVisitor extends Visitor{
 
     @Override
     public Object visit(DeclStmt node) {
+        this.classSymbolTables.get(this.currClass.getName()).add(node.getName(), new Location(mipsSupport.getFPReg(), currOffset));
         super.visit(node);
         mipsSupport.genComment("Store variable " + node.getName() + " in local vars");
         mipsSupport.genStoreWord(mipsSupport.getResultReg(), currOffset, mipsSupport.getFPReg());
-        this.classSymbolTables.get(this.currClass.getName()).add(node.getName(), new Location(mipsSupport.getFPReg(), currOffset));
         currOffset += 4;
         return null;
     }
@@ -345,7 +347,6 @@ public class CodeGeneratorVisitor extends Visitor{
         }
 
         String start = this.mipsSupport.getLabel();
-        this.mipsSupport.genLabel(start);
         String end = this.mipsSupport.getLabel();
         this.loopExit = end;
         this.mipsSupport.genLabel(start);
@@ -795,11 +796,19 @@ public class CodeGeneratorVisitor extends Visitor{
                 this.currClass.getName()).lookup(node.getName()
         );
         this.mipsSupport.genComment("Load Variable");
-        this.mipsSupport.genLoadWord(
-                this.mipsSupport.getResultReg(),
-                loc.getOffset(),
-                loc.getBaseReg()
-        );
+        if(loc.isInMemory()) {
+            this.mipsSupport.genLoadWord(
+                    this.mipsSupport.getResultReg(),
+                    loc.getOffset(),
+                    loc.getBaseReg()
+            );
+        } else { //If the data is stored in a register rather than memory
+            this.mipsSupport.genLoadWord(
+                    this.mipsSupport.getResultReg(),
+                    0,
+                    loc.getReg()
+            );
+        }
         return null;
     }
 
@@ -832,9 +841,10 @@ public class CodeGeneratorVisitor extends Visitor{
         parent.getASTNode().accept(this);
 
         //Generate inits for each of the child classes
-        parent.getChildrenList().forEachRemaining( child ->
-                generateInit(child)
-        );
+        parent.getChildrenList().forEachRemaining( child -> {
+            generateInit(child);
+            this.classSymbolTables.get(child.getName()).setParent(this.classSymbolTables.get(parent.getName()));
+        });
     }
 
     /**
