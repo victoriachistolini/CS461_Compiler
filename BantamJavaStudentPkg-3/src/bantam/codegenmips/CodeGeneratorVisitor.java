@@ -490,7 +490,7 @@ public class CodeGeneratorVisitor extends Visitor{
         this.mipsSupport.genAdd(
                 this.mipsSupport.getSPReg(),
                 this.mipsSupport.getSPReg(),
-                -4
+                4
         );
 
         this.mipsSupport.genComment("Restore the variables stored on the stack");
