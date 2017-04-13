@@ -538,7 +538,8 @@ public class CodeGeneratorVisitor extends Visitor{
 
     @Override
     public Object visit(InstanceofExpr node) {
-
+        System.out.println(this.classNames.get(node.getExprType()));
+        System.out.println(this.classNames.get(node.getType()));
         int expr_type = Integer.parseInt(this.classNames.get(node.getExprType()));
         int dest_type = Integer.parseInt(this.classNames.get(node.getType()));
         int num_children = this.root.getClassMap().get(node.getType()).getNumChildren();
