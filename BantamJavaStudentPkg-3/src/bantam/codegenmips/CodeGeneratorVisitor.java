@@ -538,9 +538,7 @@ public class CodeGeneratorVisitor extends Visitor{
 
     @Override
     public Object visit(InstanceofExpr node) {
-        System.out.println(this.classNames.get(node.getExprType()));
-        System.out.println(this.classNames.get(node.getType()));
-        int expr_type = Integer.parseInt(this.classNames.get(node.getExprType()));
+        int expr_type = Integer.parseInt(this.classNames.get(node.getExpr().getExprType()));
         int dest_type = Integer.parseInt(this.classNames.get(node.getType()));
         int num_children = this.root.getClassMap().get(node.getType()).getNumChildren();
         int result = 1;
@@ -556,7 +554,7 @@ public class CodeGeneratorVisitor extends Visitor{
     public Object visit(CastExpr node) {
         //only do something if downcast
         if (!node.getUpCast()) {
-            int cast_to_type_id = Integer.parseInt(this.classNames.get(node.getType()));
+            int cast_to_type_id = Integer.parseInt(this.classNames.get(node.getExpr().getExprType()));
             int expr_type_ID = Integer.parseInt(this.classNames.get(node.getExprType()));
             int num_children = this.root.getClassMap().get(node.getType()).getNumChildren();
             //check of expr type is child of cast_to type

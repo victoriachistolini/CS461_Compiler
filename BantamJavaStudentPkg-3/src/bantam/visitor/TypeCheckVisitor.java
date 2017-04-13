@@ -311,7 +311,6 @@ public class TypeCheckVisitor extends Visitor {
     @Override
     public Object visit(InstanceofExpr node) {
         super.visit(node);
-
         if (SemanticTools.isPrimitive(node.getExpr().getExprType()) ||
                 SemanticTools.isPrimitive(node.getType())) {
             errorHandler.register(errorHandler.SEMANT_ERROR,
@@ -325,7 +324,7 @@ public class TypeCheckVisitor extends Visitor {
                         node.getLineNum(),
                         "Invalid type " + node.getExpr().getExprType());
             }
-            if (!classMap.containsKey(classMap.get(currentClass).getVarSymbolTable().lookup(node.getType()))) {
+            if (!classMap.containsKey(node.getType())) {
                 errorHandler.register(errorHandler.SEMANT_ERROR,
                         this.currentClass.getFilename(),
                         node.getLineNum(),
@@ -564,14 +563,14 @@ public class TypeCheckVisitor extends Visitor {
     public Object visit(UnaryIncrExpr node) {
         super.visit(node);
         checkUnaryExpr(node);
-        return false;
+        return true;
     }
 
     @Override
     public Object visit(UnaryDecrExpr node) {
         super.visit(node);
         checkUnaryExpr(node);
-        return false;
+        return true;
     }
 
     /**
