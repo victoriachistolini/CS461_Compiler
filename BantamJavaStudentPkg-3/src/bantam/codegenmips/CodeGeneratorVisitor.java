@@ -267,10 +267,16 @@ public class CodeGeneratorVisitor extends Visitor{
     @Override
     public Object visit(DeclStmt node) {
         this.classSymbolTables.get(this.currClass.getName()).add(node.getName(), new Location(mipsSupport.getFPReg(), currOffset));
+        if (node.getInit() instanceof NewExpr) {
+            pushAVT();
+        }
         super.visit(node);
         mipsSupport.genComment("Store variable " + node.getName() + " in local vars");
         mipsSupport.genStoreWord(mipsSupport.getResultReg(), currOffset, mipsSupport.getFPReg());
         currOffset += 4;
+        if (node.getInit() instanceof NewExpr) {
+            popAVT();
+        }
         return null;
     }
 
@@ -522,9 +528,11 @@ public class CodeGeneratorVisitor extends Visitor{
 
     @Override
     public Object visit(NewExpr node) {
+
         mipsSupport.genLoadAddr(mipsSupport.getT0Reg(), node.getType() + "_template");
         mipsSupport.genDirCall("Object.clone");
         mipsSupport.genDirCall(node.getType() + "_init");
+
         return null;
     }
 
