@@ -35,7 +35,7 @@ class Main {
 }
 
 class A {
-    int classAfield = 3+3;
+    int classAfield = 3;
     String classAstring = "Hello";
 
     /**

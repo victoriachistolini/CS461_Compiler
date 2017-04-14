@@ -140,7 +140,7 @@ public class CodeGeneratorVisitor extends Visitor{
     public Object visit(Field node) {
         if (generatingInits) {
             //Add the field and location to the symbol table
-            Location location = new Location(this.mipsSupport.getArg0Reg(), this.currOffset);
+            Location location = new Location(this.mipsSupport.getT0Reg(), this.currOffset);
             this.classSymbolTables.get(currClass.getName()).add(node.getName(), location);
 
             super.visit(node); //This will put the expr of the field in $v0
@@ -151,7 +151,7 @@ public class CodeGeneratorVisitor extends Visitor{
                 this.mipsSupport.genStoreWord(
                         this.mipsSupport.getResultReg(),
                         this.currOffset,
-                        this.mipsSupport.getArg0Reg()
+                        this.mipsSupport.getT0Reg()
                 );
             }
             //update memory for the next
@@ -440,23 +440,15 @@ public class CodeGeneratorVisitor extends Visitor{
         for(ASTNode param : node.getActualList()) {
             param.accept(this);
             if (numberOfParams == 1) {
-                this.mipsSupport.genStoreWord(
-                        this.mipsSupport.getResultReg(),
-                        0,
-                        this.mipsSupport.getArg1Reg()
-                );
+                this.mipsSupport.genMove(mipsSupport.getArg1Reg(),
+                                         mipsSupport.getResultReg());
+
             } else if (numberOfParams == 2) {
-                this.mipsSupport.genStoreWord(
-                        this.mipsSupport.getResultReg(),
-                        0,
-                        this.mipsSupport.getArg2Reg()
-                );
+                this.mipsSupport.genMove(mipsSupport.getArg2Reg(),
+                                         mipsSupport.getResultReg());
             } else if (numberOfParams == 3) {
-                this.mipsSupport.genStoreWord(
-                        this.mipsSupport.getResultReg(),
-                        0,
-                        "$a3"
-                );
+                this.mipsSupport.genMove("$a3",
+                                         mipsSupport.getResultReg());
             } else {
                 //Store the rest of the params on the stack
                 mipsSupport.genStoreWord(
@@ -820,9 +812,8 @@ public class CodeGeneratorVisitor extends Visitor{
                     loc.getBaseReg()
             );
         } else { //If the data is stored in a register rather than memory
-            this.mipsSupport.genLoadWord(
+            this.mipsSupport.genMove(
                     this.mipsSupport.getResultReg(),
-                    0,
                     loc.getReg()
             );
         }
