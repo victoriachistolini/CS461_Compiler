@@ -168,7 +168,7 @@ public class CodeGeneratorVisitor extends Visitor{
             //Terminate at the method node as this means all fields are generated
             return null;
         } else {
-            this.currOffset = 4;
+            this.currOffset = 0;
             NumLocalVarsVisitor varCounter = new NumLocalVarsVisitor();
             this.mipsSupport.genLabel(this.currClass.getName() + "." + node.getName());
             this.mipsSupport.genComment("Preamble to the method call");
