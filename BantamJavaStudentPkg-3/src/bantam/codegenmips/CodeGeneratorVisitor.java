@@ -79,7 +79,7 @@ public class CodeGeneratorVisitor extends Visitor{
         this.root = root;
         this.classNames = classNames;
         this.stringLabels = stringLabels;
-        this.currOffset = 12;
+        this.currOffset = -12;
         this.classSymbolTables = new HashMap<>();
     }
 
@@ -116,7 +116,7 @@ public class CodeGeneratorVisitor extends Visitor{
                 this.popIntoRegister(this.mipsSupport.getRAReg());
             }
             super.visit(node);
-            this.currOffset = 12; //reset the offset
+            this.currOffset = -12; //reset the offset
             this.mipsSupport.genRetn(); //generate a return to close the init
             return null;
         }
@@ -155,7 +155,7 @@ public class CodeGeneratorVisitor extends Visitor{
                 );
             }
             //update memory for the next
-            this.currOffset += 4;
+            this.currOffset += -4;
             return null;
         } else {
             return null;
@@ -253,7 +253,7 @@ public class CodeGeneratorVisitor extends Visitor{
                     node.getName(),
                     new Location(mipsSupport.getFPReg(), currOffset)
             );
-            currOffset += 4;
+            currOffset += -4;
         }
         this.numParams++;
         return null;
@@ -270,7 +270,7 @@ public class CodeGeneratorVisitor extends Visitor{
         super.visit(node);
         mipsSupport.genComment("Store variable " + node.getName() + " in local vars");
         mipsSupport.genStoreWord(mipsSupport.getResultReg(), currOffset, mipsSupport.getFPReg());
-        currOffset += 4;
+        currOffset += -4;
         return null;
     }
 
@@ -456,7 +456,7 @@ public class CodeGeneratorVisitor extends Visitor{
                         currOffset,
                         mipsSupport.getFPReg()
                 );
-                currOffset += 4;
+                currOffset += -4;
             }
             numberOfParams++;
         }

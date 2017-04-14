@@ -31,6 +31,9 @@ class Main {
         int bar = foo + 6;
         A a = new A();
         a.coolMethodName(bar);
+        B b = new B();
+        String baz = b.testReturn(testString, foo, bar);
+        b.testBlock();
     }
 }
 
@@ -74,6 +77,21 @@ class A {
 class B extends A {
     int classBfield = 4*4;
     String classBstring = "there";
+
+    /**
+     * This method tests parameters and returns
+     */
+    String testReturn(String a, int b, int c) {
+        int d = b + c;
+        return a;
+    }
+
+    /**
+     * Tests the block statement
+     */
+     void testBlock() {
+        {return;}
+     }
 
 }
 
