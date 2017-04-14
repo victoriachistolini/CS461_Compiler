@@ -1,0 +1,87 @@
+class Main {
+
+    /**
+     * Tests the instance of expression
+     **/
+    int testInstanceOf() {
+        A a = new B();
+        if(a instanceof B) {
+            return 1;
+        } else {
+            return 2;
+        }
+    }
+
+    /**
+     * Tests the cast expression
+     */
+    void testCast() {
+        A a = new C();
+        B b = (B)(a);
+        A a2 = new B();
+        C c = (C)(a2);
+        return;
+    }
+
+    /**
+     *  Main method
+     */
+    void main() {
+        int foo = 3;
+        int bar = foo + 6;
+        A a = new A();
+        a.coolMethodName(bar);
+    }
+}
+
+class A {
+    int classAfield = 3+3;
+    String classAstring = "Hello";
+
+    /**
+     * This method tests integer params,
+     * local variable scopes,
+     * for loops, if statements and break statements
+     */
+    void coolMethodName(int iterations) {
+        int x = 0;
+        int y = 0;
+        for(x = 0; x < iterations; x++) {
+            y = x + 1;
+            if(y < 0) {
+                break;
+            }
+        }
+    }
+
+    /**
+     * This method tests the while loop
+     * and increment/decrement expressions
+     */
+    void testWhile() {
+        int x = 0;
+        while(3 > x) {
+            if(x == 2) {
+                break;
+            }
+            x++;
+            x++;
+            x--;
+        }
+    }
+}
+
+class B extends A {
+    int classBfield = 4*4;
+    String classBstring = "there";
+
+}
+
+class C extends B {
+    int classCfield = 10;
+    String classCstring = "friend";
+
+    int sumFields() {
+        return classAfield + classBfield + classCfield;
+    }
+}
