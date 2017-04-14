@@ -27,6 +27,8 @@ class Main {
      *  Main method
      */
     void main() {
+        String testString = "I am a String";
+
         int foo = 3;
         int bar = foo + 6;
         A a = new A();
