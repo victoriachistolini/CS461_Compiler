@@ -60,6 +60,8 @@ public class CodeGeneratorVisitor extends Visitor{
     /** builtin classes */
     private String[] builtins = {"Object", "String", "TextIO", "Sys"};
 
+    /** current method end label */
+    private String currentMethodEnd;
 
     /**
      * constructor method
@@ -168,6 +170,7 @@ public class CodeGeneratorVisitor extends Visitor{
             //Terminate at the method node as this means all fields are generated
             return null;
         } else {
+            this.currentMethodEnd = this.mipsSupport.getLabel();
             this.currOffset = 0;
             NumLocalVarsVisitor varCounter = new NumLocalVarsVisitor();
             this.mipsSupport.genLabel(this.currClass.getName() + "." + node.getName());
@@ -195,7 +198,7 @@ public class CodeGeneratorVisitor extends Visitor{
             //Exit the local variable scope
             this.classSymbolTables.get(currClass.getName()).exitScope();
             this.mipsSupport.genComment("End of the method body");
-
+            this.mipsSupport.genLabel(this.currentMethodEnd);
             this.mipsSupport.genComment("Now starts the epilogue of the method "+node.getName());
             this.mipsSupport.genComment("pop space for "+numLocalVariables+ " local vars");
             this.mipsSupport.genAdd(
@@ -398,9 +401,10 @@ public class CodeGeneratorVisitor extends Visitor{
     @Override
     public Object visit(ReturnStmt node) {
         if (node.getExpr() != null) {
+            mipsSupport.genComment("Load into v0 the expr");
             node.getExpr().accept(this);
         }
-        mipsSupport.genRetn();
+        this.mipsSupport.genUncondBr(this.currentMethodEnd);
         return null;
     }
 
@@ -528,11 +532,9 @@ public class CodeGeneratorVisitor extends Visitor{
 
     @Override
     public Object visit(NewExpr node) {
-
         mipsSupport.genLoadAddr(mipsSupport.getT0Reg(), node.getType() + "_template");
         mipsSupport.genDirCall("Object.clone");
         mipsSupport.genDirCall(node.getType() + "_init");
-
         return null;
     }
 
@@ -710,7 +712,7 @@ public class CodeGeneratorVisitor extends Visitor{
         mipsSupport.genStoreWord(mipsSupport.getResultReg(), 0, mipsSupport.getSPReg());
         node.getRightExpr().accept(this);
         mipsSupport.genComment("Move $v0 to $v1");
-        mipsSupport.genMove(mipsSupport.getResultReg(), "$v1");
+        mipsSupport.genMove("$v1", mipsSupport.getResultReg());
         mipsSupport.genComment("Pop the stack to $v0");
         mipsSupport.genLoadWord(mipsSupport.getResultReg(), 0, mipsSupport.getSPReg());
         mipsSupport.genAdd(mipsSupport.getSPReg(), mipsSupport.getSPReg(), mipsSupport.getWordSize());
