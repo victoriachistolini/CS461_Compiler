@@ -63,6 +63,8 @@ public class CodeGeneratorVisitor extends Visitor{
     /** current method end label */
     private String currentMethodEnd;
 
+    private final String NULL = "null";
+
     /**
      * constructor method
      * @param root the root node of the program
@@ -435,7 +437,7 @@ public class CodeGeneratorVisitor extends Visitor{
                     0,
                     this.mipsSupport.getSPReg()
             );
-            refName = ((VarExpr) node.getRefExpr()).getExprType();
+            refName = (node.getRefExpr()).getExprType();
         } else { //If there isn't a reference, use the 'this' pointer
             this.mipsSupport.genStoreWord(
                     this.mipsSupport.getArg0Reg(),
@@ -809,11 +811,16 @@ public class CodeGeneratorVisitor extends Visitor{
         if (node.getRef() != null) {
             node.getRef().accept(this);
         }
+        if (node.getName().equals(NULL)) {
+            this.mipsSupport.genLoadImm(mipsSupport.getResultReg(), 0);
+            return null;
+        }
 
         //Get the location of the VarExpr
         Location loc = (Location) this.classSymbolTables.get(
                 this.currClass.getName()).lookup(node.getName()
         );
+
         this.mipsSupport.genComment("Load Variable");
         if(loc.isInMemory()) {
             this.mipsSupport.genLoadWord(

@@ -60,12 +60,25 @@ public class TypeCheckVisitor extends Visitor {
         program.accept(this);
     }
 
+    @Override
+    public Object visit(ClassList node) {
+
+        for (ASTNode aNode : node) {
+            if (!(SemanticTools.isBuiltin(((Class_ )aNode).getName()))) {
+                aNode.accept(this);
+            }
+        }
+        return null;
+    }
+
+
     /** update current class fields*/
     @Override
     public Object visit(Class_ node) {
         this.currentVarSymbolTable = classMap.get(node.getName()).getVarSymbolTable();
         this.currentClass = node;
-        return super.visit(node);
+        super.visit(node);
+        return null;
     }
 
     /** Make sure types for fields are compatible*/
@@ -233,10 +246,10 @@ public class TypeCheckVisitor extends Visitor {
         // Evaluate type of reference
         String referenceType;
         if (node.getRefExpr() != null) {
-            if(((VarExpr) node.getRefExpr()).getName().equals(THIS)) {
+            node.getRefExpr().accept(this);
+            if(node.getRefExpr().getExprType().equals(THIS)) {
                 referenceType = this.currentClass.getName();
             } else {
-                node.getRefExpr().accept(this);
                 referenceType = node.getRefExpr().getExprType();
             }
         } else {
@@ -246,10 +259,12 @@ public class TypeCheckVisitor extends Visitor {
         node.getActualList().accept(this);
         node.setExprType(OBJECT); //default error type. overwritten if below passes
         // Check method compatibility
+
         if(this.classMap.containsKey(referenceType)) {
             Method method = (Method) this.classMap.get(referenceType)
                     .getMethodSymbolTable()
                     .lookup(node.getMethodName());
+
             if(method == null) {
                 errorHandler.register(errorHandler.SEMANT_ERROR,
                         this.currentClass.getFilename(),
@@ -581,6 +596,10 @@ public class TypeCheckVisitor extends Visitor {
     @Override
     public Object visit(VarExpr node) {
         String varType = null;
+        if (node.getName().equals(NULL)) {
+            node.setExprType(NULL);
+            return false;
+        }
         if (node.getRef() != null) {
             node.getRef().accept(this);
             if(((VarExpr) node.getRef()).getName().equals(THIS)) {
@@ -677,7 +696,7 @@ public class TypeCheckVisitor extends Visitor {
      * @param debug true if one wishes to report errors to the errorhandler
      */
     private boolean checkType(String type, String subtype, ASTNode ast, boolean debug) {
-        if(type == null || subtype == null) {
+        if(type == null || subtype == NULL || subtype == null) {
             return true;
         }
 
@@ -781,7 +800,7 @@ public class TypeCheckVisitor extends Visitor {
                 }
             } else {
                 // types
-                if(!(checkType(leftType, rightType, node, false) && checkType(rightType, leftType, node, false))) {
+                if(!(checkType(leftType, rightType, node, false) )) {
                     errorHandler.register(errorHandler.SEMANT_ERROR,
                             this.currentClass.getFilename(),
                             node.getLineNum(),

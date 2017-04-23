@@ -30,7 +30,9 @@ import java.util.Scanner;
 public class SemanticTools {
     private enum reservedWords { NULL, VOID, SUPER, THIS, BOOLEAN, INT };
 
-    private enum primitives {INT, BOOLEAN}
+    private enum primitives {INT, BOOLEAN};
+
+    public static String[] builtins = {"TextIO", "Sys", "Object", "String"};
 
     /**
      * Returns true if the input string is a keyword, else returns false
@@ -52,6 +54,18 @@ public class SemanticTools {
     public static boolean isPrimitive(String word) {
         for ( primitives p : primitives.values()) {
             if (p.name().equalsIgnoreCase(word)) { return true; }
+        }
+        return false;
+    }
+
+    /**
+     * Returns true if the input string is a builtin class
+     * @param word the input in question
+     * @return boolean
+     */
+    public static boolean isBuiltin(String word) {
+        for ( String p : builtins) {
+            if (p.equals(word)) { return true; }
         }
         return false;
     }

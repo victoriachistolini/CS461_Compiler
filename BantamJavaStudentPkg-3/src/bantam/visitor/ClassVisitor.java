@@ -50,6 +50,16 @@ public class ClassVisitor extends Visitor{
         program.accept(this);
 
         establishHierarchy();
+        program.getClassList().addElement(classMap.get("TextIO").getASTNode());
+        classMap.get("TextIO").getMethodSymbolTable().enterScope();
+        classMap.get("TextIO").getVarSymbolTable().enterScope();
+        program.getClassList().addElement(classMap.get("Sys").getASTNode());
+        classMap.get("Sys").getMethodSymbolTable().enterScope();
+        classMap.get("Sys").getVarSymbolTable().enterScope();
+        program.getClassList().addElement(classMap.get("String").getASTNode());
+        classMap.get("String").getMethodSymbolTable().enterScope();
+        classMap.get("String").getVarSymbolTable().enterScope();
+        program.getClassList().addElement(classMap.get("Object").getASTNode());
     }
 
     /**
