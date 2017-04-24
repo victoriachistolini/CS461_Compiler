@@ -44,6 +44,7 @@ import bantam.codegenjvm.JVMCodeGenerator;
 import bantam.codegenmips.MipsCodeGenerator;
 import bantam.codegenx86.X86CodeGenerator;
 import bantam.interp.Interpreter;
+import bantam.prettyprinter.PrettyGenerator;
 import bantam.visitor.MainMainVisitor;
 import bantam.codegenmips.NumLocalVarsVisitor;
 import java_cup.runtime.Symbol;
@@ -84,6 +85,10 @@ public class Main {
      * utilized at a particular time
      */
     private static boolean findMain;
+    /**
+     * Boolean flag that indicates whether or not we are using pretty printing
+     */
+    private static boolean prettyPrint;
     /**
      * Debugging flags for each phase of the compiler
      */
@@ -224,6 +229,11 @@ public class Main {
             // if -mm then run the MainMain visitor to figure out if the class has a main items
             else if (args[i].equals("-mm")) {
                 findMain = true;
+            }
+
+            // if -pp then run the pretty printer
+            else if (args[i].equals("-pp")) {
+                prettyPrint = true;
             }
 
             // if -int turn on interpreter mode
@@ -419,6 +429,13 @@ public class Main {
                     optimizer.print();
                     System.exit(0);
                 }
+            }
+
+            // pretty printing
+            if (prettyPrint) {
+                PrettyGenerator prettyPrinter = new PrettyGenerator(classTree, outFile);
+                prettyPrinter.prettyGenerate();
+                System.exit(0);
             }
 
             // code generation
