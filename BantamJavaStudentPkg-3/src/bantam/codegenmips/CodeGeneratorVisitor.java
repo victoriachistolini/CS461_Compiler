@@ -64,6 +64,8 @@ public class CodeGeneratorVisitor extends Visitor{
     private String currentMethodEnd;
 
     private final String NULL = "null";
+    private final String THIS = "this";
+    private final String SUPER = "super";
 
     /**
      * constructor method
@@ -116,11 +118,11 @@ public class CodeGeneratorVisitor extends Visitor{
                 this.mipsSupport.genComment("Call the parent's init method");
                 this.mipsSupport.genDirCall(node.getParent() + "_init");
 
-                this.mipsSupport.genComment("Pop RA off of the stack");
-                this.popIntoRegister(this.mipsSupport.getRAReg());
             }
             super.visit(node);
             this.currOffset = -12; //reset the offset
+            this.mipsSupport.genComment("Pop RA off of the stack");
+            this.popIntoRegister(this.mipsSupport.getRAReg());
             this.mipsSupport.genRetn(); //generate a return to close the init
             return null;
         }
@@ -480,7 +482,6 @@ public class CodeGeneratorVisitor extends Visitor{
 
         this.mipsSupport.genComment("Compute the location of the method call");
         this.mipsSupport.genComment("and place it in $t0");
-
         this.mipsSupport.genLoadAddr(
                 this.mipsSupport.getT0Reg(),
                 refName + "." + node.getMethodName()
@@ -581,7 +582,11 @@ public class CodeGeneratorVisitor extends Visitor{
     public Object visit(AssignExpr node) {
         super.visit(node);
         Location loc = (Location) this.classSymbolTables.get(currClass.getName()).lookup(node.getName());
-        mipsSupport.genStoreWord(mipsSupport.getResultReg(), loc.getOffset(), loc.getBaseReg());
+        if (loc.isInMemory()) {
+            mipsSupport.genStoreWord(mipsSupport.getResultReg(), loc.getOffset(), loc.getBaseReg());
+        } else {
+            mipsSupport.genMove(loc.getReg(), mipsSupport.getResultReg());
+        }
         return null;
     }
 
@@ -814,13 +819,30 @@ public class CodeGeneratorVisitor extends Visitor{
         if (node.getName().equals(NULL)) {
             this.mipsSupport.genLoadImm(mipsSupport.getResultReg(), 0);
             return null;
+        } else if (node.getName().equals(THIS)) {
+            node.setExprType(currClass.getName());
+            return null;
+        } else if (node.getName().equals(SUPER)) {
+            node.setExprType(this.currClass.getParent());
+            return null;
         }
-
-        //Get the location of the VarExpr
-        Location loc = (Location) this.classSymbolTables.get(
-                this.currClass.getName()).lookup(node.getName()
-        );
-
+        Location loc;
+        if (node.getRef() != null) {
+            if (node.getRef().getExprType().equals(SUPER)) {
+                loc = (Location) this.classSymbolTables.get(
+                        node.getRef().getExprType()).lookup(node.getName()
+                );
+            } else {
+                loc = (Location) this.classSymbolTables.get(
+                        this.currClass.getName()).lookup(node.getName()
+                );
+            }
+        } else {
+            //Get the location of the VarExpr
+            loc = (Location) this.classSymbolTables.get(
+                    this.currClass.getName()).lookup(node.getName()
+            );
+        }
         this.mipsSupport.genComment("Load Variable");
         if(loc.isInMemory()) {
             this.mipsSupport.genLoadWord(

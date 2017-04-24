@@ -85,7 +85,7 @@ public class TypeCheckVisitor extends Visitor {
     @Override
     public Object visit(Field node) {
         super.visit(node);
-        if(this.currentVarSymbolTable.lookup(node.getName()) != null) {
+        if(this.currentVarSymbolTable.lookup(node.getName()) != null && node.getInit() != null) {
             checkType(node.getType(), node.getInit().getExprType(), node, true);
         }
         return null;
@@ -402,10 +402,12 @@ public class TypeCheckVisitor extends Visitor {
                             "Undeclared field " + node.getName() + " in " + node.getRefName());
                 }
             } else {
-                errorHandler.register(errorHandler.SEMANT_ERROR,
-                        this.currentClass.getFilename(),
-                        node.getLineNum(),
-                        "Undeclared class " + node.getRefName());
+                if ((!node.getRefName().equals(THIS) && !node.getRefName().equals(SUPER))){
+                    errorHandler.register(errorHandler.SEMANT_ERROR,
+                            this.currentClass.getFilename(),
+                            node.getLineNum(),
+                            "Undeclared class " + node.getRefName());
+                }
             }
 
         } else {
@@ -624,10 +626,16 @@ public class TypeCheckVisitor extends Visitor {
         if (varType != null) {
             node.setExprType(varType);
         } else {
-            errorHandler.register(errorHandler.SEMANT_ERROR,
-                    this.currentClass.getFilename(),
-                    node.getLineNum(),
-                    "Undeclared variable " + node.getName());
+            if (node.getName().equals(THIS)) {
+                 node.setExprType(currentClass.getName());
+            } else if (node.getName().equals(SUPER)) {
+                node.setExprType(currentClass.getParent());
+            } else{
+                errorHandler.register(errorHandler.SEMANT_ERROR,
+                        this.currentClass.getFilename(),
+                        node.getLineNum(),
+                        "Undeclared variable " + node.getName());
+            }
         }
         return false;
     }
